@@ -18,5 +18,15 @@
     "status": "not_started",
     "completedSteps": 0,
     "totalSteps": 0
+  },
+  {
+    "id": "nico-80783035",
+    "name": "Nico Briefing",
+    "schemaId": "ai-dossier-intake",
+    "createdAt": "2026-03-22T16:58:10.392Z",
+    "lastModified": "2026-03-22T16:58:10.392Z",
+    "status": "not_started",
+    "completedSteps": 0,
+    "totalSteps": 0
   }
 ]
