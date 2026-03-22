@@ -237,9 +237,11 @@ export function RepeatingGroup({
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-2">
           <Label className="text-sm font-medium">{label}</Label>
-          <span className="text-xs text-muted-foreground tabular-nums">
-            {entries.length}{maxItems ? `/${maxItems}` : ""}
-          </span>
+          {entries.length > 0 && (
+            <span className="text-xs text-muted-foreground tabular-nums">
+              {entries.length}{maxItems ? `/${maxItems}` : ""}
+            </span>
+          )}
           {showWarning && (
             <Badge variant="outline" className="shrink-0 border-amber-300 bg-amber-50 text-amber-800 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-300 text-xs">
               {validation.warnMessage}
