@@ -30,7 +30,7 @@
       {
         "short_label": "test3",
         "full_name": "test3",
-        "auto_tags": "test, test3"
+        "auto_tags": "test, test4"
       }
     ],
     "editors": [
@@ -151,5 +151,5 @@
   "completedSteps": [
     "your-publication"
   ],
-  "lastSaved": "2026-03-22T15:06:37.383Z"
+  "lastSaved": "2026-03-22T15:06:40.323Z"
 }
