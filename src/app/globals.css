@@ -123,13 +123,14 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   }
   html {
-    @apply font-sans;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   }
-  /* Clean heading style — Geist Sans with tight tracking */
+  /* Clean heading style — system sans-serif with tight tracking */
   h1, h2, h3 {
-    font-family: var(--font-sans);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
     letter-spacing: -0.02em;
     font-weight: 600;
   }
