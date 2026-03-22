@@ -28,8 +28,8 @@
         "auto_tags": "test, test2"
       },
       {
-        "short_label": "test,test2",
-        "full_name": "",
+        "short_label": "test3",
+        "full_name": "test3",
         "auto_tags": "test,test2"
       }
     ],
@@ -151,5 +151,5 @@
   "completedSteps": [
     "your-publication"
   ],
-  "lastSaved": "2026-03-22T15:06:13.326Z"
+  "lastSaved": "2026-03-22T15:06:19.176Z"
 }
