@@ -26,13 +26,24 @@ const CATEGORY_COLORS = [
   { bg: "bg-slate-500", text: "text-slate-500", light: "bg-slate-100 dark:bg-slate-900/40" },
 ] as const
 
-export type CategoryColor = (typeof CATEGORY_COLORS)[number]
+export type CategoryColor = { bg: string; text: string; light: string }
+
+/** Spotlight gets a special black/white dot */
+const SPOTLIGHT_COLOR: CategoryColor = {
+  bg: "bg-foreground",
+  text: "text-foreground",
+  light: "bg-foreground/10",
+}
+
+/** Use -1 as the sentinel index for spotlight */
+const SPOTLIGHT_INDEX = -1
 
 /**
  * Get a stable color for a category based on its index.
  * The index is determined by the order categories were defined.
  */
 export function getCategoryColor(index: number): CategoryColor {
+  if (index === SPOTLIGHT_INDEX) return SPOTLIGHT_COLOR
   return CATEGORY_COLORS[index % CATEGORY_COLORS.length]
 }
 

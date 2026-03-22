@@ -147,15 +147,16 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
           /* Turn category text input into a select with dynamic options.
              Editors can cover 1+ categories, so users type comma-separated values.
              The select shows the available options but the field stays text-based. */
-          const allOptions = [
-            ...categoryOptions,
-            { label: "Spotlight", value: "spotlight" },
-          ]
+          const spotlightOption = { label: "Spotlight", value: "spotlight", colorIndex: -1 }
+          const allOptions = [...categoryOptions, spotlightOption]
           return {
             ...subField,
             type: "select",
             options: allOptions,
-            colorMap: Object.fromEntries(categoryOptions.map(c => [c.value, c.colorIndex])),
+            colorMap: {
+              ...Object.fromEntries(categoryOptions.map(c => [c.value, c.colorIndex])),
+              spotlight: -1,
+            },
             help: "Which category does this editor cover? Each category can only be assigned to one editor.",
           }
         }),
