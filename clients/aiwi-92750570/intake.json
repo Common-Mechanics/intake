@@ -131,9 +131,7 @@
       }
     ]
   },
-  "skippedSections": [
-    "social-profiles"
-  ],
+  "skippedSections": [],
   "completedSteps": [
     "editorial-team",
     "sentiment-tracker",
@@ -143,5 +141,5 @@
     "sentiment-rules",
     "social-profiles"
   ],
-  "lastSaved": "2026-03-22T02:39:21.354Z"
+  "lastSaved": "2026-03-22T02:39:26.951Z"
 }
