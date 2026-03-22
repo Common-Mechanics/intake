@@ -5,16 +5,17 @@ import { HelpCircle } from "lucide-react"
 
 interface HelpTooltipProps {
   text: string
-  /** Show inline always instead of behind tooltip */
-  alwaysVisible?: boolean
+  /** Hide behind a (?) icon instead of showing inline. Use for niche
+      explanations, not general guidance. Default: visible. */
+  compact?: boolean
 }
 
-export function HelpTooltip({ text, alwaysVisible }: HelpTooltipProps) {
+export function HelpTooltip({ text, compact }: HelpTooltipProps) {
   const [open, setOpen] = useState(false)
 
-  if (alwaysVisible) {
+  if (!compact) {
     return (
-      <p className="text-[13px] leading-relaxed text-muted-foreground/70 mt-1">{text}</p>
+      <p className="text-[13px] leading-relaxed text-muted-foreground/60 mt-0.5">{text}</p>
     )
   }
 

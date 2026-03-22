@@ -40,14 +40,10 @@ export function TextareaField({
 
   return (
     <div className="flex flex-col gap-1.5">
-      <div className="flex items-center gap-1.5">
-        <Label htmlFor={id} className="text-sm font-medium">
-          {label}
-          {!required && <span className="text-muted-foreground text-xs font-normal ml-1">(optional)</span>}
-        </Label>
-        {/* Short textareas get tooltip; long ones get inline help below the input */}
-        {help && rows < 4 && <HelpTooltip text={help} />}
-      </div>
+      <Label htmlFor={id} className="text-sm font-medium">
+        {label}
+        {!required && <span className="text-muted-foreground text-xs font-normal ml-1">(optional)</span>}
+      </Label>
       <Textarea
         id={id}
         placeholder={placeholder}
@@ -69,16 +65,15 @@ export function TextareaField({
         <p id={`${id}-error`} role="alert" className="text-sm font-medium text-destructive">{error}</p>
       )}
       <div className="flex justify-between gap-4">
-        {/* Important textareas (rows >= 4) show help inline below the input */}
-        {help && rows >= 4 ? (
-          <HelpTooltip text={help} alwaysVisible />
-        ) : (
-          <span />
+        {help && (
+          <div id={`${id}-help`} className="flex-1">
+            <HelpTooltip text={help} />
+          </div>
         )}
         {maxLength != null && (
           <p
             className={cn(
-              "ml-auto text-sm text-muted-foreground tabular-nums",
+              "ml-auto text-sm text-muted-foreground tabular-nums shrink-0",
               currentLength >= maxLength
                 ? "text-destructive"
                 : currentLength > maxLength * 0.95

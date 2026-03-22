@@ -38,13 +38,10 @@ export function NumberField({
 }: NumberFieldProps) {
   return (
     <div className="flex flex-col gap-1.5">
-      <div className="flex items-center gap-1.5">
-        <Label htmlFor={id} className="text-sm font-medium">
-          {label}
-          {!required && <span className="text-muted-foreground text-xs font-normal ml-1">(optional)</span>}
-        </Label>
-        {help && <HelpTooltip text={help} />}
-      </div>
+      <Label htmlFor={id} className="text-sm font-medium">
+        {label}
+        {!required && <span className="text-muted-foreground text-xs font-normal ml-1">(optional)</span>}
+      </Label>
       <Input
         id={id}
         type="number"
@@ -72,6 +69,11 @@ export function NumberField({
       />
       {error && (
         <p id={`${id}-error`} role="alert" className="text-sm font-medium text-destructive">{error}</p>
+      )}
+      {help && (
+        <div id={`${id}-help`}>
+          <HelpTooltip text={help} />
+        </div>
       )}
     </div>
   )
