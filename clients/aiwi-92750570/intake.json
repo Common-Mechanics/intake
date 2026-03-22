@@ -121,13 +121,7 @@
         "handle": "ver.bsky.social"
       },
       {
-        "handle": "w.bsky.social"
-      },
-      {
         "handle": "b.bsky.social"
-      },
-      {
-        "handle": "c.bsky.social"
       }
     ],
     "x_handles": [
@@ -154,5 +148,5 @@
     "sentiment-rules",
     "social-profiles"
   ],
-  "lastSaved": "2026-03-22T02:47:25.913Z"
+  "lastSaved": "2026-03-22T02:47:47.486Z"
 }
