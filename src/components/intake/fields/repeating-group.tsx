@@ -238,12 +238,12 @@ export function RepeatingGroup({
         <div className="flex flex-col gap-0.5">
           <div className="flex items-center gap-2">
             <Label className="text-sm font-medium">{label}</Label>
-            <span className="text-xs text-muted-foreground/60 tabular-nums">
+            <span className="text-xs text-muted-foreground tabular-nums">
               {entries.length}{maxItems ? `/${maxItems}` : ""}
             </span>
           </div>
           {help && (
-            <p className="text-[13px] leading-relaxed text-muted-foreground/70">{help}</p>
+            <p className="text-[13px] leading-relaxed text-muted-foreground">{help}</p>
           )}
         </div>
         <div className="flex items-center gap-2">
@@ -331,11 +331,11 @@ export function RepeatingGroup({
           })}
           {canAdd && (
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
               onClick={handleAdd}
               disabled={disabled}
-              className="self-start text-muted-foreground mt-1 h-7 text-xs"
+              className="self-start mt-1 h-7 text-xs"
             >
               <Plus className="size-3" />
               Add {singularLabel.toLowerCase()}
@@ -360,7 +360,7 @@ export function RepeatingGroup({
                 )}
               >
                 {showColorDots && <CategoryDot index={index} className="mt-2.5" />}
-                <span className="text-xs text-muted-foreground/50 tabular-nums mt-2 shrink-0 w-4">{index + 1}</span>
+                <span className="text-xs text-muted-foreground tabular-nums mt-2 shrink-0 w-4">{index + 1}</span>
                 <div className="flex-1 grid grid-cols-1 md:grid-cols-[1fr,1fr] gap-x-3 gap-y-2">
                   {fields.map((field) => (
                     <div key={field.id} className={cn(
@@ -422,7 +422,7 @@ export function RepeatingGroup({
                     isOpen && "rotate-180"
                   )} />
                   {showColorDots && <CategoryDot index={index} />}
-                  <span className="text-xs text-muted-foreground/50 tabular-nums shrink-0">{index + 1}</span>
+                  <span className="text-xs text-muted-foreground tabular-nums shrink-0">{index + 1}</span>
                   <span className={cn(
                     "text-sm font-medium truncate flex-1",
                     hasEntryErrors && "text-destructive"
@@ -473,7 +473,7 @@ export function RepeatingGroup({
 
       {/* Empty state — minimal, just a hint next to the add button */}
       {entries.length === 0 && validation?.minItems && validation.minItems > 0 && (
-        <p className="text-xs text-muted-foreground/60">
+        <p className="text-xs text-muted-foreground">
           You&apos;ll need at least {validation.minItems} to continue
         </p>
       )}

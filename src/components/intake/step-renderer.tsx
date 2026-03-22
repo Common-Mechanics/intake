@@ -133,7 +133,7 @@ export function StepRenderer({
             {/* Section header */}
             {section.label && (
               <div className="flex items-center gap-4 mb-6">
-                <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground/50 shrink-0">
+                <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground shrink-0">
                   {section.label}
                 </span>
                 <div className="flex-1 h-px bg-border/50" />
@@ -175,7 +175,7 @@ export function StepRenderer({
                     {/* Help text — right side on desktop, below on mobile */}
                     {hasHelp && !isWideType && (
                       <p className={cn(
-                        "text-[13px] leading-relaxed text-muted-foreground/50",
+                        "text-[13px] leading-relaxed text-muted-foreground",
                         "md:flex-[2] md:pt-7"
                       )}>
                         {field.help}
@@ -184,7 +184,7 @@ export function StepRenderer({
 
                     {/* Wide types (repeating, custom): help below */}
                     {hasHelp && isWideType && (
-                      <p className="text-[13px] leading-relaxed text-muted-foreground/50 md:hidden">
+                      <p className="text-[13px] leading-relaxed text-muted-foreground md:hidden">
                         {field.help}
                       </p>
                     )}

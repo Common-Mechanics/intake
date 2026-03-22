@@ -6,6 +6,6 @@ interface HelpTooltipProps {
 
 export function HelpTooltip({ text }: HelpTooltipProps) {
   return (
-    <p className="text-[13px] leading-relaxed text-muted-foreground/60 mt-0.5">{text}</p>
+    <p className="text-[13px] leading-relaxed text-muted-foreground mt-0.5">{text}</p>
   )
 }

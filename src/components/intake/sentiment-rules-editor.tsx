@@ -101,7 +101,7 @@ export function SentimentRulesEditor({
             <div className="flex items-center gap-2.5 mb-4">
               <CategoryDot index={category.colorIndex} className="size-3" />
               <h4 className="text-sm font-semibold tracking-tight">{category.label}</h4>
-              <span className="text-xs text-muted-foreground/60 tabular-nums">
+              <span className="text-xs text-muted-foreground tabular-nums">
                 {rules.length === 0 ? "no rules" : `${rules.length} rule${rules.length !== 1 ? "s" : ""}`}
               </span>
             </div>

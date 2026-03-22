@@ -187,7 +187,7 @@ export function FieldRenderer({
          visual boundaries between field groups within a step */
       return (
         <div className="flex items-center gap-4 pt-4 mt-2">
-          <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground/60 shrink-0">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground shrink-0">
             {field.label}
           </span>
           <div className="flex-1 h-px bg-border/70" />
