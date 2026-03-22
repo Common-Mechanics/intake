@@ -142,6 +142,7 @@ export function VoiceAssistant({
     isConnected: false, isSpeaking: false, isMuted: false,
     transcript: [], error: null,
   })
+  const [isStarting, setIsStarting] = useState(false)
   const conversationRef = useRef<ConversationHandle | null>(null)
   const valuesRef = useRef(values); valuesRef.current = values
   const stepsRef = useRef(steps); stepsRef.current = steps
@@ -162,8 +163,11 @@ export function VoiceAssistant({
     setVoice(prev => ({ ...prev, transcript: [...prev.transcript, { role, text, timestamp: Date.now() }] }))
   }, [])
 
+  const isStartingRef = useRef(false)
   const startConversation = useCallback(async () => {
-    if (!agentId) return
+    if (!agentId || isStartingRef.current || conversationRef.current) return
+    isStartingRef.current = true
+    setIsStarting(true)
     setVoice(prev => ({ ...prev, error: null }))
     try {
       const { Conversation } = await import("@11labs/client")
@@ -206,9 +210,13 @@ export function VoiceAssistant({
         },
       })
       conversationRef.current = conversation
+      isStartingRef.current = false
+      setIsStarting(false)
       const progress = buildProgressSummary(valuesRef.current, stepsRef.current)
       conversation.sendContextualUpdate(`[SYSTEM] Current form state — skip filled fields:\n\n${progress}`)
     } catch (err) {
+      isStartingRef.current = false
+      setIsStarting(false)
       setVoice(prev => ({ ...prev, error: err instanceof Error ? err.message : String(err) }))
     }
   }, [agentId, setFieldValue, goToStep, addToTranscript])
@@ -359,9 +367,9 @@ export function VoiceAssistant({
       {/* Controls */}
       <div className="border-t px-4 py-2.5 flex items-center justify-center gap-3 shrink-0 pb-[max(0.625rem,env(safe-area-inset-bottom))]">
         {!voice.isConnected ? (
-          <Button onClick={startConversation} className="gap-2" size="lg">
+          <Button onClick={startConversation} className="gap-2" size="lg" disabled={isStarting}>
             <Phone aria-hidden="true" className="size-4" />
-            Start Conversation
+            {isStarting ? "Connecting\u2026" : "Start Conversation"}
           </Button>
         ) : (
           <>
