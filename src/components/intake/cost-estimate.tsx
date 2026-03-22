@@ -29,7 +29,6 @@ interface CostEstimateProps {
  */
 
 interface PipelineStep {
-  phase: string
   task: string
   model: string
   /** Estimated daily cost in USD — varies by editor/source count */
@@ -55,49 +54,42 @@ export function CostEstimate({ values }: CostEstimateProps) {
        Assumes ~40 stories flagged from triage, 15 make final dossier. */
     const steps: PipelineStep[] = [
       {
-        phase: "1",
         task: "Triage",
         model: "Haiku 4.5",
         cost: 0.05 + sourceCount * 0.015,
         note: `Batch-flag relevant items from ${sourceCount} source${sourceCount !== 1 ? "s" : ""}`,
       },
       {
-        phase: "1b",
         task: "Novelty classification",
         model: "Sonnet 4.6",
         cost: 0.35,
         note: "Classify each flagged story into 1 of 9 novelty classes",
       },
       {
-        phase: "1c",
         task: "Event matching",
         model: "Sonnet 4.6 + embeddings",
         cost: 0.15,
         note: "Match stories to persistent event timeline",
       },
       {
-        phase: "2",
         task: `Editor review (×${editorCount})`,
         model: "Sonnet 4.6",
         cost: editorCount * 0.30,
         note: `${editorCount} editor${editorCount !== 1 ? "s" : ""} review all stories in parallel (cached)`,
       },
       {
-        phase: "3",
         task: "Chief editor",
         model: "Opus 4.6",
         cost: 0.80,
         note: "Final selection of 3 leads, 8\u201312 ticker, 1\u20132 spotlight",
       },
       {
-        phase: "4\u20135",
         task: "Research + produce",
         model: "Sonnet 4.6",
         cost: 0.60,
         note: "Deep research on leads, write final dossier copy",
       },
       {
-        phase: "6",
         task: "Dedup QA",
         model: "Haiku 4.5 + embeddings",
         cost: 0.05,
@@ -107,7 +99,6 @@ export function CostEstimate({ values }: CostEstimateProps) {
 
     if (ruleCount > 0) {
       steps.push({
-        phase: "\u2014",
         task: `Sentiment rules (${ruleCount})`,
         model: "Sonnet 4.6",
         cost: 0.15,
@@ -157,23 +148,15 @@ export function CostEstimate({ values }: CostEstimateProps) {
           </button>
 
           {showDetails && (
-            <div className="flex flex-col gap-0.5">
+            <div className="flex flex-col divide-y divide-border/50">
               {estimate.steps.map((step) => (
-                <div key={step.phase + step.task} className="flex items-start justify-between gap-4 py-1.5 text-sm">
-                  <div className="flex flex-col gap-0.5 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="text-muted-foreground tabular-nums shrink-0 w-6">{step.phase}</span>
-                      <span className="font-medium">{step.task}</span>
-                    </div>
-                    <div className="flex items-center gap-2 pl-8">
-                      <span className="text-xs text-muted-foreground">{step.model}</span>
-                      {step.note && (
-                        <>
-                          <span className="text-xs text-muted-foreground">&middot;</span>
-                          <span className="text-xs text-muted-foreground">{step.note}</span>
-                        </>
-                      )}
-                    </div>
+                <div key={step.task} className="flex items-baseline justify-between gap-3 py-2 text-sm">
+                  <div className="min-w-0">
+                    <span className="font-medium">{step.task}</span>
+                    <span className="text-muted-foreground ml-1.5 text-xs">({step.model})</span>
+                    {step.note && (
+                      <p className="text-xs text-muted-foreground mt-0.5">{step.note}</p>
+                    )}
                   </div>
                   <span className="tabular-nums text-muted-foreground shrink-0">{fmt(step.cost)}</span>
                 </div>
