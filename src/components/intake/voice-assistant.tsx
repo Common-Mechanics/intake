@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useCallback, useRef } from "react"
-import { Mic, MicOff, Phone, PhoneOff } from "lucide-react"
+import { Mic, Phone, PhoneOff } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Sheet,
@@ -195,23 +195,18 @@ function VoiceAssistantInner({
 
   return (
     <>
-      {/* Floating mic button — bottom-left, above the nav bar */}
+      {/* Header button — inline in the top nav */}
       <Button
-        variant="outline"
-        size="icon"
+        variant="ghost"
+        size="sm"
         onClick={() => setIsOpen(true)}
         className={cn(
-          "fixed bottom-20 left-4 z-50 size-12 rounded-full shadow-lg border-2 md:bottom-4",
-          isConnected && "border-primary bg-primary/10",
-          isSpeaking && "animate-pulse"
+          "h-8 gap-1.5 text-xs",
+          isConnected && "text-primary"
         )}
-        aria-label="Voice assistant"
       >
-        {isConnected ? (
-          <Mic aria-hidden="true" className="size-5 text-primary" />
-        ) : (
-          <MicOff aria-hidden="true" className="size-5 text-muted-foreground" />
-        )}
+        <Mic aria-hidden="true" className={cn("size-3.5", isConnected && "animate-pulse")} />
+        <span className="hidden sm:inline">Assisted Setup</span>
       </Button>
 
       {/* Voice panel */}
