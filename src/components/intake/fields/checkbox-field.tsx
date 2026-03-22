@@ -38,7 +38,7 @@ export function CheckboxField({
         </Label>
       </div>
       {help && (
-        <p className="text-sm text-muted-foreground pl-7">{help}</p>
+        <p className="text-[13px] leading-relaxed text-muted-foreground/70 pl-7">{help}</p>
       )}
     </div>
   )

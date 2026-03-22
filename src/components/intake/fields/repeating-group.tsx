@@ -230,7 +230,7 @@ export function RepeatingGroup({
         <div className="flex flex-col gap-1">
           <Label className="text-sm font-medium">{label}</Label>
           {help && (
-            <p className="text-sm text-muted-foreground">{help}</p>
+            <p className="text-[13px] leading-relaxed text-muted-foreground/70">{help}</p>
           )}
         </div>
         {showWarning && (
@@ -241,7 +241,7 @@ export function RepeatingGroup({
       </div>
 
       {error && (
-        <div id={`${id}-error`} role="alert" className="text-sm text-destructive flex flex-col gap-1">
+        <div id={`${id}-error`} role="alert" className="text-sm font-medium text-destructive flex flex-col gap-1">
           <p>{error}</p>
           {/* Show count-specific help when below minimum */}
           {validation?.minItems && entries.length < validation.minItems && (

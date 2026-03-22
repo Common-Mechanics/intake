@@ -92,10 +92,10 @@ export function SelectField({
         </SelectContent>
       </Select>
       {error && (
-        <p id={`${id}-error`} role="alert" className="text-sm text-destructive">{error}</p>
+        <p id={`${id}-error`} role="alert" className="text-sm font-medium text-destructive">{error}</p>
       )}
       {help && (
-        <p id={`${id}-help`} className="text-sm text-muted-foreground">{help}</p>
+        <p id={`${id}-help`} className="text-[13px] leading-relaxed text-muted-foreground/70">{help}</p>
       )}
     </div>
   )

@@ -132,6 +132,30 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
     wizard.setFieldValue("editorial-team", "editors", editors)
   }, [wizard.currentStepDef.id, categoryEntries, wizard.values, wizard.setFieldValue])
 
+  /* Auto-populate sentiment tracker defaults from topic_label when arriving at the step.
+     Suggests a tracker name based on topic, plus sensible default labels. */
+  useEffect(() => {
+    if (wizard.currentStepDef.id !== "sentiment-tracker") return
+    const trackerValues = wizard.values["sentiment-tracker"] ?? {}
+    const topicLabel = (wizard.values["audience"]?.["topic_label"] as string)?.trim()
+
+    // Only suggest if the field is currently empty
+    if (!trackerValues["tracker_name"] && topicLabel) {
+      // Capitalize first letter of each word for a clean name
+      const capitalized = topicLabel.replace(/\b\w/g, (c) => c.toUpperCase())
+      wizard.setFieldValue("sentiment-tracker", "tracker_name", `${capitalized} Index`)
+    }
+    if (!trackerValues["tracker_nav_label"]) {
+      wizard.setFieldValue("sentiment-tracker", "tracker_nav_label", "Tracker")
+    }
+    if (!trackerValues["positive_signal_label"]) {
+      wizard.setFieldValue("sentiment-tracker", "positive_signal_label", "progress")
+    }
+    if (!trackerValues["negative_signal_label"]) {
+      wizard.setFieldValue("sentiment-tracker", "negative_signal_label", "risk")
+    }
+  }, [wizard.currentStepDef.id, wizard.values, wizard.setFieldValue])
+
   /* Auto-populate sentiment_rules_by_category with empty arrays per category */
   useEffect(() => {
     if (wizard.currentStepDef.id !== "sentiment-rules") return
@@ -232,7 +256,7 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
     <div className="flex min-h-dvh flex-col">
       {/* Header + progress bar */}
       <div className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur-sm">
-        <div className="mx-auto max-w-2xl">
+        <div className="mx-auto max-w-3xl">
           <div className="flex items-center justify-between px-4 pt-3 pb-0">
             <h1 className="text-base font-semibold tracking-tight">Onboarding Form</h1>
           </div>
@@ -251,7 +275,7 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
         <div
           className={cn(
             "mx-auto w-full flex-1 py-6 md:py-10",
-            "max-w-2xl",
+            "max-w-3xl",
             /* Mobile: edge-to-edge with padding inside */
             "px-0 md:px-4"
           )}

@@ -356,6 +356,7 @@
         {
           "id": "what_negative_means",
           "type": "textarea",
+          "layout": "half",
           "label": "What Negative Means",
           "help": "In one sentence, what does a negative signal mean? Example: \"Decarbonization is slowing — rollbacks, delays, or new obstacles.\"",
           "placeholder": "Things are getting worse because...",
@@ -367,6 +368,7 @@
         {
           "id": "fallback_sentiment_question",
           "type": "textarea",
+          "layout": "half",
           "label": "Fallback Sentiment Question",
           "help": "When a story's sentiment isn't obvious, the pipeline uses this question as a tiebreaker. Frame it as a yes/no question about direction. Example: \"Is the world's trajectory toward net-zero getting better or worse?\"",
           "placeholder": "Is the situation getting better or worse?",
@@ -388,6 +390,7 @@
         {
           "id": "scoring_positive",
           "type": "textarea",
+          "layout": "half",
           "label": "Positive Scoring — What Does It Look Like?",
           "help": "Describe what positive signals look like in your domain. Give 2-3 concrete examples of stories your audience would instantly recognize as good news. Example: \"New binding emissions targets signed into law. Major fossil fuel company announces accelerated phase-out timeline. Record-breaking renewable energy deployment in a G20 country.\"",
           "placeholder": "A story is positive when...",
@@ -399,6 +402,7 @@
         {
           "id": "scoring_negative",
           "type": "textarea",
+          "layout": "half",
           "label": "Negative Scoring — What Does It Look Like?",
           "help": "Describe what negative signals look like. Give 2-3 concrete examples. Example: \"Climate legislation repealed or weakened. Major emitter misses its own targets. New fossil fuel infrastructure approved despite net-zero pledges.\"",
           "placeholder": "A story is negative when...",
@@ -410,6 +414,7 @@
         {
           "id": "scoring_neutral",
           "type": "textarea",
+          "layout": "half",
           "label": "Neutral Scoring — What Counts as Neutral?",
           "help": "Describe what counts as neutral — neither clearly positive nor negative. Example: \"Routine data releases without clear trend direction. Personnel changes at agencies without policy implications. Conference announcements or procedural updates.\"",
           "placeholder": "A story is neutral when...",
@@ -678,6 +683,7 @@
         {
           "id": "about_what_is_this",
           "type": "textarea",
+          "layout": "half",
           "label": "What Is This?",
           "help": "Describe your publication in 2-3 sentences for a first-time visitor. What will they find here and why should they care?",
           "placeholder": "This publication is...",
@@ -689,6 +695,7 @@
         {
           "id": "about_tracker",
           "type": "textarea",
+          "layout": "half",
           "label": "About the Tracker",
           "help": "Explain your sentiment tracker — what it measures and why it matters. 2-3 sentences.",
           "placeholder": "The tracker measures...",
@@ -700,6 +707,7 @@
         {
           "id": "about_built_by",
           "type": "textarea",
+          "layout": "half",
           "label": "Built By",
           "help": "Describe your organization in 1-2 sentences. Who are you and why did you build this?",
           "placeholder": "Built by...",
@@ -711,6 +719,7 @@
         {
           "id": "llms_description",
           "type": "textarea",
+          "layout": "half",
           "label": "LLMs Description",
           "help": "One-sentence description for AI crawlers (llms.txt). Example: \"Daily climate policy intelligence briefing curated from 60+ sources.\"",
           "placeholder": "Daily intelligence briefing on...",

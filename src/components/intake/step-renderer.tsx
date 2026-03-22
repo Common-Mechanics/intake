@@ -108,26 +108,35 @@ export function StepRenderer({
         />
       )}
 
-      {/* Fields */}
+      {/* Fields — responsive 2-column grid on desktop, single column on mobile */}
       <div
         className={cn(
-          "flex flex-col gap-6 transition-opacity duration-200",
+          "grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6 transition-opacity duration-200",
           isSkipped && "pointer-events-none opacity-40"
         )}
       >
-        {step.fields.map((field) => (
-          <FieldRenderer
-            key={field.id}
-            field={field}
-            value={values[field.id]}
-            onChange={handleFieldChange(field.id)}
-            error={errors[field.id]}
-            allErrors={errors}
-            disabled={disabled || isSkipped}
-            allValues={values}
-            onBlur={onFieldBlur}
-          />
-        ))}
+        {step.fields.map((field) => {
+          /* Determine grid column span from layout hint in schema.
+             Repeating groups and textareas without explicit "half" layout always span full width. */
+          const layout = (field as Record<string, unknown>).layout as string | undefined
+          const isFullWidthType = field.type === "repeating" || field.type === "custom"
+          const spanFull = isFullWidthType || !layout || layout === "full"
+
+          return (
+            <div key={field.id} className={cn(spanFull && "md:col-span-2")}>
+              <FieldRenderer
+                field={field}
+                value={values[field.id]}
+                onChange={handleFieldChange(field.id)}
+                error={errors[field.id]}
+                allErrors={errors}
+                disabled={disabled || isSkipped}
+                allValues={values}
+                onBlur={onFieldBlur}
+              />
+            </div>
+          )
+        })}
       </div>
     </div>
   )
