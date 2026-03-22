@@ -14,6 +14,8 @@ interface VoiceAssistantProps {
   currentStep: number
   steps: StepDef[]
   onPanelToggle?: (isOpen: boolean) => void
+  /** Whether the panel should be visible */
+  isOpen?: boolean
 }
 
 interface TranscriptEntry {
@@ -22,7 +24,7 @@ interface TranscriptEntry {
   timestamp: number
 }
 
-/** Play a short synthesized tone via Web Audio API — no audio files needed */
+/** Play a short synthesized tone via Web Audio API */
 function playTone(type: "connect" | "disconnect") {
   try {
     const ctx = new AudioContext()
@@ -31,7 +33,6 @@ function playTone(type: "connect" | "disconnect") {
     gain.gain.value = 0.15
 
     if (type === "connect") {
-      /* Friendly rising ping: two quick ascending notes */
       const o1 = ctx.createOscillator()
       o1.type = "sine"
       o1.frequency.value = 660
@@ -48,7 +49,6 @@ function playTone(type: "connect" | "disconnect") {
 
       setTimeout(() => ctx.close(), 300)
     } else {
-      /* Deeper descending ba-dum: two notes going down */
       const o1 = ctx.createOscillator()
       o1.type = "sine"
       o1.frequency.value = 440
@@ -65,9 +65,7 @@ function playTone(type: "connect" | "disconnect") {
 
       setTimeout(() => ctx.close(), 400)
     }
-  } catch {
-    /* AudioContext not available — silently skip */
-  }
+  } catch { /* AudioContext not available */ }
 }
 
 /** Briefly highlight a form field when the assistant fills it */
@@ -107,6 +105,38 @@ function buildProgressSummary(
   return summary.join("\n")
 }
 
+/**
+ * Header trigger button — rendered inline in the nav bar.
+ * Separate from the panel so it can live in the header while the panel
+ * is a flex sibling at the layout level.
+ */
+export function VoiceAssistantTrigger({
+  isOpen,
+  onToggle,
+}: {
+  isOpen: boolean
+  onToggle: () => void
+}) {
+  const agentId = process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID
+  if (!agentId) return null
+
+  return (
+    <Button
+      variant="ghost"
+      size="sm"
+      onClick={onToggle}
+      className={cn("h-8 gap-1.5 text-xs", isOpen && "text-primary")}
+    >
+      <Mic aria-hidden="true" className="size-3.5" />
+      <span className="hidden sm:inline">Assisted Setup</span>
+    </Button>
+  )
+}
+
+/**
+ * Voice assistant panel — renders as a flex sibling to the form column.
+ * Takes up space in the layout (not an overlay).
+ */
 export function VoiceAssistant({
   setFieldValue,
   goToStep,
@@ -114,11 +144,13 @@ export function VoiceAssistant({
   currentStep,
   steps,
   onPanelToggle,
+  isOpen,
 }: VoiceAssistantProps) {
   const agentId = process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID
   if (!agentId) return null
+  if (!isOpen) return null
 
-  return <VoiceAssistantInner
+  return <VoiceAssistantPanel
     agentId={agentId}
     setFieldValue={setFieldValue}
     goToStep={goToStep}
@@ -129,8 +161,7 @@ export function VoiceAssistant({
   />
 }
 
-/** Inner component — only rendered when agent ID is configured */
-function VoiceAssistantInner({
+function VoiceAssistantPanel({
   agentId,
   setFieldValue,
   goToStep,
@@ -138,12 +169,6 @@ function VoiceAssistantInner({
   steps,
   onPanelToggle,
 }: VoiceAssistantProps & { agentId: string }) {
-  const [isOpen, setIsOpenState] = useState(false)
-
-  const setIsOpen = useCallback((open: boolean) => {
-    setIsOpenState(open)
-    onPanelToggle?.(open)
-  }, [onPanelToggle])
   const [isConnected, setIsConnected] = useState(false)
   const [isSpeaking, setIsSpeaking] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
@@ -151,7 +176,6 @@ function VoiceAssistantInner({
   const [error, setError] = useState<string | null>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
 
-  // Keep refs to latest values/steps for tool callbacks
   const valuesRef = useRef(values)
   valuesRef.current = values
   const stepsRef = useRef(steps)
@@ -166,7 +190,6 @@ function VoiceAssistantInner({
 
   const addToTranscript = useCallback((role: "user" | "assistant", text: string) => {
     setTranscript(prev => [...prev, { role, text, timestamp: Date.now() }])
-    // Auto-scroll
     setTimeout(() => {
       scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" })
     }, 50)
@@ -175,8 +198,6 @@ function VoiceAssistantInner({
   const startConversation = useCallback(async () => {
     setError(null)
     try {
-      /* Dynamic import to avoid loading ElevenLabs SDK when voice is disabled.
-         We use the client directly for imperative session control. */
       const { Conversation } = await import("@11labs/client")
 
       const conversation = await Conversation.startSession({
@@ -184,27 +205,21 @@ function VoiceAssistantInner({
         connectionType: "websocket",
         clientTools: {
           update_field: async (params: Record<string, unknown>) => {
-            const stepId = params.step_id as string
-            const fieldId = params.field_id as string
-            const value = params.value
-            setFieldValue(stepId, fieldId, value)
-            highlightField(fieldId)
+            setFieldValue(params.step_id as string, params.field_id as string, params.value)
+            highlightField(params.field_id as string)
             return "Field updated successfully"
           },
           update_repeating_group: async (params: Record<string, unknown>) => {
-            const stepId = params.step_id as string
-            const fieldId = params.field_id as string
             const entries = params.entries as unknown[]
-            setFieldValue(stepId, fieldId, entries)
-            return `Updated ${fieldId} with ${entries.length} entries`
+            setFieldValue(params.step_id as string, params.field_id as string, entries)
+            return `Updated with ${entries.length} entries`
           },
           get_current_progress: async () => {
             return buildProgressSummary(valuesRef.current, stepsRef.current)
           },
           navigate_to_step: async (params: Record<string, unknown>) => {
-            const stepIndex = params.step_index as number
-            goToStep(stepIndex)
-            return `Navigated to step ${stepIndex}`
+            goToStep(params.step_index as number)
+            return `Navigated to step ${params.step_index}`
           },
         },
         onConnect: () => {
@@ -219,8 +234,7 @@ function VoiceAssistantInner({
           playTone("disconnect")
         },
         onError: (err: unknown) => {
-          const msg = err instanceof Error ? err.message : String(err)
-          setError(msg)
+          setError(err instanceof Error ? err.message : String(err))
           setIsConnected(false)
         },
         onMessage: (msg: { source: "user" | "ai"; message: string }) => {
@@ -233,17 +247,12 @@ function VoiceAssistantInner({
 
       conversationRef.current = conversation
     } catch (err) {
-      const msg = err instanceof Error ? err.message : String(err)
-      setError(msg)
+      setError(err instanceof Error ? err.message : String(err))
     }
   }, [agentId, setFieldValue, goToStep, addToTranscript])
 
   const endConversation = useCallback(async () => {
-    try {
-      await conversationRef.current?.endSession()
-    } catch {
-      // Ignore cleanup errors
-    }
+    try { await conversationRef.current?.endSession() } catch { /* ignore */ }
     conversationRef.current = null
     setIsConnected(false)
     setIsSpeaking(false)
@@ -255,7 +264,6 @@ function VoiceAssistantInner({
     const next = !isMuted
     conversationRef.current.setMicMuted(next)
     conversationRef.current.setVolume({ volume: next ? 0 : 1 })
-    /* Tell the agent to stop/resume — prevents timeout re-prompts */
     conversationRef.current.sendContextualUpdate(
       next
         ? "[SYSTEM] The user has paused the conversation to work on the form manually. Do NOT speak, do NOT ask questions, do NOT respond until the user resumes. Stay completely silent."
@@ -265,100 +273,87 @@ function VoiceAssistantInner({
   }, [isMuted])
 
   return (
-    <>
-      {/* Header button — inline in the top nav */}
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => setIsOpen(true)}
-        className={cn(
-          "h-8 gap-1.5 text-xs",
-          isConnected && "text-primary"
-        )}
-      >
-        <Mic aria-hidden="true" className={cn("size-3.5", isConnected && "animate-pulse")} />
-        <span className="hidden sm:inline">Assisted Setup</span>
-      </Button>
+    <div className={cn(
+      /* Mobile: bottom sheet */
+      "fixed inset-x-0 bottom-0 z-50 bg-background border-t rounded-t-2xl shadow-2xl flex flex-col",
+      "max-h-[70dvh]",
+      /* Desktop: side panel */
+      "sm:static sm:inset-auto sm:z-auto sm:w-[380px] sm:shrink-0 sm:border-r sm:border-t-0 sm:rounded-none sm:shadow-none sm:h-dvh sm:sticky sm:top-0 sm:max-h-none"
+    )}>
+      {/* Header */}
+      <div className="flex items-center justify-between px-4 py-3 border-b shrink-0">
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-semibold">Voice Assistant</span>
+          {isConnected && (
+            <Badge variant={isMuted ? "outline" : isSpeaking ? "default" : "secondary"} className="text-xs">
+              {isMuted ? "Paused" : isSpeaking ? "Speaking" : "Listening"}
+            </Badge>
+          )}
+        </div>
+        <Button variant="ghost" size="icon" className="size-7" onClick={() => onPanelToggle?.(false)} aria-label="Close">
+          <X aria-hidden="true" className="size-4" />
+        </Button>
+      </div>
 
-      {/* Side panel — pushes form content, no overlay */}
-      {isOpen && (
-        <div className="fixed top-0 left-0 bottom-0 z-40 w-full sm:w-[380px] border-r bg-background flex flex-col">
-          {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 border-b shrink-0">
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold">Voice Assistant</span>
-              {isConnected && (
-                <Badge variant={isMuted ? "outline" : isSpeaking ? "default" : "secondary"} className="text-xs">
-                  {isMuted ? "Paused" : isSpeaking ? "Speaking" : "Listening"}
-                </Badge>
+      {/* Transcript */}
+      <div className="flex-1 min-h-0 overflow-y-auto px-4" ref={scrollRef}>
+        <div className="flex flex-col gap-3 py-4">
+          {transcript.length === 0 && !isConnected && (
+            <p className="text-sm text-muted-foreground text-center py-8">
+              Start a voice conversation. The assistant will guide you through the form.
+            </p>
+          )}
+          {transcript.map((entry, i) => (
+            <div
+              key={i}
+              className={cn(
+                "rounded-lg px-3 py-2 text-sm max-w-[85%]",
+                entry.role === "user"
+                  ? "self-end bg-primary text-primary-foreground"
+                  : "self-start bg-muted"
               )}
+            >
+              {entry.text}
             </div>
-            <Button variant="ghost" size="icon" className="size-7" onClick={() => setIsOpen(false)} aria-label="Close">
-              <X aria-hidden="true" className="size-4" />
-            </Button>
-          </div>
-
-          {/* Transcript */}
-          <div className="flex-1 min-h-0 overflow-y-auto px-4" ref={scrollRef}>
-            <div className="flex flex-col gap-3 py-4">
-              {transcript.length === 0 && !isConnected && (
-                <p className="text-sm text-muted-foreground text-center py-8">
-                  Start a voice conversation. The assistant will guide you through the form.
-                </p>
-              )}
-              {transcript.map((entry, i) => (
-                <div
-                  key={i}
-                  className={cn(
-                    "rounded-lg px-3 py-2 text-sm max-w-[85%]",
-                    entry.role === "user"
-                      ? "self-end bg-primary text-primary-foreground"
-                      : "self-start bg-muted"
-                  )}
-                >
-                  {entry.text}
-                </div>
-              ))}
-              {isConnected && !isSpeaking && !isMuted && transcript.length > 0 && (
-                <div className="self-start flex items-center gap-1.5 text-xs text-muted-foreground px-1">
-                  <span className="size-2 rounded-full bg-primary animate-pulse" />
-                  Listening...
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Error display */}
-          {error && (
-            <div className="mx-4 mb-2 rounded-md bg-destructive/10 px-3 py-2 text-xs text-destructive">
-              {error}
+          ))}
+          {isConnected && !isSpeaking && !isMuted && transcript.length > 0 && (
+            <div className="self-start flex items-center gap-1.5 text-xs text-muted-foreground px-1">
+              <span className="size-2 rounded-full bg-primary animate-pulse" />
+              Listening...
             </div>
           )}
+        </div>
+      </div>
 
-          {/* Controls */}
-          <div className="border-t px-4 py-3 flex items-center justify-center gap-3 shrink-0">
-            {!isConnected ? (
-              <Button onClick={startConversation} className="gap-2" size="lg">
-                <Phone aria-hidden="true" className="size-4" />
-                Start Conversation
-              </Button>
-            ) : (
-              <>
-                <Button onClick={toggleMute} variant="outline" className="gap-2" size="lg">
-                  {isMuted ? (
-                    <><Play aria-hidden="true" className="size-4" /> Resume</>
-                  ) : (
-                    <><Pause aria-hidden="true" className="size-4" /> Pause</>
-                  )}
-                </Button>
-                <Button onClick={endConversation} variant="destructive" className="gap-2" size="lg">
-                  <PhoneOff aria-hidden="true" className="size-4" /> End
-                </Button>
-              </>
-            )}
-          </div>
+      {/* Error */}
+      {error && (
+        <div className="mx-4 mb-2 rounded-md bg-destructive/10 px-3 py-2 text-xs text-destructive">
+          {error}
         </div>
       )}
-    </>
+
+      {/* Controls */}
+      <div className="border-t px-4 py-3 flex items-center justify-center gap-3 shrink-0">
+        {!isConnected ? (
+          <Button onClick={startConversation} className="gap-2" size="lg">
+            <Phone aria-hidden="true" className="size-4" />
+            Start Conversation
+          </Button>
+        ) : (
+          <>
+            <Button onClick={toggleMute} variant="outline" className="gap-2" size="lg">
+              {isMuted ? (
+                <><Play aria-hidden="true" className="size-4" /> Resume</>
+              ) : (
+                <><Pause aria-hidden="true" className="size-4" /> Pause</>
+              )}
+            </Button>
+            <Button onClick={endConversation} variant="destructive" className="gap-2" size="lg">
+              <PhoneOff aria-hidden="true" className="size-4" /> End
+            </Button>
+          </>
+        )}
+      </div>
+    </div>
   )
 }

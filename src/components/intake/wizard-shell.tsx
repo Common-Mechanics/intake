@@ -12,7 +12,7 @@ import { CompletionChecklist } from "./completion-checklist"
 import { CategoryAssignment } from "./category-assignment"
 import { CostEstimate } from "./cost-estimate"
 import { SettingsPopover } from "./settings-popover"
-import { VoiceAssistant } from "./voice-assistant"
+import { VoiceAssistant, VoiceAssistantTrigger } from "./voice-assistant"
 
 interface WizardShellProps {
   schema: FormSchema
@@ -299,21 +299,25 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
   const currentValues = wizard.values[wizard.currentStepDef.id] ?? {}
 
   return (
-    <div className={cn("flex min-h-dvh flex-col transition-[margin] duration-300", voicePanelOpen && "sm:ml-[380px]")}>
+    <div className="flex min-h-dvh">
+      {/* Voice assistant panel — side panel on desktop, bottom sheet on mobile */}
+      <VoiceAssistant
+        setFieldValue={wizard.setFieldValue}
+        goToStep={wizard.goToStep}
+        values={wizard.values}
+        currentStep={wizard.currentStep}
+        steps={schema.steps}
+        onPanelToggle={setVoicePanelOpen}
+        isOpen={voicePanelOpen}
+      />
+    <div className="flex-1 flex flex-col min-w-0">
       {/* Header + progress bar */}
       <div className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur-sm">
         <div className="mx-auto max-w-3xl">
           <div className="flex items-center justify-between px-4 pt-3 pb-0">
             <h1 className="text-base font-semibold tracking-tight">Onboarding Form</h1>
             <div className="flex items-center gap-1">
-              <VoiceAssistant
-                setFieldValue={wizard.setFieldValue}
-                goToStep={wizard.goToStep}
-                values={wizard.values}
-                currentStep={wizard.currentStep}
-                steps={schema.steps}
-                onPanelToggle={setVoicePanelOpen}
-              />
+              <VoiceAssistantTrigger isOpen={voicePanelOpen} onToggle={() => setVoicePanelOpen(!voicePanelOpen)} />
               <SettingsPopover />
             </div>
           </div>
@@ -392,6 +396,7 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
         conflictData={wizard.conflictData}
       />
 
+    </div>
     </div>
   )
 }
