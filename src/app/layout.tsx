@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/intake/theme-provider";
+import { ErrorLogger } from "@/components/intake/error-logger";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -29,6 +30,7 @@ export default function RootLayout({
           >
             Skip to main content
           </a>
+          <ErrorLogger />
           {children}
           {/* Desktop: bottom-right. Mobile: top-center via CSS override */}
           <Toaster position="bottom-right" />
