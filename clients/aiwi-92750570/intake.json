@@ -116,6 +116,9 @@
     "bluesky_handles": [
       {
         "handle": "herrhaase.bsky.social"
+      },
+      {
+        "handle": ""
       }
     ]
   },
@@ -130,5 +133,5 @@
     "categories",
     "sentiment-rules"
   ],
-  "lastSaved": "2026-03-22T02:26:20.790Z"
+  "lastSaved": "2026-03-22T02:26:28.368Z"
 }
