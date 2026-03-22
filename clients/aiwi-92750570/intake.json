@@ -2,18 +2,18 @@
   "schemaId": "ai-dossier-intake",
   "schemaVersion": 2,
   "orgId": "aiwi-92750570",
-  "orgName": "",
+  "orgName": "test",
   "data": {
-    "publication_name": "",
-    "tagline": "",
-    "full_title": "Super duper",
-    "topic_label": "policy",
-    "site_url": "abc.de",
-    "publisher_name": "AIWI",
-    "publisher_url": "abc.de",
-    "audience_description": "proleten",
-    "key_question": "Why is this important to the ai community?",
-    "reader_profile": "Drunk pirates",
+    "publication_name": "test",
+    "tagline": "test",
+    "full_title": "test",
+    "topic_label": "test",
+    "site_url": "test.de",
+    "publisher_name": "test",
+    "publisher_url": "test.de",
+    "audience_description": "test",
+    "key_question": "test",
+    "reader_profile": "test",
     "publication_type": "hot takes",
     "community_label": "the whistleblowing ",
     "categories": [
@@ -150,5 +150,5 @@
   },
   "skippedSections": [],
   "completedSteps": [],
-  "lastSaved": "2026-03-22T13:47:52.158Z"
+  "lastSaved": "2026-03-22T13:49:41.040Z"
 }
