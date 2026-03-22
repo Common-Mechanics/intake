@@ -149,6 +149,8 @@
     "llms_description": "Blabla"
   },
   "skippedSections": [],
-  "completedSteps": [],
-  "lastSaved": "2026-03-22T13:49:47.325Z"
+  "completedSteps": [
+    "your-publication"
+  ],
+  "lastSaved": "2026-03-22T13:49:54.302Z"
 }
