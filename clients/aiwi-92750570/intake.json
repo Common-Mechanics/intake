@@ -132,10 +132,10 @@
     ],
     "x_handles": [
       {
-        "handle": ""
+        "handle": "@"
       },
       {
-        "handle": "@"
+        "handle": "@2"
       }
     ],
     "linkedin_urls": [
@@ -154,5 +154,5 @@
     "sentiment-rules",
     "social-profiles"
   ],
-  "lastSaved": "2026-03-22T02:47:20.307Z"
+  "lastSaved": "2026-03-22T02:47:25.913Z"
 }
