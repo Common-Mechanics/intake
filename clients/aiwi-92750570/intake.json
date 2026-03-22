@@ -138,7 +138,15 @@
       }
     ],
     "key_organizations": [],
-    "triage_topics": []
+    "triage_topics": [],
+    "sources": [
+      {
+        "name": "",
+        "url": "",
+        "tags": "",
+        "notes": ""
+      }
+    ]
   },
   "skippedSections": [],
   "completedSteps": [
@@ -151,5 +159,5 @@
     "social-profiles",
     "organizations-and-topics"
   ],
-  "lastSaved": "2026-03-22T02:53:37.746Z"
+  "lastSaved": "2026-03-22T02:53:40.420Z"
 }
