@@ -1,21 +1,21 @@
 {
   "schemaId": "ai-dossier-intake",
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "orgId": "aiwi-92750570",
   "orgName": "Testiko",
   "data": {
     "publication_name": "Testiko",
-    "full_title": "Testiko publishing",
     "tagline": "Blabla",
+    "full_title": "Testiko publishing",
+    "topic_label": "whistling",
     "site_url": "abc.de",
     "publisher_name": "AIWI",
     "publisher_url": "abc.de",
     "audience_description": "proleten",
-    "publication_type": "hot takes",
-    "topic_label": "whistling",
     "key_question": "Why is this important to the ai community?",
-    "community_label": "the whistleblowing ",
     "reader_profile": "Drunk pirates",
+    "publication_type": "hot takes",
+    "community_label": "the whistleblowing ",
     "categories": [
       {
         "short_label": "Policy",
@@ -62,30 +62,15 @@
     ],
     "tracker_name": "1",
     "tracker_subtitle": "",
+    "tracker_nav_label": "1",
     "positive_signal_label": "progress",
     "negative_signal_label": "ri",
-    "tracker_nav_label": "1",
     "what_positive_means": "1",
     "what_negative_means": "1",
     "fallback_sentiment_question": "1",
     "scoring_positive": "1",
     "scoring_negative": "1",
     "scoring_neutral": "1",
-    "sentiment_rules": [
-      {
-        "category_group": "policy",
-        "category_group_key": "",
-        "when_this_happens": "democracy fails",
-        "default_sentiment": "negative",
-        "because": "we all die"
-      },
-      {
-        "category_group": "policy",
-        "when_this_happens": "",
-        "default_sentiment": "",
-        "because": ""
-      }
-    ],
     "sentiment_rules_by_category": {
       "policy": [
         {
@@ -114,6 +99,14 @@
         }
       ]
     },
+    "sources": [
+      {
+        "name": "test",
+        "url": "test.de",
+        "tags": "test",
+        "notes": "test"
+      }
+    ],
     "bluesky_handles": [
       {
         "handle": "whatever.bsky.social"
@@ -152,15 +145,7 @@
         "name": ""
       }
     ],
-    "triage_topics": [],
-    "sources": [
-      {
-        "name": "test",
-        "url": "test.de",
-        "tags": "test",
-        "notes": "test"
-      }
-    ]
+    "triage_topics": []
   },
   "skippedSections": [],
   "completedSteps": [
@@ -174,5 +159,5 @@
     "organizations-and-topics",
     "sources"
   ],
-  "lastSaved": "2026-03-22T04:05:05.606Z"
+  "lastSaved": "2026-03-22T12:39:54.425Z"
 }
