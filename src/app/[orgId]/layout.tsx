@@ -5,8 +5,8 @@ export default function IntakeLayout({
 }) {
   return (
     <div className="min-h-dvh bg-muted/30 flex flex-col">
-      {/* Minimal branding — small muted text, not a full header */}
-      <div className="px-4 pt-3 pb-0 md:pt-4">
+      {/* Minimal branding — hidden on mobile to save screen space */}
+      <div className="hidden md:block px-4 pt-3 pb-0 md:pt-4">
         <span className="text-xs text-muted-foreground/60 tracking-wide uppercase">
           Common Mechanics
         </span>

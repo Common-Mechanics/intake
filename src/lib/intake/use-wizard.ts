@@ -126,6 +126,8 @@ export function useWizard(
   )
   const [sha, setSha] = useState<string | undefined>(initialData?.sha)
   const [conflictData, setConflictData] = useState<SavedData | null>(null)
+  // Whether localStorage has a draft (gives users confidence their typing isn't lost)
+  const [hasDraft, setHasDraft] = useState<boolean>(() => loadDraft(orgId) !== null)
 
   // Debounce timer ref for localStorage auto-save
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -149,6 +151,7 @@ export function useWizard(
     if (debounceRef.current) clearTimeout(debounceRef.current)
     debounceRef.current = setTimeout(() => {
       saveDraft(orgId, values)
+      setHasDraft(true)
     }, DEBOUNCE_MS)
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current)
@@ -382,5 +385,8 @@ export function useWizard(
 
     // Progress
     progressPercent,
+
+    // Draft
+    hasDraft,
   }
 }

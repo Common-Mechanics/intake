@@ -20,7 +20,19 @@ interface ConflictDialogProps {
 export function ConflictDialog({
   isOpen,
   onResolve,
+  conflictData,
 }: ConflictDialogProps) {
+  // Format server version timestamp so users can make an informed decision
+  const serverTimestamp = conflictData?.lastSaved
+    ? new Date(conflictData.lastSaved).toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    : null
+
   return (
     <Dialog open={isOpen}>
       <DialogContent showCloseButton={false}>
@@ -28,7 +40,10 @@ export function ConflictDialog({
           <DialogTitle>Someone else made changes</DialogTitle>
           <DialogDescription>
             Another user has saved changes to this form since you last loaded it.
-            Choose which version you&apos;d like to keep.
+            {serverTimestamp && (
+              <> Their version was saved on {serverTimestamp}.</>
+            )}
+            {" "}Choose which version you&apos;d like to keep.
           </DialogDescription>
         </DialogHeader>
 

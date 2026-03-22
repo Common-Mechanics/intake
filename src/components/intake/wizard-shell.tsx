@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useCallback } from "react"
+import { useEffect, useCallback, useRef } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { useWizard } from "@/lib/intake/use-wizard"
@@ -18,16 +18,59 @@ interface WizardShellProps {
 
 export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
   const wizard = useWizard(schema, initialData, orgId)
+  const stepHeadingRef = useRef<HTMLHeadingElement>(null)
+
+  const scrollToFirstError = useCallback(() => {
+    // Small delay to let React render the error state
+    setTimeout(() => {
+      const firstErrorId = Object.keys(wizard.errors)[0]
+      if (firstErrorId) {
+        const el = document.getElementById(firstErrorId)
+        el?.scrollIntoView({ behavior: "smooth", block: "center" })
+        el?.focus()
+      }
+    }, 50)
+  }, [wizard.errors])
 
   const handleNext = useCallback(() => {
     if (wizard.isLastStep) {
       // On last step, validate then save
       const valid = wizard.validateCurrentStep()
-      if (valid) wizard.saveToServer()
+      if (valid) {
+        wizard.saveToServer()
+      } else {
+        scrollToFirstError()
+      }
     } else {
-      wizard.nextStep()
+      const moved = wizard.nextStep()
+      if (!moved) scrollToFirstError()
     }
-  }, [wizard])
+  }, [wizard, scrollToFirstError])
+
+  // Focus heading and scroll to top on step transitions
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" })
+    // Small delay to let the new step render
+    setTimeout(() => {
+      stepHeadingRef.current?.focus()
+    }, 100)
+  }, [wizard.currentStep])
+
+  // Warn before leaving with unsaved changes
+  useEffect(() => {
+    const hasUnsavedChanges = Object.values(wizard.values).some(
+      stepValues => Object.keys(stepValues).length > 0
+    )
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasUnsavedChanges && wizard.saveStatus !== "saved") {
+        e.preventDefault()
+      }
+    }
+
+    window.addEventListener("beforeunload", handleBeforeUnload)
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload)
+  }, [wizard.values, wizard.saveStatus])
 
   const handleFieldChange = useCallback(
     (fieldId: string, value: unknown) => {
@@ -91,7 +134,7 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
           )}
         >
           {/* Desktop: card wrapper. Mobile: no card chrome */}
-          <div className="md:hidden px-5 py-2">
+          <div key={`mobile-${wizard.currentStep}`} className="md:hidden px-5 py-2 animate-step-enter">
             <StepRenderer
               step={stepForRenderer}
               values={currentValues}
@@ -100,10 +143,11 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
               isSkipped={wizard.skippedSections.has(wizard.currentStepDef.id)}
               onToggleSkip={wizard.toggleSkipSection}
               onFieldBlur={wizard.validateField}
+              headingRef={stepHeadingRef}
             />
           </div>
 
-          <Card className="hidden md:flex shadow-sm">
+          <Card key={`desktop-${wizard.currentStep}`} className="hidden md:flex shadow-sm animate-step-enter">
             <CardContent className="py-6 px-8">
               <StepRenderer
                 step={stepForRenderer}
@@ -112,6 +156,7 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
                 errors={wizard.errors}
                 isSkipped={wizard.skippedSections.has(wizard.currentStepDef.id)}
                 onToggleSkip={wizard.toggleSkipSection}
+                headingRef={stepHeadingRef}
               />
             </CardContent>
           </Card>
@@ -131,6 +176,7 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
         onSave={wizard.saveToServer}
         saveStatus={wizard.saveStatus}
         lastSaved={wizard.lastSaved}
+        hasDraft={wizard.hasDraft}
       />
 
       {/* Conflict resolution dialog */}

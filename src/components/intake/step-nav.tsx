@@ -17,6 +17,7 @@ interface StepNavProps {
   onSave: () => void
   saveStatus: SaveStatus
   lastSaved: Date | null
+  hasDraft?: boolean
 }
 
 export function StepNav({
@@ -28,6 +29,7 @@ export function StepNav({
   onSave,
   saveStatus,
   lastSaved,
+  hasDraft,
 }: StepNavProps) {
   return (
     <div
@@ -40,20 +42,24 @@ export function StepNav({
       )}
     >
       <div className="mx-auto flex max-w-2xl items-center justify-between gap-3 px-4 py-3">
-        {/* Back button */}
-        <Button
-          variant="outline"
-          onClick={onPrev}
-          disabled={isFirstStep || !canGoPrev}
-          className="min-h-[48px] min-w-[48px] gap-1.5"
-        >
-          <ChevronLeft className="size-4" data-icon="inline-start" />
-          <span className="hidden sm:inline">Back</span>
-        </Button>
+        {/* Back button — hidden on first step to avoid a disabled-looking control */}
+        {!isFirstStep ? (
+          <Button
+            variant="outline"
+            onClick={onPrev}
+            disabled={!canGoPrev}
+            className="min-h-[48px] min-w-[48px] gap-1.5"
+          >
+            <ChevronLeft className="size-4" data-icon="inline-start" />
+            <span className="hidden sm:inline">Back</span>
+          </Button>
+        ) : (
+          <div className="min-w-[48px]" />
+        )}
 
         {/* Center: save indicator */}
         <div className="flex-1 flex justify-center">
-          <SaveIndicator status={saveStatus} lastSaved={lastSaved} />
+          <SaveIndicator status={saveStatus} lastSaved={lastSaved} hasDraft={hasDraft} />
         </div>
 
         {/* Next / Save & Complete button */}

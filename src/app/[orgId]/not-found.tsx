@@ -10,7 +10,10 @@ export default function NotFound() {
           may have changed.
         </p>
         <p className="text-sm text-muted-foreground/70">
-          Contact us if you believe this is an error.
+          <a href="mailto:hello@commonmechanics.io" className="text-primary underline underline-offset-4">
+            Contact us
+          </a>
+          {" "}if you believe this is an error.
         </p>
       </div>
     </div>

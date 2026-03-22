@@ -133,4 +133,23 @@
     font-family: var(--font-heading);
     letter-spacing: -0.01em;
   }
+  /* Prevent iOS auto-zoom on input focus — Safari zooms on fonts <16px */
+  input, textarea, select {
+    font-size: 16px;
+  }
+}
+
+@keyframes step-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-step-enter {
+  animation: step-enter 0.25s ease-out;
 }

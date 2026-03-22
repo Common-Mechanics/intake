@@ -9,6 +9,8 @@ type SaveStatus = "idle" | "saving" | "saved" | "error" | "conflict"
 interface SaveIndicatorProps {
   status: SaveStatus
   lastSaved: Date | null
+  /** True when localStorage has saved data but GitHub hasn't been saved yet */
+  hasDraft?: boolean
 }
 
 /**
@@ -25,7 +27,7 @@ function relativeTime(date: Date): string {
   return date.toLocaleDateString("en-GB", { day: "numeric", month: "short" })
 }
 
-export function SaveIndicator({ status, lastSaved }: SaveIndicatorProps) {
+export function SaveIndicator({ status, lastSaved, hasDraft }: SaveIndicatorProps) {
   // Re-render every 30s so relative time stays fresh
   const [, setTick] = useState(0)
   // Track whether "Saved" should be visible (fades after 3s)
@@ -85,6 +87,15 @@ export function SaveIndicator({ status, lastSaved }: SaveIndicatorProps) {
     return (
       <span className="text-xs text-muted-foreground">
         Saved {relativeTime(lastSaved)}
+      </span>
+    )
+  }
+
+  // No server save yet but draft exists in localStorage
+  if (hasDraft) {
+    return (
+      <span className="text-xs text-muted-foreground">
+        Draft saved locally
       </span>
     )
   }
