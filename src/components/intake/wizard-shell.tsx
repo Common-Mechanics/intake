@@ -377,7 +377,7 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
       </div>
 
       {/* Bottom nav spacer for mobile fixed nav */}
-      <div className="h-20 md:hidden" aria-hidden="true" />
+      <div className="h-12 md:hidden" aria-hidden="true" />
 
       <StepNav
         canGoPrev={wizard.canGoPrev}

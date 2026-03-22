@@ -125,9 +125,9 @@ export function VoiceAssistantTrigger({
       variant="ghost"
       size="sm"
       onClick={onToggle}
-      className={cn("h-8 gap-1.5 text-xs", isOpen && "text-primary")}
+      className={cn("h-10 gap-1.5 text-xs touch-manipulation", isOpen && "text-primary")}
     >
-      <Mic aria-hidden="true" className="size-3.5" />
+      <Mic aria-hidden="true" className="size-4" />
       <span className="hidden sm:inline">Assisted Setup</span>
     </Button>
   )
