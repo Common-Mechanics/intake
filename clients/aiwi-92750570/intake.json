@@ -129,6 +129,14 @@
       {
         "handle": "c.bsky.social"
       }
+    ],
+    "x_handles": [
+      {
+        "handle": ""
+      },
+      {
+        "handle": ""
+      }
     ]
   },
   "skippedSections": [],
@@ -141,5 +149,5 @@
     "sentiment-rules",
     "social-profiles"
   ],
-  "lastSaved": "2026-03-22T02:45:49.195Z"
+  "lastSaved": "2026-03-22T02:45:56.522Z"
 }
