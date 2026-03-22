@@ -264,7 +264,7 @@ export function RepeatingGroup({
         className="w-full min-h-12"
       >
         <Plus data-icon="inline-start" />
-        Add {label.replace(/s$/, "")}
+        Add {label.replace(/ies$/i, "y").replace(/ses$/i, "s").replace(/s$/i, "")}
       </Button>
     </div>
   )
