@@ -41,6 +41,7 @@ interface VoiceAssistantProps {
   onSaveAndComplete?: () => void
   onPanelToggle?: (isOpen: boolean) => void
   onConnectionChange?: (isConnected: boolean) => void
+  onPausedChange?: (isPaused: boolean) => void
   isOpen?: boolean
 }
 
@@ -109,14 +110,18 @@ function buildProgressSummary(
 export function VoiceAssistantTrigger({
   isOpen,
   isConnected,
+  isPaused,
   onToggle,
 }: {
   isOpen: boolean
   isConnected: boolean
+  isPaused: boolean
   onToggle: () => void
 }) {
   const agentId = process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID
   if (!agentId) return null
+
+  const active = isConnected || isPaused
 
   return (
     <Button
@@ -126,7 +131,8 @@ export function VoiceAssistantTrigger({
       className={cn(
         "h-10 gap-1.5 text-xs touch-manipulation",
         isConnected && "bg-emerald-100 text-emerald-700 hover:bg-emerald-200 dark:bg-emerald-950 dark:text-emerald-400 dark:hover:bg-emerald-900",
-        isOpen && !isConnected && "text-primary"
+        isPaused && "bg-amber-100 text-amber-700 hover:bg-amber-200 dark:bg-amber-950 dark:text-amber-400 dark:hover:bg-amber-900",
+        isOpen && !active && "text-primary"
       )}
     >
       {isConnected ? (
@@ -134,10 +140,14 @@ export function VoiceAssistantTrigger({
           <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-500 opacity-75" />
           <span className="relative inline-flex size-2 rounded-full bg-emerald-600" />
         </span>
+      ) : isPaused ? (
+        <span className="inline-flex size-2 rounded-full bg-amber-500" />
       ) : (
         <Mic aria-hidden="true" className="size-4" />
       )}
-      <span className="hidden sm:inline">{isConnected ? "Call Active" : "Assisted Setup"}</span>
+      <span className="hidden sm:inline">
+        {isConnected ? "Call Active" : isPaused ? "Call Paused" : "Assisted Setup"}
+      </span>
     </Button>
   )
 }
@@ -155,6 +165,7 @@ export function VoiceAssistant({
   onSaveAndComplete,
   onPanelToggle,
   onConnectionChange,
+  onPausedChange,
   isOpen,
 }: VoiceAssistantProps) {
   const agentId = process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID
@@ -173,10 +184,14 @@ export function VoiceAssistant({
   const saveRef = useRef(onSaveAndComplete); saveRef.current = onSaveAndComplete
   const scrollRef = useRef<HTMLDivElement>(null)
 
-  /* Notify parent of connection state changes */
+  /* Notify parent of connection/pause state changes */
   useEffect(() => {
     onConnectionChange?.(voice.isConnected)
   }, [voice.isConnected, onConnectionChange])
+
+  useEffect(() => {
+    onPausedChange?.(voice.isMuted)
+  }, [voice.isMuted, onPausedChange])
 
   /* Auto-scroll transcript */
   useEffect(() => {
@@ -268,16 +283,31 @@ export function VoiceAssistant({
     setVoice(prev => ({ ...prev, isConnected: false, isSpeaking: false, isMuted: false }))
   }, [])
 
-  const toggleMute = useCallback(() => {
-    if (!conversationRef.current) return
-    const next = !voice.isMuted
-    conversationRef.current.setMicMuted(next)
-    conversationRef.current.setVolume({ volume: next ? 0 : 1 })
-    conversationRef.current.sendContextualUpdate(
-      next ? "[SYSTEM] User paused. Stay silent until resumed." : "[SYSTEM] User resumed. Continue where you left off."
-    )
-    setVoice(prev => ({ ...prev, isMuted: next }))
-  }, [voice.isMuted])
+  /* Pause: fully end the session (only way to stop ElevenLabs turn timeouts).
+     Resume: start a new session with transcript context so it picks up where it left off. */
+  const togglePause = useCallback(async () => {
+    if (voice.isMuted) {
+      /* Resume — start a new session with conversation history */
+      setVoice(prev => ({ ...prev, isMuted: false }))
+      await startConversation()
+      /* Send transcript summary so the agent knows what was discussed */
+      setTimeout(() => {
+        if (!conversationRef.current) return
+        const recentMessages = voice.transcript.slice(-10).map(
+          e => `${e.role === "user" ? "User" : "Assistant"}: ${e.text}`
+        ).join("\n")
+        conversationRef.current.sendContextualUpdate(
+          `[SYSTEM] This is a resumed conversation. Here's what was discussed before the pause:\n\n${recentMessages}\n\nContinue where you left off — ask the next question.`
+        )
+      }, 500)
+    } else {
+      /* Pause — fully end the session */
+      try { await conversationRef.current?.endSession() } catch { /* ignore */ }
+      conversationRef.current = null
+      isStartingRef.current = false
+      setVoice(prev => ({ ...prev, isMuted: true, isConnected: false, isSpeaking: false }))
+    }
+  }, [voice.isMuted, voice.transcript, startConversation])
 
   /* Sync form edits to agent (debounced) */
   const syncTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -328,11 +358,10 @@ export function VoiceAssistant({
       className={cn(
         /* Mobile: bottom sheet */
         "fixed inset-x-0 bottom-0 z-50 bg-background border-t rounded-t-2xl shadow-2xl flex flex-col",
-        /* Desktop: side panel, full viewport height — !important via sm:h-dvh overrides the inline style */
-        "sm:static sm:inset-auto sm:z-auto sm:w-[380px] sm:shrink-0 sm:border-r sm:border-t-0 sm:rounded-none sm:shadow-none sm:sticky sm:top-0"
+        /* Desktop: side panel, full viewport height */
+        "sm:static sm:inset-auto sm:z-auto sm:w-[380px] sm:shrink-0 sm:border-r sm:border-t-0 sm:rounded-none sm:shadow-none sm:sticky sm:top-0 sm:!h-dvh"
       )}
-      style={{ height: `${sheetHeight}dvh` }}
-      data-voice-panel=""
+      style={{ "--voice-sheet-h": `${sheetHeight}dvh`, height: "var(--voice-sheet-h)" } as React.CSSProperties}
     >
       {/* Drag handle — mobile only */}
       <div
@@ -404,22 +433,34 @@ export function VoiceAssistant({
         </div>
       )}
 
-      {/* Controls */}
+      {/* Controls — 3 states: idle, active, paused */}
       <div className="border-t px-4 py-2.5 flex items-center justify-center gap-3 shrink-0 pb-[max(0.625rem,env(safe-area-inset-bottom))]">
-        {!voice.isConnected ? (
-          <Button onClick={startConversation} className="gap-2" size="lg" disabled={isStarting}>
-            <Phone aria-hidden="true" className="size-4" />
-            {isStarting ? "Connecting\u2026" : "Start Conversation"}
-          </Button>
-        ) : (
+        {voice.isMuted && !voice.isConnected ? (
+          /* Paused state — session ended, can resume or fully end */
           <>
-            <Button onClick={toggleMute} variant="outline" className="gap-2" size="lg">
-              {voice.isMuted ? <><Play aria-hidden="true" className="size-4" /> Resume</> : <><Pause aria-hidden="true" className="size-4" /> Pause</>}
+            <Button onClick={togglePause} className="gap-2" size="lg" disabled={isStarting}>
+              <Play aria-hidden="true" className="size-4" /> {isStarting ? "Resuming\u2026" : "Resume"}
+            </Button>
+            <Button onClick={() => { setVoice(prev => ({ ...prev, isMuted: false })); }} variant="outline" className="gap-2" size="lg">
+              <PhoneOff aria-hidden="true" className="size-4" /> End
+            </Button>
+          </>
+        ) : voice.isConnected ? (
+          /* Active state */
+          <>
+            <Button onClick={togglePause} variant="outline" className="gap-2" size="lg">
+              <Pause aria-hidden="true" className="size-4" /> Pause
             </Button>
             <Button onClick={endConversation} variant="destructive" className="gap-2" size="lg">
               <PhoneOff aria-hidden="true" className="size-4" /> End
             </Button>
           </>
+        ) : (
+          /* Idle state */
+          <Button onClick={startConversation} className="gap-2" size="lg" disabled={isStarting}>
+            <Phone aria-hidden="true" className="size-4" />
+            {isStarting ? "Connecting\u2026" : "Start Conversation"}
+          </Button>
         )}
       </div>
     </div>

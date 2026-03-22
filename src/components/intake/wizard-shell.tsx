@@ -84,6 +84,7 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
   const stepHeadingRef = useRef<HTMLHeadingElement>(null)
   const [voicePanelOpen, setVoicePanelOpen] = useState(false)
   const [voiceConnected, setVoiceConnected] = useState(false)
+  const [voicePaused, setVoicePaused] = useState(false)
   const [isComplete, setIsComplete] = useState(false)
 
   /* Validate all steps at once — returns errors grouped by step ID */
@@ -400,6 +401,7 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
         onSaveAndComplete={handleSaveAndComplete}
         onPanelToggle={setVoicePanelOpen}
         onConnectionChange={setVoiceConnected}
+        onPausedChange={setVoicePaused}
         isOpen={voicePanelOpen}
       />
     <div className="flex-1 flex flex-col min-w-0">
@@ -409,7 +411,7 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
           <div className="flex items-center justify-between px-4 pt-3 pb-0">
             <h1 className="text-base font-semibold tracking-tight">Onboarding Form</h1>
             <div className="flex items-center gap-1">
-              <VoiceAssistantTrigger isOpen={voicePanelOpen} isConnected={voiceConnected} onToggle={() => setVoicePanelOpen(!voicePanelOpen)} />
+              <VoiceAssistantTrigger isOpen={voicePanelOpen} isConnected={voiceConnected} isPaused={voicePaused} onToggle={() => setVoicePanelOpen(!voicePanelOpen)} />
               <SettingsPopover />
             </div>
           </div>
@@ -468,8 +470,8 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
         </div>
       </div>
 
-      {/* Bottom nav spacer for mobile fixed nav */}
-      <div className="h-12 md:hidden" aria-hidden="true" />
+      {/* Bottom nav spacer — must clear the fixed nav + safe area inset */}
+      <div className="h-24 md:hidden" aria-hidden="true" />
 
       <StepNav
         canGoPrev={wizard.canGoPrev}
