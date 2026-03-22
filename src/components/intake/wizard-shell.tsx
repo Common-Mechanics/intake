@@ -9,6 +9,7 @@ import { ProgressBar } from "./progress-bar"
 import { StepRenderer } from "./step-renderer"
 import { StepNav } from "./step-nav"
 import { ConflictDialog } from "./conflict-dialog"
+import { CompletionChecklist } from "./completion-checklist"
 
 interface WizardShellProps {
   schema: FormSchema
@@ -145,6 +146,15 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
               onFieldBlur={wizard.validateField}
               headingRef={stepHeadingRef}
             />
+            {wizard.isLastStep && (
+              <CompletionChecklist
+                steps={schema.steps}
+                values={wizard.values}
+                completedSteps={wizard.completedSteps}
+                skippedSections={wizard.skippedSections}
+                onGoToStep={wizard.goToStep}
+              />
+            )}
           </div>
 
           <Card key={`desktop-${wizard.currentStep}`} className="hidden md:flex shadow-sm animate-step-enter">
@@ -159,6 +169,15 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
                 onFieldBlur={wizard.validateField}
                 headingRef={stepHeadingRef}
               />
+              {wizard.isLastStep && (
+                <CompletionChecklist
+                  steps={schema.steps}
+                  values={wizard.values}
+                  completedSteps={wizard.completedSteps}
+                  skippedSections={wizard.skippedSections}
+                  onGoToStep={wizard.goToStep}
+                />
+              )}
             </CardContent>
           </Card>
         </div>

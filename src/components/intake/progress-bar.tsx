@@ -1,6 +1,8 @@
 "use client"
 
-import { Check, Minus } from "lucide-react"
+import { useState, useRef, useEffect } from "react"
+import { ChevronLeft, ChevronRight, ChevronDown, Check, Minus, AlertCircle, Info } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import type { StepDef } from "@/lib/intake/schemas"
 
@@ -10,6 +12,8 @@ interface ProgressBarProps {
   completedSteps: Set<string>
   skippedSections: Set<string>
   onStepClick: (index: number) => void
+  /** Per-step error counts, keyed by step ID */
+  stepErrors?: Record<string, number>
 }
 
 export function ProgressBar({
@@ -18,96 +22,129 @@ export function ProgressBar({
   completedSteps,
   skippedSections,
   onStepClick,
+  stepErrors = {},
 }: ProgressBarProps) {
   const totalSteps = steps.length
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  /* Close dropdown on outside click */
+  useEffect(() => {
+    if (!dropdownOpen) return
+    function handleClick(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClick)
+    return () => document.removeEventListener("mousedown", handleClick)
+  }, [dropdownOpen])
+
+  const currentStepDef = steps[currentStep]
+
+  function stepIcon(step: StepDef, index: number) {
+    const hasErrors = (stepErrors[step.id] ?? 0) > 0
+    const isCompleted = completedSteps.has(step.id)
+    const isSkipped = skippedSections.has(step.id)
+
+    if (hasErrors) return <AlertCircle className="size-4 text-destructive" />
+    if (isSkipped) return <Info className="size-4 text-muted-foreground" />
+    if (isCompleted) return <Check className="size-4 text-primary" />
+    if (index === currentStep) return <span className="size-2 rounded-full bg-primary" />
+    return <span className="size-2 rounded-full bg-border" />
+  }
 
   return (
-    <>
-      {/* Mobile: compact "Step X of Y" with thin progress bar */}
-      <div className="md:hidden flex flex-col gap-2 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-muted-foreground">
-            Step {currentStep + 1} of {totalSteps}
+    <div className="flex items-center gap-2 px-4 py-2.5">
+      {/* Back arrow */}
+      <Button
+        variant="ghost"
+        size="icon"
+        className="size-8 shrink-0"
+        onClick={() => onStepClick(currentStep - 1)}
+        disabled={currentStep === 0}
+        aria-label="Previous step"
+      >
+        <ChevronLeft className="size-4" />
+      </Button>
+
+      {/* Step indicator + dropdown trigger */}
+      <div className="relative flex-1" ref={dropdownRef}>
+        <button
+          type="button"
+          onClick={() => setDropdownOpen(!dropdownOpen)}
+          className="flex items-center gap-2 w-full min-h-[36px] px-3 py-1.5 rounded-md hover:bg-accent transition-colors"
+        >
+          <span className="text-sm font-medium tabular-nums text-muted-foreground shrink-0">
+            {currentStep + 1}/{totalSteps}
           </span>
-          <span className="text-sm font-medium truncate ml-3 max-w-[60%] text-right">
-            {steps[currentStep].title}
+          <span className="text-sm font-medium truncate">
+            {currentStepDef.title}
           </span>
-        </div>
-        <div className="h-1 w-full rounded-full bg-muted overflow-hidden">
+          <ChevronDown className={cn(
+            "size-3.5 text-muted-foreground shrink-0 transition-transform ml-auto",
+            dropdownOpen && "rotate-180"
+          )} />
+        </button>
+
+        {/* Thin progress bar */}
+        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-muted rounded-full overflow-hidden">
           <div
-            className="h-full rounded-full bg-primary transition-all duration-500 ease-out"
+            className="h-full bg-primary transition-all duration-500 ease-out rounded-full"
             style={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }}
           />
         </div>
-      </div>
 
-      {/* Desktop: horizontal dots connected by lines */}
-      <div className="hidden md:flex items-start justify-between relative px-4 py-4">
-        {steps.map((step, index) => {
-          const isCompleted = completedSteps.has(step.id)
-          const isSkipped = skippedSections.has(step.id)
-          const isCurrent = index === currentStep
-          const isClickable = isCompleted || isSkipped
+        {/* Dropdown */}
+        {dropdownOpen && (
+          <div className="absolute top-full left-0 right-0 mt-1 bg-popover border rounded-lg shadow-lg z-50 py-1 max-h-[60vh] overflow-y-auto">
+            {steps.map((step, index) => {
+              const isCurrent = index === currentStep
+              const hasErrors = (stepErrors[step.id] ?? 0) > 0
 
-          return (
-            <div
-              key={step.id}
-              className="flex flex-col items-center relative z-10 flex-1"
-            >
-              {/* Connecting line — drawn between dots */}
-              {index < totalSteps - 1 && (
-                <div
+              return (
+                <button
+                  key={step.id}
+                  type="button"
+                  onClick={() => {
+                    onStepClick(index)
+                    setDropdownOpen(false)
+                  }}
                   className={cn(
-                    "absolute top-4 left-1/2 w-full h-0.5",
-                    index < currentStep
-                      ? "bg-primary"
-                      : "bg-border"
+                    "flex items-center gap-3 w-full px-3 py-2.5 text-sm text-left transition-colors",
+                    "hover:bg-accent",
+                    isCurrent && "bg-accent/50"
                   )}
-                  /* Offset by half a dot so it starts at the edge */
-                  style={{ transform: "translateX(50%)" }}
-                />
-              )}
-
-              {/* Dot */}
-              <button
-                type="button"
-                onClick={() => isClickable && onStepClick(index)}
-                disabled={!isClickable}
-                className={cn(
-                  "relative flex items-center justify-center size-8 rounded-full border-2 text-xs font-medium transition-all duration-300",
-                  isCurrent && "border-primary bg-primary text-primary-foreground scale-110",
-                  isCompleted && !isCurrent && "border-primary bg-primary text-primary-foreground cursor-pointer hover:scale-105",
-                  isSkipped && !isCurrent && "border-muted-foreground/40 bg-muted text-muted-foreground cursor-pointer hover:scale-105",
-                  !isCurrent && !isCompleted && !isSkipped && "border-border bg-background text-muted-foreground"
-                )}
-                aria-label={`${step.title} — step ${index + 1}`}
-                aria-current={isCurrent ? "step" : undefined}
-              >
-                {isCompleted && !isCurrent ? (
-                  <Check className="size-4" />
-                ) : isSkipped && !isCurrent ? (
-                  <Minus className="size-3.5" />
-                ) : (
-                  <span>{index + 1}</span>
-                )}
-              </button>
-
-              {/* Title below dot */}
-              <span
-                className={cn(
-                  "mt-2 text-[11px] leading-tight text-center max-w-[80px] truncate transition-colors duration-200",
-                  isCurrent
-                    ? "text-foreground font-medium"
-                    : "text-muted-foreground"
-                )}
-                title={step.title}
-              >
-                {step.title}
-              </span>
-            </div>
-          )
-        })}
+                >
+                  <span className="shrink-0">{stepIcon(step, index)}</span>
+                  <span className="tabular-nums text-muted-foreground shrink-0 w-5">
+                    {index + 1}.
+                  </span>
+                  <span className={cn(
+                    "truncate",
+                    isCurrent && "font-medium",
+                    hasErrors && "text-destructive"
+                  )}>
+                    {step.title}
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+        )}
       </div>
-    </>
+
+      {/* Forward arrow */}
+      <Button
+        variant="ghost"
+        size="icon"
+        className="size-8 shrink-0"
+        onClick={() => onStepClick(currentStep + 1)}
+        disabled={currentStep === totalSteps - 1}
+        aria-label="Next step"
+      >
+        <ChevronRight className="size-4" />
+      </Button>
+    </div>
   )
 }
