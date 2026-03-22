@@ -116,9 +116,6 @@
     "bluesky_handles": [
       {
         "handle": "rolf.bsky.social"
-      },
-      {
-        "handle": "climate.bsky.social"
       }
     ]
   },
@@ -133,5 +130,5 @@
     "categories",
     "sentiment-rules"
   ],
-  "lastSaved": "2026-03-22T02:32:50.688Z"
+  "lastSaved": "2026-03-22T02:33:03.992Z"
 }
