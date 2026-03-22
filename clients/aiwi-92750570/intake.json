@@ -18,9 +18,9 @@
     "community_label": "the writing literature AI community",
     "categories": [
       {
-        "short_label": "",
-        "full_name": "",
-        "auto_tags": ""
+        "short_label": "test",
+        "full_name": "test",
+        "auto_tags": "test"
       },
       {
         "short_label": "",
@@ -151,5 +151,5 @@
   "completedSteps": [
     "your-publication"
   ],
-  "lastSaved": "2026-03-22T15:05:39.839Z"
+  "lastSaved": "2026-03-22T15:05:50.874Z"
 }
