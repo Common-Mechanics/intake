@@ -32,6 +32,11 @@
         "short_label": "",
         "full_name": "",
         "auto_tags": ""
+      },
+      {
+        "short_label": "",
+        "full_name": "",
+        "auto_tags": ""
       }
     ],
     "editors": [
@@ -152,5 +157,5 @@
   "completedSteps": [
     "your-publication"
   ],
-  "lastSaved": "2026-03-22T13:50:09.100Z"
+  "lastSaved": "2026-03-22T13:50:34.769Z"
 }
