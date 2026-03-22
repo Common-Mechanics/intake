@@ -28,5 +28,15 @@
     "status": "not_started",
     "completedSteps": 0,
     "totalSteps": 5
+  },
+  {
+    "id": "taylor-60885404",
+    "name": "Taylors Briefing",
+    "schemaId": "ai-dossier-intake",
+    "createdAt": "2026-03-22T17:13:54.125Z",
+    "lastModified": "2026-03-22T17:13:54.125Z",
+    "status": "not_started",
+    "completedSteps": 0,
+    "totalSteps": 5
   }
 ]
