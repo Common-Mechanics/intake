@@ -137,42 +137,8 @@
         "url": "linkedin.com"
       }
     ],
-    "key_organizations": [
-      {
-        "name": ""
-      },
-      {
-        "name": ""
-      },
-      {
-        "name": ""
-      },
-      {
-        "name": ""
-      },
-      {
-        "name": ""
-      },
-      {
-        "name": ""
-      },
-      {
-        "name": ""
-      }
-    ],
+    "key_organizations": [],
     "triage_topics": [
-      {
-        "topic": ""
-      },
-      {
-        "topic": ""
-      },
-      {
-        "topic": ""
-      },
-      {
-        "topic": ""
-      },
       {
         "topic": ""
       },
@@ -194,5 +160,5 @@
     "sentiment-rules",
     "social-profiles"
   ],
-  "lastSaved": "2026-03-22T02:53:23.438Z"
+  "lastSaved": "2026-03-22T02:53:31.483Z"
 }
