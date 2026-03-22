@@ -1,8 +1,8 @@
 # Intake
 
-JSON-driven onboarding wizard with GitHub backend. Built for Common Mechanics client onboarding.
+JSON-driven onboarding wizard with voice assistant and GitHub backend. Built for Common Mechanics client onboarding.
 
-Clients receive a unique link (e.g., `intake.commonmechanics.io/aiwi-24329427`), fill in a multi-step wizard with their publication details, and the data saves to GitHub as JSON files. An admin view at `/admin` lets you create organizations, track completion, and download data.
+Clients receive a unique link, fill in a 5-step wizard (or talk to a voice assistant), and the data saves to GitHub as JSON files. An admin view at `/admin` lets you create organizations, track completion, edit the voice assistant prompt, and download data.
 
 ---
 
@@ -18,23 +18,20 @@ npm run dev
 Create `.env.local`:
 
 ```env
-GITHUB_TOKEN=ghp_...          # Personal access token with contents:write scope
-GITHUB_REPO=owner/repo         # Repository for storing client data
-GITHUB_BRANCH=main             # Optional, defaults to "main"
-```
+GITHUB_TOKEN=ghp_...                          # PAT with contents:write scope
+GITHUB_REPO=owner/repo                        # Repository for storing client data
+GITHUB_BRANCH=main                            # Optional, defaults to "main"
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `GITHUB_TOKEN` | Yes | GitHub PAT with `contents:write` scope |
-| `GITHUB_REPO` | Yes | Target repo in `owner/repo` format |
-| `GITHUB_BRANCH` | No | Branch to read/write (default: `main`) |
+# Voice assistant (optional — omit to disable)
+ELEVENLABS_API_KEY=sk_...                     # Server-side, for agent management
+NEXT_PUBLIC_ELEVENLABS_AGENT_ID=agent_...     # Client-side, for WebSocket connection
+```
 
 ### Commands
 
 ```bash
 npm run dev          # Development server
 npm run build        # Production build
-npm run start        # Start production server
 npm run lint         # ESLint
 ```
 
@@ -42,45 +39,123 @@ npm run lint         # ESLint
 
 ## Architecture
 
-### How It Works
-
 ```
-Form Schema JSON  →  WizardShell (client)  →  Field components
-                                            →  Auto-save to localStorage (500ms debounce)
-                                            →  Explicit "Save" → PUT /api/intake/[orgId]
-                                                               → GitHub Contents API
-                                                               → clients/{orgId}/intake.json
+┌─────────────────────────────────────────────────────────────────┐
+│ Browser                                                         │
+│                                                                 │
+│  ┌──────────────────┐   ┌─────────────────────────────────────┐│
+│  │ VoiceAssistant    │   │ WizardShell                         ││
+│  │ (@11labs/client)  │──▶│ useWizard hook                      ││
+│  │ STT → LLM → TTS  │   │ setFieldValue / goToStep / validate ││
+│  │ Tool callbacks    │   │ Auto-save: localStorage + GitHub    ││
+│  └────────┬──────────┘   └──────────────┬──────────────────────┘│
+│           │ WebSocket                   │ REST                  │
+└───────────┼─────────────────────────────┼───────────────────────┘
+            │                             │
+   ┌────────▼────────┐          ┌─────────▼─────────────┐
+   │ ElevenLabs      │          │ Next.js API Routes     │
+   │ Conversational  │          │ PUT /api/intake/[orgId] │
+   │ AI Agent        │          │ → GitHub Contents API   │
+   └─────────────────┘          └───────────────────────┘
 ```
 
-1. Admin creates an organization at `/admin` → generates a unique link like `/aiwi-24329427`
-2. Client opens the link → 10-step wizard loads with the form schema
-3. Client fills in fields → auto-saved to localStorage, explicit save to GitHub
-4. Multiple users can use the same link — optimistic locking handles concurrent saves
-5. Admin views progress, downloads data, or copies links from `/admin`
+### Data Flow
+
+1. Admin creates an organization at `/admin` → generates a unique link
+2. Client opens the link → 5-step wizard loads from JSON schema
+3. Client fills fields manually OR talks to the voice assistant
+4. Auto-save: localStorage (500ms debounce) + GitHub (2s debounce)
+5. Optimistic locking handles concurrent saves (SHA-based)
+6. On completion → thank you page with confetti
 
 ### Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
 | Framework | Next.js 16 (App Router), React 19, TypeScript |
-| UI | shadcn/ui (base-nova), Tailwind CSS 4, Lucide icons |
-| Validation | Zod 4 (schema + runtime) |
+| UI | shadcn/ui, Tailwind CSS 4, Lucide icons |
+| Validation | Zod 4 (JSON schema → runtime validators) |
 | Backend | GitHub Contents API (no database) |
-| State | localStorage (client draft) + GitHub (server persistence) |
-| Notifications | Sonner (toast) |
+| Voice | ElevenLabs Conversational AI, @11labs/client |
 
-### No Database
+---
 
-GitHub is the backend. All data lives as JSON files in the configured repository:
+## The 5-Step Form
 
-```
-clients/
-  index.json                    # Array of OrgEntry (org list with status)
-  climate-45820731/
-    intake.json                 # SavedData (form responses + metadata)
-  aiwi-24329427/
-    intake.json
-```
+| # | Step | ID | Key Fields |
+|---|------|----|------------|
+| 1 | Your Publication | `your-publication` | Name, tagline, topic, audience, key question, reader profile |
+| 2 | Categories & Editors | `categories-and-editors` | Categories (repeating, min 3) + AI editors (auto-generated) |
+| 3 | Sentiment & Scoring | `sentiment-and-scoring` | Tracker config, signal meanings, scoring calibration |
+| 4 | Sources & Discovery | `sources-and-discovery` | RSS feeds + optional social profiles, organizations, triage topics |
+| 5 | Review & Launch | `review-and-launch` | About page, completion checklist, cost estimate |
+
+### Progressive Disclosure
+
+Each step uses **sections** — collapsible groups of fields:
+- Required sections always open
+- Optional sections collapsed by default with "X fields" badge
+- Section-level skip: "I don't need this" with consequence explanation
+- Validation skips fields in skipped sections
+
+### Smart Auto-Derivation
+
+Fields auto-fill from earlier answers (only fills empty fields, never overwrites):
+- `publication_name` + `tagline` → `full_title`
+- `topic_label` → `community_label`, `publication_type`, `tracker_name`
+- `tagline` → `llms_description`
+- `publication_name` → `site_url` suggestion
+- Categories → auto-generate editors with template expertise
+
+---
+
+## Voice Assistant
+
+An ElevenLabs Conversational AI agent guides clients through the form via natural conversation. **Opt-in**: no `NEXT_PUBLIC_ELEVENLABS_AGENT_ID` = no voice UI.
+
+### How It Works
+
+1. User clicks "Assisted Setup" in the header → panel opens
+2. Clicks "Start Conversation" → WebSocket connects to ElevenLabs
+3. Agent asks questions one at a time, fills fields via tool callbacks
+4. User can pause/resume, close panel (call stays active), or end
+5. At the end, agent validates all steps and calls `complete_form`
+
+### Client-Side Tools
+
+The agent has 6 tools that execute in the browser:
+
+| Tool | Description |
+|------|-------------|
+| `update_field` | Set a single form field value |
+| `update_repeating_group` | Set entries for a repeating group |
+| `get_current_progress` | Check filled/empty fields + validation errors |
+| `navigate_to_step` | Move to a specific form step (0-4) |
+| `validate_all_steps` | Run validation across all steps at once |
+| `complete_form` | Save and complete (shows thank you page) |
+
+### Context Awareness
+
+- On connect: form state sent via `sendContextualUpdate`
+- On manual edits: updated state sent (debounced 3s)
+- Errors included in progress updates so agent can help fix them
+
+### System Prompt
+
+Located at `config/assistant-prompt.md`. Editable from the admin panel. Defines:
+- Conversation flow (question order per step)
+- Guardrails (stay on topic, validate before committing)
+- Auto-derivation rules
+- End-of-process validation flow
+
+### Knowledge Base
+
+3 documents in `config/knowledge-base/`:
+- `01-pipeline-overview.md` — how the 7-phase pipeline works
+- `02-form-field-guide.md` — what each field does, pipeline impact, advice
+- `03-best-practices-and-pitfalls.md` — cost optimization, quality tips
+
+Uploaded to ElevenLabs KB with RAG for retrieval during conversations.
 
 ---
 
@@ -89,372 +164,49 @@ clients/
 ```
 src/
   app/
-    [orgId]/
-      page.tsx                  # Intake form page (server component)
-      layout.tsx                # Clean layout — no header/footer
-      not-found.tsx             # 404 for invalid org links
-    admin/
-      page.tsx                  # Admin dashboard (server component)
-      admin-client.tsx          # Admin UI — org list, create dialog (client)
-      layout.tsx                # Admin layout (max-w-5xl centered)
+    [orgId]/page.tsx              # Intake form page
+    admin/admin-client.tsx        # Admin UI — orgs + voice prompt editor
     api/intake/
-      orgs/route.ts             # GET: list orgs, POST: create org
-      [orgId]/route.ts          # GET: read data, PUT: save data
-    page.tsx                    # Root → redirects to /admin
-    layout.tsx                  # Root layout — fonts, Toaster, metadata
-    globals.css                 # Tailwind v4 theme, editorial styles
+      orgs/route.ts               # GET/POST organizations
+      [orgId]/route.ts            # GET/PUT intake data
+      assistant/route.ts          # POST: create/update ElevenLabs agent
+      assistant/prompt/route.ts   # GET/PUT system prompt via GitHub
 
-  components/
-    intake/
-      wizard-shell.tsx          # Main orchestrator — useWizard + layout
-      step-renderer.tsx         # Renders one step's fields
-      field-renderer.tsx        # Switch on field.type → correct component
-      progress-bar.tsx          # Step dots (desktop) / bar (mobile)
-      step-nav.tsx              # Bottom nav — Back/Next/Save
-      save-indicator.tsx        # "Saving..." / "Saved" / "Draft saved locally"
-      conflict-dialog.tsx       # Merge conflict resolution dialog
-      fields/
-        text-field.tsx          # Text + URL input (globe icon for URLs)
-        textarea-field.tsx      # Multi-line with char counter
-        number-field.tsx        # Numeric input
-        select-field.tsx        # Dropdown (shadcn Select)
-        checkbox-field.tsx      # Boolean checkbox
-        repeating-group.tsx     # Add/remove/reorder entries
-        batch-input.tsx         # CSV paste + JSON upload for bulk data
-        skip-section.tsx        # "I don't need this" toggle
-    ui/                         # shadcn/ui components (auto-generated)
+  components/intake/
+    wizard-shell.tsx              # Main orchestrator + auto-derivation
+    step-renderer.tsx             # Section-based field rendering
+    field-renderer.tsx            # Routes field types to components
+    voice-assistant.tsx           # Voice panel + ElevenLabs integration
+    progress-bar.tsx              # Step navigation with dropdown
+    step-nav.tsx                  # Bottom nav — Back/Next/Finish
+    save-indicator.tsx            # Auto-save status display
+    cost-estimate.tsx             # Pipeline cost breakdown table
+    completion-checklist.tsx      # Per-step completion review
+    category-assignment.tsx       # Editor-category mapping display
+    sentiment-rules-editor.tsx    # Per-category sentiment rules
+    fields/
+      text-field.tsx              # Text + URL input
+      textarea-field.tsx          # Multi-line with char counter
+      number-field.tsx            # Numeric input
+      select-field.tsx            # Dropdown with color dots
+      checkbox-field.tsx          # Boolean checkbox
+      repeating-group.tsx         # Add/remove entries (3 render modes)
+      batch-input.tsx             # CSV/JSON bulk import
+      skip-section.tsx            # Section skip toggle
 
   lib/intake/
-    schemas.ts                  # Zod schemas + TypeScript types
-    github.ts                   # GitHub Contents API helpers
-    schema-to-zod.ts            # JSON validation rules → Zod validators
-    use-wizard.ts               # Client hook — state, validation, save, nav
-    logger.ts                   # Structured error logging
+    schemas.ts                    # Zod schemas + TypeScript types
+    github.ts                     # GitHub Contents API helpers
+    schema-to-zod.ts              # JSON → Zod validators + section-aware skipping
+    use-wizard.ts                 # Client hook — state, validation, save
 
-  data/
-    ai-dossier-intake.json      # 10-step intake form schema
+config/
+  assistant-prompt.md             # Voice assistant system prompt
+  knowledge-base/                 # Pipeline docs for agent RAG
+
+src/data/
+  ai-dossier-intake.json          # 5-step form schema with sections
 ```
-
----
-
-## API Reference
-
-### `POST /api/intake/orgs` — Create Organization
-
-Creates a new org and generates a unique intake form link.
-
-**Request:**
-```json
-{
-  "name": "Climate Dossier",
-  "prefix": "climate",
-  "schemaId": "ai-dossier-intake"
-}
-```
-
-**Response (201):**
-```json
-{
-  "id": "climate-45820731",
-  "name": "Climate Dossier",
-  "schemaId": "ai-dossier-intake",
-  "createdAt": "2026-03-22T10:30:00Z",
-  "lastModified": "2026-03-22T10:30:00Z",
-  "status": "not_started",
-  "completedSteps": 0,
-  "totalSteps": 0
-}
-```
-
-The `id` is generated as `{prefix}-{8 random digits}` — e.g., `climate-45820731`. This becomes the URL path: `/{id}`.
-
-| Status | Errors |
-|--------|--------|
-| 400 | Invalid data (validation failed) |
-| 500 | GitHub API error |
-
----
-
-### `GET /api/intake/orgs` — List Organizations
-
-Returns all organizations from `clients/index.json`.
-
-**Response (200):** Array of `OrgEntry` objects (see Data Structures below).
-
----
-
-### `GET /api/intake/[orgId]` — Read Intake Data
-
-Fetches saved form data for an organization.
-
-**Response (200):** `SavedData` object with the GitHub file SHA attached.
-
-| Status | Errors |
-|--------|--------|
-| 404 | Org doesn't exist |
-| 500 | GitHub API error |
-
----
-
-### `PUT /api/intake/[orgId]` — Save Intake Data
-
-Updates intake data with optimistic locking.
-
-**Request:** `SavedData` object (including `sha` from previous GET).
-
-**Response (200):** Updated `SavedData` with new SHA.
-
-**Side effects:**
-- Writes `clients/{orgId}/intake.json` to GitHub
-- Updates `clients/index.json` with new status, step count, last modified
-
-| Status | Errors |
-|--------|--------|
-| 400 | Invalid data (Zod validation failed) |
-| 409 | Conflict — SHA mismatch (someone else saved). Response includes current server data for merge. |
-| 500 | GitHub API error |
-
----
-
-## Data Structures
-
-### Form Schema (input — defines the wizard)
-
-```typescript
-FormSchema {
-  id: string                      // "ai-dossier-intake"
-  version: number                 // 1
-  title: string                   // "Publication Setup"
-  steps: StepDef[]
-}
-
-StepDef {
-  id: string                      // "publication-identity"
-  title: string                   // "Publication Identity"
-  description?: string            // Shown below the title
-  hint?: string                   // Editorial tip in an Alert callout
-  fields: FieldDef[]
-  optional?: {                    // "I don't need this section" toggle
-    label: string
-    consequences: string          // Informative, not scary
-  }
-}
-
-FieldDef {
-  id: string                      // "publication_name"
-  type: "text" | "url" | "textarea" | "number" | "select" | "checkbox" | "repeating"
-  label: string
-  help?: string                   // Always-visible hint with examples
-  placeholder?: string
-  defaultValue?: unknown
-  readOnly?: boolean
-  validation?: {
-    required?: boolean
-    minLength?: number
-    maxLength?: number
-    min?: number                  // For number fields
-    max?: number
-    pattern?: string              // Regex
-    minItems?: number             // For repeating groups
-    maxItems?: number
-    warnAbove?: number            // Show warning badge above this count
-    warnMessage?: string
-  }
-  condition?: {                   // Show only when sibling field matches
-    field: string
-    equals: unknown
-  }
-  options?: { label: string; value: string }[]   // For select fields
-  fields?: FieldDef[]                             // Sub-fields for repeating groups
-  batchInput?: {                                  // Bulk import support
-    enabled: boolean
-    csvColumns?: string[]
-    jsonExample?: string
-  }
-}
-```
-
-### SavedData (stored in GitHub)
-
-```typescript
-SavedData {
-  schemaId: string                // "ai-dossier-intake"
-  schemaVersion: number           // 1
-  orgId: string                   // "climate-45820731"
-  orgName: string                 // "Climate Dossier"
-  data: Record<string, unknown>   // Flat map of field_id → value
-  skippedSections: string[]       // Step IDs the user chose to skip
-  completedSteps: string[]        // Step IDs with valid data
-  lastSaved: string               // ISO timestamp
-  lastSavedBy?: string            // Optional user identifier
-  sha?: string                    // GitHub file SHA (for optimistic locking, not stored)
-}
-```
-
-### OrgEntry (in `clients/index.json`)
-
-```typescript
-OrgEntry {
-  id: string                      // "climate-45820731"
-  name: string                    // "Climate Dossier"
-  schemaId: string                // "ai-dossier-intake"
-  createdAt: string               // ISO timestamp
-  lastModified: string            // ISO timestamp
-  status: "not_started" | "in_progress" | "completed"
-  completedSteps: number
-  totalSteps: number
-}
-```
-
----
-
-## Form Schema: AI Dossier Intake
-
-The default schema (`src/data/ai-dossier-intake.json`) has 10 steps:
-
-| # | Step | ID | Required | Key Fields |
-|---|------|----|----------|------------|
-| 1 | Publication Identity | `publication-identity` | Yes | Name, full title, tagline, site URL, publisher |
-| 2 | Your Audience | `audience` | Yes | Audience description, reader profile, topic label, key question |
-| 3 | Categories | `categories` | Yes | Repeating group (min 3) — label, full name, slug, auto-tags |
-| 4 | Editorial Team | `editors` | Yes | Repeating group (min 3, warns >6) — name, category, expertise |
-| 5 | Sentiment Tracker | `sentiment-tracker` | Yes | Tracker name, labels, definitions, 3-tier scoring (good/bad/neutral) |
-| 6 | Sentiment Rules | `sentiment-rules` | No | Repeating group — category, situation, sentiment, reasoning |
-| 7 | Social Profiles | `social-profiles` | No | Bluesky, X.com, LinkedIn handles (batch input) |
-| 8 | Key Orgs & Topics | `organizations-and-topics` | No | Organizations + triage topics (batch input) |
-| 9 | Sources | `sources` | Yes | RSS feeds — name, URL, tags, notes (batch input) |
-| 10 | About & Final | `about-and-final` | No | About page sections, LLMs description |
-
-**Optional sections** have an "I don't need this section" checkbox with an informative message about what happens if skipped.
-
-**Batch input** is enabled on sources, social profiles, organizations, and triage topics — users can paste CSV or upload JSON instead of typing entries one by one.
-
----
-
-## Validation
-
-Validation happens at three levels:
-
-### 1. Per-field on blur
-
-When a user leaves a text, textarea, number, or select field, the field validates immediately and shows inline errors.
-
-### 2. Per-step on "Next"
-
-Clicking "Next" runs Zod validation on all fields in the current step. If any fail:
-- Error messages appear on the fields
-- The viewport scrolls to the first error
-- The first errored field receives focus
-
-### 3. Server-side on PUT
-
-The API route validates the entire `SavedData` payload with Zod before writing to GitHub.
-
-### How it works
-
-`schema-to-zod.ts` converts JSON validation rules into Zod validators at runtime:
-
-| JSON Rule | Zod Equivalent |
-|-----------|---------------|
-| `required: true` | Field is non-optional |
-| `minLength: 3` | `z.string().min(3)` |
-| `maxLength: 100` | `z.string().max(100)` |
-| `pattern: "^[a-z]+$"` | `z.string().regex(...)` |
-| `min: 1` / `max: 10` | `z.number().min(1).max(10)` |
-| `minItems: 3` | `z.array().min(3)` |
-| `type: "url"` | `z.string().url()` |
-
-Conditional fields (`condition`) are automatically optional when their condition isn't met. Skipped sections bypass validation entirely.
-
----
-
-## Concurrency & Optimistic Locking
-
-Multiple users can access the same intake form link simultaneously. Conflicts are handled via GitHub's SHA-based optimistic locking:
-
-1. Client loads data → receives `sha` from GitHub
-2. Client saves → sends `sha` with the PUT request
-3. If another user saved in between, GitHub rejects the write (SHA mismatch)
-4. API returns `409 Conflict` with the current server data
-5. Client shows a dialog: "Someone else made changes"
-   - **"Keep my changes"** — overwrites server with local data
-   - **"Use their changes"** — discards local, loads server version
-
----
-
-## UX Features
-
-### Mobile-First Design
-
-- Edge-to-edge cards on mobile (no border/shadow/radius)
-- Card wrapper with subtle shadow on desktop
-- Fixed bottom navigation with safe-area padding
-- 48px minimum touch targets
-- 16px input font size (prevents iOS auto-zoom)
-- Branding header hidden on mobile to save space
-
-### Editorial Premium Feel
-
-- Source Serif 4 (serif) for headings — gives a magazine-like quality
-- Geist Sans for body text
-- Generous whitespace (gap-6 between fields, gap-8 between sections)
-- Subtle step transition animations (fade + slide up)
-- Step descriptions in `text-foreground/70` — readable but subordinate
-
-### Auto-Save
-
-- **localStorage**: Debounced 500ms after any field change. Key: `intake-draft-{orgId}`
-- **GitHub**: Explicit "Save" button or "Save & Complete" on the last step
-- Save indicator shows: "Draft saved locally" → "Saving..." → "Saved"
-- `beforeunload` warning prevents accidental tab close with unsaved changes
-
-### Accessibility
-
-- `aria-invalid` and `aria-describedby` on all form controls
-- `role="alert"` on error messages (announced by screen readers)
-- Focus management: heading receives focus on step transitions
-- Keyboard navigation: Ctrl/Cmd+Enter advances the form
-- Unique IDs on all skip-section checkboxes (per step)
-- Proper ARIA tabs on batch input CSV/JSON toggle
-
-### Repeating Groups
-
-- Add/remove entries with + and X buttons
-- Reorder with up/down arrow buttons
-- Card titles show first field value (e.g., "Policy" instead of "#1")
-- Warning badge when count exceeds `warnAbove` threshold
-- Empty state with guidance: "No categories added yet. You'll need at least 3 to continue."
-- Undo toast on entry deletion (restore with one click)
-
-### Batch Input
-
-For fields like sources, social profiles, and organizations, users can import data in bulk:
-
-- **CSV Paste**: Paste tab-separated or comma-separated data into a textarea. Smart delimiter detection.
-- **JSON Upload**: Drag-and-drop or click to upload a `.json` file. Also accepts pasting JSON directly.
-- Preview shows parsed entry count before importing
-- Entries are appended (not replaced)
-- Visual drag-over state on the drop zone
-
-### Optional Sections
-
-Steps marked as optional show an "I don't need this section" checkbox at the top. When checked:
-- An informative Alert explains consequences (e.g., "Without custom sentiment rules, the pipeline will use general-purpose sentiment analysis...")
-- All fields dim and become non-interactive
-- The section counts as "completed" for progress tracking
-- Validation is skipped
-
----
-
-## Adding a New Form Schema
-
-The wizard renderer is generic — `ai-dossier-intake.json` is just the first schema. To add another:
-
-1. Create a new JSON file in `src/data/` following the `FormSchema` structure
-2. Import it in the page component that should use it
-3. When creating orgs via the admin, use the new schema's `id` as `schemaId`
-
-The entire field rendering, validation, save, and navigation system works with any valid schema.
 
 ---
 
@@ -462,40 +214,23 @@ The entire field rendering, validation, save, and navigation system works with a
 
 ### Vercel (recommended)
 
-1. Connect the GitHub repo to Vercel
-2. Set environment variables in Vercel dashboard
-3. Deploy — no special configuration needed
+1. Connect GitHub repo
+2. Set environment variables
+3. Deploy
 
-### Other Hosts
+### Voice Assistant Setup
 
-Any Node.js 20+ host that supports Next.js App Router:
-
-```bash
-npm run build
-npm run start
-```
-
-Set the three environment variables (`GITHUB_TOKEN`, `GITHUB_REPO`, `GITHUB_BRANCH`) in your host's configuration.
-
-### DNS
-
-For `intake.commonmechanics.io`, point a CNAME to your deployment (e.g., `cname.vercel-dns.com`).
+1. Add `ELEVENLABS_API_KEY` to env
+2. `POST /api/intake/assistant` → creates agent, returns `agent_id`
+3. Add `NEXT_PUBLIC_ELEVENLABS_AGENT_ID=agent_...` to env
+4. Restart — mic button appears in the form header
 
 ---
 
-## Security Notes
+## Security
 
-- **No authentication**: Anyone with an org link can fill in the form. Links are unguessable (`{prefix}-{8 random digits}`).
-- **No robots**: `robots.txt` blocks all crawlers. Metadata has `robots: { index: false, follow: false }`.
-- **GitHub token**: Server-side only — never exposed to the client. Needs `contents:write` scope.
-- **No secrets in forms**: The intake form collects editorial content, not credentials or PII.
-
----
-
-## Constraints
-
-- No new npm dependencies without asking
-- All UI uses shadcn/ui + Tailwind — no custom CSS classes
-- Mobile-first — Luke Wroblewski form design principles
-- Auto-save to localStorage, explicit save to GitHub
-- European date format in admin: "22nd Mar 2026"
+- **No authentication**: Links are unguessable (`{prefix}-{8 random digits}`)
+- **No robots**: `robots.txt` + `noindex, nofollow` metadata
+- **GitHub token**: Server-side only, `contents:write` scope
+- **ElevenLabs key**: Server-side only, used for agent management API
+- **Agent ID**: Client-side (public), only connects to your configured agent
