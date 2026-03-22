@@ -97,6 +97,9 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
               values={currentValues}
               onChange={handleFieldChange}
               errors={wizard.errors}
+              isSkipped={wizard.skippedSections.has(wizard.currentStepDef.id)}
+              onToggleSkip={wizard.toggleSkipSection}
+              onFieldBlur={wizard.validateField}
             />
           </div>
 
@@ -107,6 +110,8 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
                 values={currentValues}
                 onChange={handleFieldChange}
                 errors={wizard.errors}
+                isSkipped={wizard.skippedSections.has(wizard.currentStepDef.id)}
+                onToggleSkip={wizard.toggleSkipSection}
               />
             </CardContent>
           </Card>

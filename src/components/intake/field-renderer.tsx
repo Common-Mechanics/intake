@@ -34,6 +34,8 @@ interface FieldRendererProps {
   disabled?: boolean
   /** All current step values, used to evaluate field.condition */
   allValues?: Record<string, unknown>
+  /** Called on blur with the field ID for per-field validation */
+  onBlur?: (fieldId: string) => void
 }
 
 /**
@@ -63,7 +65,9 @@ export function FieldRenderer({
   error,
   disabled,
   allValues = {},
+  onBlur,
 }: FieldRendererProps) {
+  const handleBlur = () => onBlur?.(field.id)
   // Check conditional visibility
   if (!evaluateCondition(field.condition, allValues)) {
     return null
@@ -88,6 +92,7 @@ export function FieldRenderer({
           value={(value as string) ?? ""}
           onChange={onChange as (v: string) => void}
           readOnly={field.readOnly}
+          onBlur={handleBlur}
         />
       )
 
@@ -101,6 +106,7 @@ export function FieldRenderer({
           readOnly={field.readOnly}
           rows={field.rows}
           maxLength={field.maxLength}
+          onBlur={handleBlur}
         />
       )
 

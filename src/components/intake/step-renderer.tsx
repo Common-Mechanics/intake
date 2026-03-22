@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useCallback } from "react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Info } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -43,6 +43,12 @@ interface StepRendererProps {
   onChange: (fieldId: string, value: unknown) => void
   errors: Record<string, string>
   disabled?: boolean
+  /** Whether this section is currently skipped — managed by parent wizard */
+  isSkipped?: boolean
+  /** Callback when user toggles skip — managed by parent wizard */
+  onToggleSkip?: (stepId: string) => void
+  /** Called on field blur for per-field validation */
+  onFieldBlur?: (fieldId: string) => void
 }
 
 export function StepRenderer({
@@ -51,9 +57,10 @@ export function StepRenderer({
   onChange,
   errors,
   disabled,
+  isSkipped = false,
+  onToggleSkip,
+  onFieldBlur,
 }: StepRendererProps) {
-  const [skipped, setSkipped] = useState(false)
-
   const handleFieldChange = useCallback(
     (fieldId: string) => (value: unknown) => {
       onChange(fieldId, value)
@@ -84,15 +91,15 @@ export function StepRenderer({
       )}
 
       {/* Skip section toggle for optional steps */}
-      {step.optional && (
+      {step.optional && onToggleSkip && (
         <SkipSection
           label={step.skipLabel ?? "I don't need this section"}
           consequences={
             step.skipConsequences ??
             "This section will be marked as skipped. You can always come back and fill it in later."
           }
-          checked={skipped}
-          onChange={setSkipped}
+          checked={isSkipped}
+          onChange={() => { onToggleSkip(step.id) }}
           disabled={disabled}
         />
       )}
@@ -101,7 +108,7 @@ export function StepRenderer({
       <div
         className={cn(
           "flex flex-col gap-6 transition-opacity duration-200",
-          skipped && "pointer-events-none opacity-40"
+          isSkipped && "pointer-events-none opacity-40"
         )}
       >
         {step.fields.map((field) => (
@@ -111,8 +118,9 @@ export function StepRenderer({
             value={values[field.id]}
             onChange={handleFieldChange(field.id)}
             error={errors[field.id]}
-            disabled={disabled || skipped}
+            disabled={disabled || isSkipped}
             allValues={values}
+            onBlur={onFieldBlur}
           />
         ))}
       </div>

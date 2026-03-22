@@ -9,7 +9,7 @@ interface SkipSectionProps {
   label: string
   consequences: string
   checked: boolean
-  onChange: (checked: boolean) => void
+  onChange: (checked?: boolean) => void
   disabled?: boolean
 }
 

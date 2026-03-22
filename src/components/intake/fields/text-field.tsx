@@ -15,6 +15,7 @@ interface TextFieldProps {
   readOnly?: boolean
   disabled?: boolean
   type?: "text" | "url"
+  onBlur?: () => void
 }
 
 export function TextField({
@@ -28,6 +29,7 @@ export function TextField({
   readOnly,
   disabled,
   type = "text",
+  onBlur,
 }: TextFieldProps) {
   return (
     <div className="flex flex-col gap-2">
@@ -40,6 +42,7 @@ export function TextField({
         placeholder={placeholder}
         value={value ?? ""}
         onChange={(e) => onChange(e.target.value)}
+        onBlur={onBlur}
         readOnly={readOnly}
         disabled={disabled}
         aria-invalid={!!error}

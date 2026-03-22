@@ -16,6 +16,7 @@ interface TextareaFieldProps {
   disabled?: boolean
   rows?: number
   maxLength?: number
+  onBlur?: () => void
 }
 
 export function TextareaField({
@@ -30,6 +31,7 @@ export function TextareaField({
   disabled,
   rows = 4,
   maxLength,
+  onBlur,
 }: TextareaFieldProps) {
   const currentLength = (value ?? "").length
 
@@ -43,6 +45,7 @@ export function TextareaField({
         placeholder={placeholder}
         value={value ?? ""}
         onChange={(e) => onChange(e.target.value)}
+        onBlur={onBlur}
         readOnly={readOnly}
         disabled={disabled}
         rows={rows}
