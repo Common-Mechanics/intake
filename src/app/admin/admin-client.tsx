@@ -9,6 +9,8 @@ import {
   ExternalLink,
   Download,
   ClipboardCheck,
+  ChevronDown,
+  Mic,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -29,6 +31,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
@@ -387,6 +390,103 @@ function CreateOrgDialog({
   )
 }
 
+// --- Voice assistant prompt editor ---
+
+function AssistantPromptEditor() {
+  const [prompt, setPrompt] = useState("")
+  const [sha, setSha] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [expanded, setExpanded] = useState(false)
+  const [lastSynced, setLastSynced] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetch("/api/intake/assistant/prompt")
+      .then((res) => res.json())
+      .then((data) => {
+        setPrompt(data.content ?? "")
+        setSha(data.sha ?? null)
+      })
+      .catch(() => toast.error("Failed to load assistant prompt"))
+      .finally(() => setLoading(false))
+  }, [])
+
+  async function handleSave() {
+    setSaving(true)
+    try {
+      const res = await fetch("/api/intake/assistant/prompt", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: prompt, sha }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || "Save failed")
+      setSha(data.sha)
+      if (data.synced) {
+        setLastSynced(data.syncedAt)
+        toast.success("Prompt saved and synced to ElevenLabs")
+      } else {
+        toast.success("Prompt saved to GitHub")
+      }
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to save prompt")
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <Card>
+      <CardHeader className="cursor-pointer" onClick={() => setExpanded(!expanded)}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Mic aria-hidden="true" className="size-4 text-muted-foreground" />
+            <CardTitle className="text-base">Voice Assistant</CardTitle>
+          </div>
+          <ChevronDown
+            aria-hidden="true"
+            className={`size-4 text-muted-foreground transition-transform ${expanded ? "" : "-rotate-90"}`}
+          />
+        </div>
+        <CardDescription>
+          System prompt for the ElevenLabs Conversational AI agent
+        </CardDescription>
+      </CardHeader>
+      {expanded && (
+        <CardContent className="flex flex-col gap-4">
+          {loading ? (
+            <p className="text-sm text-muted-foreground">Loading prompt\u2026</p>
+          ) : (
+            <>
+              <Textarea
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                rows={20}
+                className="font-mono text-xs resize-y"
+                placeholder="System prompt for the voice assistant\u2026"
+              />
+              <div className="flex items-center justify-between gap-4">
+                <div className="text-xs text-muted-foreground">
+                  {lastSynced
+                    ? `Last synced: ${new Date(lastSynced).toLocaleString("en-GB")}`
+                    : "Not yet synced to ElevenLabs"}
+                </div>
+                <Button
+                  onClick={handleSave}
+                  disabled={saving}
+                  size="sm"
+                >
+                  {saving ? "Saving\u2026" : "Save & Sync"}
+                </Button>
+              </div>
+            </>
+          )}
+        </CardContent>
+      )}
+    </Card>
+  )
+}
+
 // --- Main admin client ---
 
 export function AdminClient({
@@ -431,6 +531,10 @@ export function AdminClient({
           ))}
         </div>
       )}
+
+      <Separator className="my-6" />
+
+      <AssistantPromptEditor />
 
       <CreateOrgDialog
         open={dialogOpen}
