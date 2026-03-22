@@ -44,6 +44,11 @@
           }
         },
         {
+          "id": "_section_urls",
+          "type": "section",
+          "label": "Where It Lives"
+        },
+        {
           "id": "site_url",
           "type": "url",
           "layout": "half",
@@ -120,6 +125,11 @@
             "required": true,
             "maxLength": 50
           }
+        },
+        {
+          "id": "_section_editorial",
+          "type": "section",
+          "label": "Editorial Lens"
         },
         {
           "id": "key_question",

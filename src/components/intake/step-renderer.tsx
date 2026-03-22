@@ -72,9 +72,9 @@ export function StepRenderer({
   )
 
   return (
-    <div className="flex flex-col gap-8">
-      {/* Step header */}
-      <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-10">
+      {/* Step header — generous bottom spacing to separate from content */}
+      <div className="flex flex-col gap-4 pb-2 border-b border-border/50">
         <h2 ref={headingRef} tabIndex={-1} className="font-heading text-[28px] md:text-[32px] font-semibold tracking-tight leading-tight outline-none">
           {step.title}
         </h2>

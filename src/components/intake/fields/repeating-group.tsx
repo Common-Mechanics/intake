@@ -250,7 +250,7 @@ export function RepeatingGroup({
         </div>
       )}
 
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-3">
         {entries.map((entry, index) => {
           const firstFieldValue = entries[index]?.[fields[0]?.id] as string | undefined
           const singularLabel = label.replace(/ies$/i, "y").replace(/ses$/i, "s").replace(/s$/i, "")

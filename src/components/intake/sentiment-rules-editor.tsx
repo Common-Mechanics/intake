@@ -95,13 +95,13 @@ export function SentimentRulesEditor({
         return (
           <div
             key={category.value}
-            className={cn("py-5", !isLast && "border-b border-border")}
+            className={cn("py-6", !isLast && "border-b border-border")}
           >
-            {/* Category header */}
-            <div className="flex items-center gap-2 mb-3">
-              <CategoryDot index={category.colorIndex} />
-              <h4 className="text-sm font-semibold">{category.label}</h4>
-              <span className="text-xs text-muted-foreground">
+            {/* Category header — prominent, anchors the section */}
+            <div className="flex items-center gap-2.5 mb-4">
+              <CategoryDot index={category.colorIndex} className="size-3" />
+              <h4 className="text-sm font-semibold tracking-tight">{category.label}</h4>
+              <span className="text-xs text-muted-foreground/60 tabular-nums">
                 {rules.length === 0 ? "no rules" : `${rules.length} rule${rules.length !== 1 ? "s" : ""}`}
               </span>
             </div>
@@ -112,11 +112,14 @@ export function SentimentRulesEditor({
                 No rules yet — the pipeline will use general sentiment analysis for this category
               </p>
             ) : (
-              <div className="space-y-3 mb-3">
+              <div className="mb-3">
                 {rules.map((rule, ruleIdx) => (
                   <div
                     key={ruleIdx}
-                    className="pl-[18px] grid grid-cols-1 md:grid-cols-[1fr,auto] gap-2 items-start"
+                    className={cn(
+                      "pl-[18px] py-3 grid grid-cols-1 md:grid-cols-[1fr,auto] gap-2 items-start",
+                      ruleIdx > 0 && "border-t border-dashed border-border/60"
+                    )}
                   >
                     {/* Left: "When" textarea */}
                     <div>
@@ -184,8 +187,11 @@ export function SentimentRulesEditor({
               </div>
             )}
 
-            {/* Add rule button */}
-            <div className="pl-[18px]">
+            {/* Add rule button — visually grouped with rules via proximity */}
+            <div className={cn(
+              "pl-[18px] pt-2",
+              rules.length > 0 && "border-t border-dashed border-border/60"
+            )}>
               <Button
                 variant="ghost"
                 size="sm"
@@ -196,9 +202,11 @@ export function SentimentRulesEditor({
                 <Plus className="size-3.5" />
                 Add rule
               </Button>
-              <p className="text-xs text-muted-foreground mt-1">
-                Aim for 3-6 rules. Focus on non-obvious cases.
-              </p>
+              {rules.length === 0 && (
+                <p className="text-xs text-muted-foreground mt-1">
+                  Aim for 3-6 rules. Focus on non-obvious cases.
+                </p>
+              )}
             </div>
           </div>
         )

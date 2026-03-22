@@ -183,12 +183,14 @@ export function FieldRenderer({
       )
 
     case "section":
+      /* Gestalt law of common region — section dividers create clear
+         visual boundaries between field groups within a step */
       return (
-        <div className="flex items-center gap-3 pt-2">
-          <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+        <div className="flex items-center gap-4 pt-4 mt-2">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground/60 shrink-0">
             {field.label}
           </span>
-          <div className="flex-1 h-px bg-border" />
+          <div className="flex-1 h-px bg-border/70" />
         </div>
       )
 
