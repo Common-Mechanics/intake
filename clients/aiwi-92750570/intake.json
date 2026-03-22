@@ -75,7 +75,7 @@
       {
         "category_group": "policy",
         "category_group_key": "",
-        "when_this_happens": "",
+        "when_this_happens": "democracy fails",
         "default_sentiment": "",
         "because": ""
       }
@@ -86,5 +86,5 @@
     "editorial-team",
     "sentiment-tracker"
   ],
-  "lastSaved": "2026-03-22T02:01:48.240Z"
+  "lastSaved": "2026-03-22T02:01:56.294Z"
 }
