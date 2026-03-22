@@ -178,7 +178,8 @@ export function RepeatingGroup({
       <div className="flex flex-col gap-2">
         {entries.map((entry, index) => {
           const firstFieldValue = entries[index]?.[fields[0]?.id] as string | undefined
-          const itemTitle = firstFieldValue?.trim() ? firstFieldValue.trim() : `#${index + 1}`
+          const singularLabel = label.replace(/s$/i, "")
+          const itemTitle = firstFieldValue?.trim() ? firstFieldValue.trim() : `New ${singularLabel}`
           const isOpen = expanded.has(index)
 
           return (
