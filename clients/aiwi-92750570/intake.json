@@ -71,21 +71,6 @@
     "scoring_positive": "1",
     "scoring_negative": "1",
     "scoring_neutral": "1",
-    "sentiment_rules": [
-      {
-        "category_group": "policy",
-        "category_group_key": "",
-        "when_this_happens": "democracy fails",
-        "default_sentiment": "negative",
-        "because": "we all die"
-      },
-      {
-        "category_group": "policy",
-        "when_this_happens": "",
-        "default_sentiment": "",
-        "because": ""
-      }
-    ],
     "sentiment_rules_by_category": {
       "policy": [
         {
@@ -160,5 +145,5 @@
     "organizations-and-topics",
     "sources"
   ],
-  "lastSaved": "2026-03-22T03:20:22.308Z"
+  "lastSaved": "2026-03-22T03:20:27.478Z"
 }
