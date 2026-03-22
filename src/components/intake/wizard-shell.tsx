@@ -111,9 +111,12 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
 
   return (
     <div className="flex min-h-dvh flex-col">
-      {/* Progress bar */}
+      {/* Header + progress bar */}
       <div className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur-sm">
         <div className="mx-auto max-w-2xl">
+          <div className="flex items-center justify-between px-4 pt-3 pb-0">
+            <h1 className="text-base font-semibold tracking-tight">Onboarding Form</h1>
+          </div>
           <ProgressBar
             steps={schema.steps}
             currentStep={wizard.currentStep}
