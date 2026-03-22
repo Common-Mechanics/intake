@@ -8,5 +8,15 @@
     "status": "in_progress",
     "completedSteps": 1,
     "totalSteps": 5
+  },
+  {
+    "id": "test-58373251",
+    "name": "test",
+    "schemaId": "ai-dossier-intake",
+    "createdAt": "2026-03-22T16:29:57.674Z",
+    "lastModified": "2026-03-22T16:29:57.674Z",
+    "status": "not_started",
+    "completedSteps": 0,
+    "totalSteps": 0
   }
 ]
