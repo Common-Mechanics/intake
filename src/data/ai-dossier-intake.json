@@ -1,0 +1,787 @@
+{
+  "id": "ai-dossier-intake",
+  "version": 1,
+  "title": "Publication Setup",
+  "steps": [
+    {
+      "id": "publication-identity",
+      "title": "Publication Identity",
+      "description": "Let's start with the basics — what is your publication called and where will it live?",
+      "fields": [
+        {
+          "id": "publication_name",
+          "type": "text",
+          "label": "Publication Name",
+          "help": "What's your publication called? This appears in the header, browser tab, and social cards. Examples: \"CLIMATE DOSSIER\", \"AI WHISTLEBLOWER\", \"CYBER PULSE\"",
+          "placeholder": "MY PUBLICATION",
+          "validation": {
+            "required": true,
+            "maxLength": 100
+          }
+        },
+        {
+          "id": "full_title",
+          "type": "text",
+          "label": "Full Title",
+          "help": "Full title with tagline. Example: \"CLIMATE DOSSIER — Daily Climate Policy Briefing\"",
+          "placeholder": "PUBLICATION — Your Tagline Here",
+          "validation": {
+            "required": true,
+            "maxLength": 200
+          }
+        },
+        {
+          "id": "tagline",
+          "type": "text",
+          "label": "Tagline",
+          "help": "One-line description for search results and social shares. Example: \"Daily intelligence on corporate AI accountability — whistleblower cases, transparency, and oversight.\"",
+          "placeholder": "Daily intelligence on...",
+          "validation": {
+            "required": true,
+            "maxLength": 150
+          }
+        },
+        {
+          "id": "site_url",
+          "type": "url",
+          "label": "Site URL",
+          "help": "Where will the site live? Example: \"https://climatedossier.org\"",
+          "placeholder": "https://yourpublication.org",
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "id": "publisher_name",
+          "type": "text",
+          "label": "Publisher Name",
+          "help": "Your organization name. Example: \"Climate Action Network\"",
+          "placeholder": "Your Organization",
+          "validation": {
+            "required": true,
+            "maxLength": 100
+          }
+        },
+        {
+          "id": "publisher_url",
+          "type": "url",
+          "label": "Publisher URL",
+          "help": "Your organization's website. Example: \"https://climatenetwork.org\"",
+          "placeholder": "https://yourorg.com",
+          "validation": {
+            "required": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "audience",
+      "title": "Your Audience",
+      "description": "This is the most important section. It shapes how every story is evaluated and written. Think about who you want reading this every morning.",
+      "hint": "We initially described our audience too technically and the pipeline produced jargon-heavy copy. Describing the reader as \"a curious professional reading over morning coffee\" dramatically improved readability. Write for who you want to reach, not who you already have.",
+      "fields": [
+        {
+          "id": "audience_description",
+          "type": "text",
+          "label": "Who Reads This?",
+          "help": "List 2-4 reader types, comma-separated. Example: \"climate policy advisors, environmental journalists, ESG analysts, sustainability professionals\"",
+          "placeholder": "policy advisors, journalists, analysts",
+          "validation": {
+            "required": true,
+            "maxLength": 300
+          }
+        },
+        {
+          "id": "publication_type",
+          "type": "text",
+          "label": "Publication Type",
+          "help": "How would you describe this publication in a sentence fragment? Example: \"climate policy intelligence briefing\", \"corporate accountability watchdog\"",
+          "placeholder": "intelligence briefing on...",
+          "validation": {
+            "required": true,
+            "maxLength": 150
+          }
+        },
+        {
+          "id": "topic_label",
+          "type": "text",
+          "label": "Topic Label",
+          "help": "Your topic in 2-4 words. Used throughout the pipeline. Example: \"climate policy\", \"AI accountability\", \"cybersecurity\"",
+          "placeholder": "climate policy",
+          "validation": {
+            "required": true,
+            "maxLength": 50
+          }
+        },
+        {
+          "id": "key_question",
+          "type": "textarea",
+          "label": "Key Question",
+          "help": "The single analytical question every story is evaluated against. This shapes how importance is scored. Example: \"How does this affect the trajectory of global decarbonization? Think through policy incentives, corporate behavior, and public pressure dynamics.\"",
+          "placeholder": "How does this affect...?",
+          "validation": {
+            "required": true,
+            "maxLength": 500
+          }
+        },
+        {
+          "id": "community_label",
+          "type": "text",
+          "label": "Community Label",
+          "help": "What do you call your community? Example: \"the climate policy community\", \"the cybersecurity community\"",
+          "placeholder": "the ... community",
+          "validation": {
+            "required": false,
+            "maxLength": 100
+          }
+        },
+        {
+          "id": "reader_profile",
+          "type": "textarea",
+          "label": "Reader Profile",
+          "help": "Describe your ideal reader in 3-5 sentences. Who are they? What's their expertise level? What should they take away? Example: \"You are writing for smart professionals who follow climate policy but are not scientists. Think: a policy advisor at a national environment ministry, a reporter covering COP negotiations, or an ESG analyst screening investments. They should understand WHY a development matters without needing atmospheric chemistry.\"",
+          "placeholder": "You are writing for...",
+          "validation": {
+            "required": true,
+            "maxLength": 1000
+          }
+        }
+      ]
+    },
+    {
+      "id": "categories",
+      "title": "Categories",
+      "description": "Every story gets classified into one of your categories. These appear as filter buttons on your site and organize the editorial workflow. Pick categories that cover your topic's major dimensions without overlapping.",
+      "hint": "Each category should have enough daily volume to regularly appear (at least 1-2 stories per day). If two categories always contain the same stories, merge them.",
+      "fields": [
+        {
+          "id": "categories",
+          "type": "repeating",
+          "label": "Categories",
+          "help": "Define your categories. Example: Label \"Policy\", Full Name \"Climate Policy & Governance\", Slug \"policy\", Tags \"governance, regulation, legislation\"",
+          "validation": {
+            "required": true,
+            "minItems": 3
+          },
+          "fields": [
+            {
+              "id": "short_label",
+              "type": "text",
+              "label": "Short Label",
+              "help": "Short label for the filter button. Example: \"Policy\", \"Science\", \"Finance\"",
+              "placeholder": "Policy",
+              "validation": {
+                "required": true,
+                "maxLength": 30
+              }
+            },
+            {
+              "id": "full_name",
+              "type": "text",
+              "label": "Full Name",
+              "help": "Full category name. Example: \"Climate Policy & Governance\"",
+              "placeholder": "Climate Policy & Governance",
+              "validation": {
+                "required": true,
+                "maxLength": 100
+              }
+            },
+            {
+              "id": "slug",
+              "type": "text",
+              "label": "ID Slug",
+              "help": "URL-friendly ID — lowercase, no spaces. Example: \"policy\", \"science\", \"finance\"",
+              "placeholder": "policy",
+              "validation": {
+                "required": true,
+                "maxLength": 30
+              }
+            },
+            {
+              "id": "auto_tags",
+              "type": "text",
+              "label": "Auto-Tags",
+              "help": "Comma-separated tags that auto-map stories to this category. Example: \"governance, regulation, legislation, treaty\"",
+              "placeholder": "governance, regulation, legislation",
+              "validation": {
+                "required": false,
+                "maxLength": 300
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "editorial-team",
+      "title": "Editorial Team",
+      "description": "Your publication has AI editors who each review every story through their domain expertise. Each editor matches one of your categories, plus a Spotlight editor who finds interesting media content like podcasts, videos, and demos. The more specific you describe each editor's expertise, the sharper their reviews will be.",
+      "hint": "Vague expertise (\"you are an expert in policy\") produces generic reviews. Listing specific organizations, sub-areas, and judgment criteria produces sharp, domain-aware assessments. The more specific, the better.",
+      "fields": [
+        {
+          "id": "editors",
+          "type": "repeating",
+          "label": "Editors",
+          "help": "Define your editors. The last entry should be your Spotlight Editor who covers media and interesting content. Example: Name \"Policy Editor\", Category \"policy\", Expertise \"You are the Policy Editor — an expert in climate governance and international negotiations...\"",
+          "validation": {
+            "required": true,
+            "minItems": 3,
+            "warnAbove": 6,
+            "warnMessage": "More than 6 editors will significantly increase API costs and processing time. Each editor reviews every story, so costs scale linearly."
+          },
+          "prefill": {
+            "lastEntry": {
+              "editor_name": "Spotlight Editor",
+              "category": "spotlight",
+              "is_spotlight": true,
+              "expertise": "The Spotlight editor finds notable podcasts, videos, demos, and entertaining content. You can customize this description or keep the default."
+            }
+          },
+          "fields": [
+            {
+              "id": "editor_name",
+              "type": "text",
+              "label": "Editor Name",
+              "help": "Editor title. Example: \"Policy Editor\", \"Science Editor\", \"Spotlight Editor\"",
+              "placeholder": "Policy Editor",
+              "validation": {
+                "required": true,
+                "maxLength": 50
+              }
+            },
+            {
+              "id": "category",
+              "type": "text",
+              "label": "Category",
+              "help": "Which category does this editor cover? Use the slug from your categories. Pre-filled as \"spotlight\" for the Spotlight Editor.",
+              "placeholder": "policy",
+              "validation": {
+                "required": true,
+                "maxLength": 30
+              }
+            },
+            {
+              "id": "is_spotlight",
+              "type": "checkbox",
+              "label": "Is Spotlight Editor",
+              "help": "Check this for the Spotlight editor who covers media content (podcasts, videos, demos).",
+              "validation": {
+                "required": false
+              }
+            },
+            {
+              "id": "expertise",
+              "type": "textarea",
+              "label": "Expertise",
+              "help": "Write 1-2 paragraphs: who they are, what sub-areas they cover (as a bullet list), and what they notice that generalists miss. Example: \"You are the Policy Editor — an expert in climate governance and international negotiations. You track COP proceedings, UNFCCC updates, EU Green Deal implementation, and US climate policy. You understand whether policy moves are substantive or performative.\"",
+              "placeholder": "You are the ... Editor — an expert in...",
+              "validation": {
+                "required": true,
+                "maxLength": 2000
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sentiment-tracker",
+      "title": "Sentiment Tracker",
+      "description": "Your publication includes a sentiment tracker that measures whether things in your domain are getting better or worse over time. Every story gets scored as positive, negative, or neutral. Name your tracker and define what those directions mean.",
+      "fields": [
+        {
+          "id": "tracker_name",
+          "type": "text",
+          "label": "Tracker Name",
+          "help": "What's your tracker called? Appears in the nav and charts. Example: \"Climate Risk Index\", \"Trust Score\", \"Momentum Tracker\"",
+          "placeholder": "Risk Index",
+          "validation": {
+            "required": true,
+            "maxLength": 50
+          }
+        },
+        {
+          "id": "tracker_subtitle",
+          "type": "text",
+          "label": "Tracker Subtitle",
+          "help": "Subtitle for metadata. Example: \"Climate Policy Sentiment Index\"",
+          "placeholder": "Sentiment Index",
+          "validation": {
+            "required": true,
+            "maxLength": 100
+          }
+        },
+        {
+          "id": "positive_signal_label",
+          "type": "text",
+          "label": "Positive Signal Label",
+          "help": "What are positive signals called? Example: \"progress points\", \"trust points\", \"green points\"",
+          "placeholder": "progress points",
+          "validation": {
+            "required": true,
+            "maxLength": 50
+          }
+        },
+        {
+          "id": "negative_signal_label",
+          "type": "text",
+          "label": "Negative Signal Label",
+          "help": "What are negative signals called? Example: \"risk points\", \"erosion points\", \"red points\"",
+          "placeholder": "risk points",
+          "validation": {
+            "required": true,
+            "maxLength": 50
+          }
+        },
+        {
+          "id": "tracker_nav_label",
+          "type": "text",
+          "label": "Tracker Nav Label",
+          "help": "Tab label in the navigation bar. Example: \"Tracker\", \"Risk Index\"",
+          "placeholder": "Tracker",
+          "validation": {
+            "required": true,
+            "maxLength": 30
+          }
+        },
+        {
+          "id": "what_positive_means",
+          "type": "textarea",
+          "label": "What Positive Means",
+          "help": "In one sentence, what does a positive signal mean in your domain? Example: \"Decarbonization is accelerating — policy, finance, or technology moving in the right direction.\"",
+          "placeholder": "Things are improving because...",
+          "validation": {
+            "required": true,
+            "maxLength": 500
+          }
+        },
+        {
+          "id": "what_negative_means",
+          "type": "textarea",
+          "label": "What Negative Means",
+          "help": "In one sentence, what does a negative signal mean? Example: \"Decarbonization is slowing — rollbacks, delays, or new obstacles.\"",
+          "placeholder": "Things are getting worse because...",
+          "validation": {
+            "required": true,
+            "maxLength": 500
+          }
+        },
+        {
+          "id": "fallback_sentiment_question",
+          "type": "textarea",
+          "label": "Fallback Sentiment Question",
+          "help": "When sentiment isn't obvious, the pipeline asks this question to decide. Example: \"Is the world's trajectory toward net-zero getting better or worse?\"",
+          "placeholder": "Is the situation getting better or worse?",
+          "validation": {
+            "required": true,
+            "maxLength": 500
+          }
+        },
+        {
+          "id": "tracker_concept_url",
+          "type": "url",
+          "label": "Tracker Concept URL",
+          "help": "Optional link to a page explaining your metric concept (Wikipedia, blog post, etc.).",
+          "placeholder": "https://en.wikipedia.org/wiki/...",
+          "validation": {
+            "required": false
+          }
+        },
+        {
+          "id": "scoring_positive",
+          "type": "textarea",
+          "label": "Positive Scoring — What Does It Look Like?",
+          "help": "Describe what positive signals look like in your domain. Give 2-3 concrete examples of stories your audience would instantly recognize as good news. Example: \"New binding emissions targets signed into law. Major fossil fuel company announces accelerated phase-out timeline. Record-breaking renewable energy deployment in a G20 country.\"",
+          "placeholder": "A story is positive when...",
+          "validation": {
+            "required": true,
+            "maxLength": 1000
+          }
+        },
+        {
+          "id": "scoring_negative",
+          "type": "textarea",
+          "label": "Negative Scoring — What Does It Look Like?",
+          "help": "Describe what negative signals look like. Give 2-3 concrete examples. Example: \"Climate legislation repealed or weakened. Major emitter misses its own targets. New fossil fuel infrastructure approved despite net-zero pledges.\"",
+          "placeholder": "A story is negative when...",
+          "validation": {
+            "required": true,
+            "maxLength": 1000
+          }
+        },
+        {
+          "id": "scoring_neutral",
+          "type": "textarea",
+          "label": "Neutral Scoring — What Counts as Neutral?",
+          "help": "Describe what counts as neutral — neither clearly positive nor negative. Example: \"Routine data releases without clear trend direction. Personnel changes at agencies without policy implications. Conference announcements or procedural updates.\"",
+          "placeholder": "A story is neutral when...",
+          "validation": {
+            "required": true,
+            "maxLength": 1000
+          }
+        }
+      ]
+    },
+    {
+      "id": "sentiment-rules",
+      "title": "Sentiment Rules",
+      "description": "For each of your categories, define rules that tell the pipeline when something is positive, negative, or neutral. Focus on the non-obvious cases — the pipeline already gets the obvious ones right. Think: \"When X happens in this category, is that good or bad for my domain?\"",
+      "hint": "We discovered a strong negativity bias in early builds. The model treated all serious stories as negative, even defensive improvements. Adding explicit \"this is positive because...\" rules fixed this. If you don't define what's positive, the pipeline assumes serious = negative.",
+      "optional": {
+        "label": "I don't need custom sentiment rules",
+        "consequences": "Without custom sentiment rules, the pipeline will use general-purpose sentiment analysis. It works well for obvious cases but may misjudge domain-specific signals — for example, treating new regulation as negative when it's actually progress in your field."
+      },
+      "fields": [
+        {
+          "id": "sentiment_rules",
+          "type": "repeating",
+          "label": "Sentiment Rules",
+          "help": "Aim for 3-6 rules per category. You can always refine these after seeing your first few builds.",
+          "validation": {
+            "required": true,
+            "minItems": 1
+          },
+          "fields": [
+            {
+              "id": "category_group",
+              "type": "text",
+              "label": "Category",
+              "help": "Which category do these rules apply to? Use the full name. Example: \"Climate Policy & Governance\"",
+              "placeholder": "Climate Policy & Governance",
+              "validation": {
+                "required": true,
+                "maxLength": 100
+              }
+            },
+            {
+              "id": "category_group_key",
+              "type": "text",
+              "label": "Category Key",
+              "help": "Category ID — lowercase, matches your category slug. Example: \"policy\"",
+              "placeholder": "policy",
+              "validation": {
+                "required": true,
+                "maxLength": 30
+              }
+            },
+            {
+              "id": "when_this_happens",
+              "type": "textarea",
+              "label": "When This Happens",
+              "help": "Describe the situation. Example: \"New regulation creates binding emissions targets\"",
+              "placeholder": "When...",
+              "validation": {
+                "required": true,
+                "maxLength": 500
+              }
+            },
+            {
+              "id": "default_sentiment",
+              "type": "select",
+              "label": "Default Sentiment",
+              "help": "Is this positive, negative, or neutral for your domain?",
+              "validation": {
+                "required": true
+              },
+              "options": [
+                { "label": "Positive", "value": "positive" },
+                { "label": "Negative", "value": "negative" },
+                { "label": "Neutral", "value": "neutral" }
+              ]
+            },
+            {
+              "id": "because",
+              "type": "textarea",
+              "label": "Because",
+              "help": "Why is this positive/negative/neutral? Example: \"governance strengthened\", \"undermines existing protections\"",
+              "placeholder": "Because...",
+              "validation": {
+                "required": false,
+                "maxLength": 500
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "social-profiles",
+      "title": "Social Profiles",
+      "description": "If your field has active social media discussion, the pipeline can monitor key voices across platforms. This feeds into social signals shown to editors and the daily community pulse.",
+      "optional": {
+        "label": "I don't need social monitoring",
+        "consequences": "Without social profiles, the pipeline won't track community discussion or include social signals in story scoring. You can always add these later."
+      },
+      "fields": [
+        {
+          "id": "bluesky_handles",
+          "type": "repeating",
+          "label": "Bluesky Handles",
+          "help": "List key researchers, journalists, and advocates on Bluesky. Example: \"climatescientist.bsky.social\"",
+          "validation": {
+            "required": false,
+            "minItems": 0
+          },
+          "batchInput": {
+            "enabled": true,
+            "csvColumns": ["handle"]
+          },
+          "fields": [
+            {
+              "id": "handle",
+              "type": "text",
+              "label": "Bluesky Handle",
+              "help": "Full Bluesky handle. Example: \"climatescientist.bsky.social\"",
+              "placeholder": "username.bsky.social",
+              "validation": {
+                "required": true,
+                "maxLength": 100
+              }
+            }
+          ]
+        },
+        {
+          "id": "x_handles",
+          "type": "repeating",
+          "label": "X.com Handles",
+          "help": "List key voices on X (formerly Twitter). Example: \"@climatejournalist\"",
+          "validation": {
+            "required": false,
+            "minItems": 0
+          },
+          "batchInput": {
+            "enabled": true,
+            "csvColumns": ["handle"]
+          },
+          "fields": [
+            {
+              "id": "handle",
+              "type": "text",
+              "label": "X Handle",
+              "help": "X handle with or without @. Example: \"@climatejournalist\" or \"climatejournalist\"",
+              "placeholder": "@username",
+              "validation": {
+                "required": true,
+                "maxLength": 100
+              }
+            }
+          ]
+        },
+        {
+          "id": "linkedin_urls",
+          "type": "repeating",
+          "label": "LinkedIn Profiles",
+          "help": "LinkedIn profile URLs for key voices in your field.",
+          "validation": {
+            "required": false,
+            "minItems": 0
+          },
+          "batchInput": {
+            "enabled": true,
+            "csvColumns": ["url"]
+          },
+          "fields": [
+            {
+              "id": "url",
+              "type": "url",
+              "label": "LinkedIn URL",
+              "help": "Full LinkedIn profile URL. Example: \"https://linkedin.com/in/climate-expert\"",
+              "placeholder": "https://linkedin.com/in/...",
+              "validation": {
+                "required": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "organizations-and-topics",
+      "title": "Key Organizations & Triage Topics",
+      "description": "Two quick lists: the organizations that matter most in your field, and the topic areas your publication should monitor.",
+      "optional": {
+        "label": "I'll add these later",
+        "consequences": "Without key organizations, stories won't get score bonuses for mentioning important players. Without triage topics, the pipeline will use your categories and key question for filtering, which works but is less precise."
+      },
+      "fields": [
+        {
+          "id": "key_organizations",
+          "type": "repeating",
+          "label": "Key Organizations",
+          "help": "Stories mentioning these organizations get a score bonus. List 10-15 whose actions are most newsworthy. Don't list too many — if everything gets a bonus, nothing does.",
+          "validation": {
+            "required": false,
+            "minItems": 0
+          },
+          "batchInput": {
+            "enabled": true,
+            "csvColumns": ["name"]
+          },
+          "fields": [
+            {
+              "id": "name",
+              "type": "text",
+              "label": "Organization Name",
+              "help": "Full organization name. Example: \"United Nations Framework Convention on Climate Change\", \"International Energy Agency\"",
+              "placeholder": "Organization name",
+              "validation": {
+                "required": true,
+                "maxLength": 200
+              }
+            }
+          ]
+        },
+        {
+          "id": "triage_topics",
+          "type": "repeating",
+          "label": "Triage Topics",
+          "help": "These are the first filter — anything not matching these topics gets discarded before the editors even see it. Be generous — better to flag too many than miss something. Aim for 4-6 topics.",
+          "validation": {
+            "required": false,
+            "minItems": 0
+          },
+          "batchInput": {
+            "enabled": true,
+            "csvColumns": ["topic"]
+          },
+          "fields": [
+            {
+              "id": "topic",
+              "type": "text",
+              "label": "Topic",
+              "help": "A short phrase defining what's relevant. Example: \"Climate litigation and legal precedents\", \"Corporate emissions reporting and greenwashing\"",
+              "placeholder": "Topic area...",
+              "validation": {
+                "required": true,
+                "maxLength": 200
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sources",
+      "title": "Sources",
+      "description": "List the RSS feeds your publication should monitor daily. Start with 20-30 high-quality sources — you can always add more later.",
+      "hint": "A good mix: 5-10 primary sources (orgs that make news), 5-10 analysis (newsletters, blogs), 5-10 media (journalists covering your beat), 5-10 wire services. Start with 20-30 high-quality sources. A smaller set of trusted sources produces better output than 100 mediocre feeds full of noise.",
+      "fields": [
+        {
+          "id": "sources",
+          "type": "repeating",
+          "label": "RSS Sources",
+          "help": "Add your RSS feed sources. To verify a feed works, try visiting the URL — it should show XML content.",
+          "validation": {
+            "required": true,
+            "minItems": 1
+          },
+          "batchInput": {
+            "enabled": true,
+            "csvColumns": ["name", "url", "tags", "notes"],
+            "jsonExample": "{\"name\": \"Carbon Brief\", \"url\": \"https://www.carbonbrief.org/feed\", \"tags\": \"policy, science\", \"notes\": \"UK-based climate science and policy analysis\"}"
+          },
+          "fields": [
+            {
+              "id": "name",
+              "type": "text",
+              "label": "Source Name",
+              "help": "Publication or organization name. Example: \"Carbon Brief\", \"Reuters Climate\"",
+              "placeholder": "Source name",
+              "validation": {
+                "required": true,
+                "maxLength": 100
+              }
+            },
+            {
+              "id": "url",
+              "type": "url",
+              "label": "Feed URL",
+              "help": "RSS feed URL. Tip: try adding /feed, /rss, /feed.xml, or /index.xml to the site URL. Example: \"https://www.carbonbrief.org/feed\"",
+              "placeholder": "https://example.com/feed",
+              "validation": {
+                "required": true
+              }
+            },
+            {
+              "id": "tags",
+              "type": "text",
+              "label": "Category Tags",
+              "help": "Comma-separated tags using your category slugs. Example: \"policy, governance\"",
+              "placeholder": "policy, science",
+              "validation": {
+                "required": true,
+                "maxLength": 200
+              }
+            },
+            {
+              "id": "notes",
+              "type": "text",
+              "label": "Notes",
+              "help": "Any notes about this source — for your reference, not used by the pipeline.",
+              "placeholder": "Optional notes...",
+              "validation": {
+                "required": false,
+                "maxLength": 500
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "about-and-final",
+      "title": "About Page & Final Details",
+      "description": "Almost done! Write a few sentences for your About page and provide any final details.",
+      "optional": {
+        "label": "I'll write the about page later",
+        "consequences": "Without about page content, we'll generate placeholder text based on your other answers. You can always edit this later on your site."
+      },
+      "fields": [
+        {
+          "id": "about_what_is_this",
+          "type": "textarea",
+          "label": "What Is This?",
+          "help": "Describe your publication in 2-3 sentences for a first-time visitor. What will they find here and why should they care?",
+          "placeholder": "This publication is...",
+          "validation": {
+            "required": true,
+            "maxLength": 1000
+          }
+        },
+        {
+          "id": "about_tracker",
+          "type": "textarea",
+          "label": "About the Tracker",
+          "help": "Explain your sentiment tracker — what it measures and why it matters. 2-3 sentences.",
+          "placeholder": "The tracker measures...",
+          "validation": {
+            "required": true,
+            "maxLength": 1000
+          }
+        },
+        {
+          "id": "about_built_by",
+          "type": "textarea",
+          "label": "Built By",
+          "help": "Describe your organization in 1-2 sentences. Who are you and why did you build this?",
+          "placeholder": "Built by...",
+          "validation": {
+            "required": true,
+            "maxLength": 500
+          }
+        },
+        {
+          "id": "llms_description",
+          "type": "textarea",
+          "label": "LLMs Description",
+          "help": "One-sentence description for AI crawlers (llms.txt). Example: \"Daily climate policy intelligence briefing curated from 60+ sources.\"",
+          "placeholder": "Daily intelligence briefing on...",
+          "validation": {
+            "required": false,
+            "maxLength": 300
+          }
+        }
+      ]
+    }
+  ]
+}
