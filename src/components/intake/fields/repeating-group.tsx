@@ -248,81 +248,53 @@ export function RepeatingGroup({
         </div>
       )}
 
-      {/* ── INLINE MODE: single-field entries as a simple list ── */}
+      {/* ── INLINE MODE: single-field entries as a clean list ── */}
       {mode === "inline" && (
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-1">
           {entries.map((entry, index) => {
             const field = fields[0]
             const entryErrors = getEntryErrors(index)
-            const hasError = !!entryErrors[field.id]
+            const errorMsg = entryErrors[field.id]
             return (
-              <div key={index} className="flex items-center gap-2">
-                {showColorDots && <CategoryDot index={index} />}
-                <Input
-                  value={(entry[field.id] as string) ?? ""}
-                  onChange={(e) => handleEntryChange(index, field.id, e.target.value)}
-                  placeholder={field.placeholder ?? `${singularLabel}...`}
-                  disabled={disabled}
-                  aria-invalid={hasError || undefined}
-                  className={cn(
-                    "h-9 text-sm",
-                    hasError && "border-destructive"
-                  )}
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="size-7 shrink-0 text-muted-foreground hover:text-destructive"
-                  onClick={() => handleRemove(index)}
-                  disabled={!canRemove || disabled}
-                  aria-label={`Remove`}
-                >
-                  <X className="size-3.5" />
-                </Button>
+              <div key={index} className="flex flex-col gap-0.5">
+                <div className="flex items-center gap-2">
+                  {showColorDots && <CategoryDot index={index} />}
+                  <Input
+                    value={(entry[field.id] as string) ?? ""}
+                    onChange={(e) => handleEntryChange(index, field.id, e.target.value)}
+                    placeholder={field.placeholder ?? `${singularLabel}...`}
+                    disabled={disabled}
+                    aria-invalid={!!errorMsg || undefined}
+                    className={cn("h-8 text-sm", errorMsg && "border-destructive")}
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="size-6 shrink-0 text-muted-foreground hover:text-destructive"
+                    onClick={() => handleRemove(index)}
+                    disabled={!canRemove || disabled}
+                  >
+                    <X className="size-3" />
+                  </Button>
+                </div>
+                {errorMsg && (
+                  <p className="text-xs text-destructive pl-0.5">{errorMsg}</p>
+                )}
               </div>
             )
           })}
-          {/* Inline add — empty input that adds on Enter */}
           {canAdd && (
-            <div className="flex items-center gap-2">
-              {showColorDots && <span className="size-2.5 shrink-0" />}
-              <div className="relative flex-1">
-                <Input
-                  placeholder={`Add ${singularLabel.toLowerCase()}...`}
-                  disabled={disabled}
-                  className="h-9 text-sm border-dashed pr-9"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault()
-                      const val = (e.target as HTMLInputElement).value.trim()
-                      if (!val) return
-                      const newEntry: Record<string, unknown> = { [fields[0].id]: val }
-                      onChange([...entries, newEntry])
-                      ;(e.target as HTMLInputElement).value = ""
-                    }
-                  }}
-                />
-                <button
-                  type="button"
-                  disabled={disabled}
-                  className="absolute right-1.5 top-1/2 -translate-y-1/2 size-6 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-                  onClick={(e) => {
-                    const input = (e.currentTarget.parentElement?.querySelector("input") as HTMLInputElement)
-                    const val = input?.value.trim()
-                    if (!val) { input?.focus(); return }
-                    const newEntry: Record<string, unknown> = { [fields[0].id]: val }
-                    onChange([...entries, newEntry])
-                    input.value = ""
-                    input.focus()
-                  }}
-                  aria-label={`Add ${singularLabel.toLowerCase()}`}
-                >
-                  <Plus className="size-3.5" />
-                </button>
-              </div>
-              <span className="size-7 shrink-0" />
-            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleAdd}
+              disabled={disabled}
+              className="self-start text-muted-foreground mt-1 h-7 text-xs"
+            >
+              <Plus className="size-3" />
+              Add {singularLabel.toLowerCase()}
+            </Button>
           )}
         </div>
       )}
@@ -431,18 +403,22 @@ export function RepeatingGroup({
                 </div>
 
                 {isOpen && (
-                  <div className="px-3 pb-3 pt-1 border-t">
-                    <div className="flex flex-col gap-4">
-                      {fields.map((field) => (
-                        <FieldRenderer
-                          key={field.id}
-                          field={field}
-                          value={entry[field.id]}
-                          onChange={(val) => handleEntryChange(index, field.id, val)}
-                          error={entryErrors[field.id]}
-                          disabled={disabled}
-                        />
-                      ))}
+                  <div className="px-3 pb-3 pt-2 border-t">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-3 gap-y-3">
+                      {fields.map((field) => {
+                        const spanFull = field.type === "textarea" || field.type === "checkbox"
+                        return (
+                          <div key={field.id} className={cn(spanFull && "md:col-span-2")}>
+                            <FieldRenderer
+                              field={field}
+                              value={entry[field.id]}
+                              onChange={(val) => handleEntryChange(index, field.id, val)}
+                              error={entryErrors[field.id]}
+                              disabled={disabled}
+                            />
+                          </div>
+                        )
+                      })}
                     </div>
                   </div>
                 )}
