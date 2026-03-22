@@ -210,7 +210,7 @@ export function VoiceAssistant({
   }, [])
 
   const isStartingRef = useRef(false)
-  const startConversation = useCallback(async () => {
+  const startConversation = useCallback(async (resumeContext?: string) => {
     if (!agentId || isStartingRef.current || conversationRef.current) return
     isStartingRef.current = true
     setIsStarting(true)
@@ -220,6 +220,15 @@ export function VoiceAssistant({
       const conversation = await Conversation.startSession({
         agentId,
         connectionType: "websocket",
+        /* On resume: override the first message so it continues naturally
+           instead of repeating "Hi! What's your publication called?" */
+        ...(resumeContext ? {
+          overrides: {
+            agent: {
+              firstMessage: "Welcome back! Let me check where we left off.",
+            },
+          },
+        } : {}),
         clientTools: {
           update_field: async (params: Record<string, unknown>) => {
             setFieldValue(params.step_id as string, params.field_id as string, params.value)
@@ -293,17 +302,17 @@ export function VoiceAssistant({
      Resume: start a new session with transcript context so it picks up where it left off. */
   const togglePause = useCallback(async () => {
     if (voice.isMuted) {
-      /* Resume — start a new session with conversation history */
+      /* Resume — start a new session with conversation history as context */
+      const recentMessages = voice.transcript.slice(-10).map(
+        e => `${e.role === "user" ? "User" : "Assistant"}: ${e.text}`
+      ).join("\n")
       setVoice(prev => ({ ...prev, isMuted: false }))
-      await startConversation()
-      /* Send transcript summary so the agent knows what was discussed */
+      await startConversation(recentMessages)
+      /* Send full context after connection is established */
       setTimeout(() => {
         if (!conversationRef.current) return
-        const recentMessages = voice.transcript.slice(-10).map(
-          e => `${e.role === "user" ? "User" : "Assistant"}: ${e.text}`
-        ).join("\n")
         conversationRef.current.sendContextualUpdate(
-          `[SYSTEM] This is a resumed conversation. Here's what was discussed before the pause:\n\n${recentMessages}\n\nContinue where you left off — ask the next question.`
+          `[SYSTEM] This is a RESUMED conversation. The user paused and came back. Here is what was discussed before the pause:\n\n${recentMessages}\n\nDo NOT re-introduce yourself. Do NOT say "what's your publication called?" again. Check the form progress and continue from the first unfilled required field. Navigate to the right step first.`
         )
       }, 500)
     } else {
@@ -463,7 +472,7 @@ export function VoiceAssistant({
           </>
         ) : (
           /* Idle state */
-          <Button onClick={startConversation} className="gap-2" size="lg" disabled={isStarting}>
+          <Button onClick={() => startConversation()} className="gap-2" size="lg" disabled={isStarting}>
             <Phone aria-hidden="true" className="size-4" />
             {isStarting ? "Connecting\u2026" : "Start Conversation"}
           </Button>
