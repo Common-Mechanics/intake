@@ -25,6 +25,10 @@ GITHUB_BRANCH=main                            # Optional, defaults to "main"
 # Voice assistant (optional — omit to disable)
 ELEVENLABS_API_KEY=sk_...                     # Server-side, for agent management
 NEXT_PUBLIC_ELEVENLABS_AGENT_ID=agent_...     # Client-side, for WebSocket connection
+
+# Admin auth (optional — omit for open access)
+ADMIN_USERNAME=admin                          # Login username
+ADMIN_PASSWORD=your-secret                    # Login password
 ```
 
 ### Commands
