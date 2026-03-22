@@ -76,9 +76,14 @@ function highlightField(fieldId: string) {
 function buildProgressSummary(
   values: Record<string, Record<string, unknown>>,
   steps: StepDef[],
-  errors?: Record<string, string>
+  errors?: Record<string, string>,
+  currentStepIndex?: number
 ): string {
   const summary: string[] = []
+  if (currentStepIndex !== undefined) {
+    summary.push(`User is currently viewing: Step ${currentStepIndex + 1} "${steps[currentStepIndex]?.title}". ALWAYS call navigate_to_step to match the step you are discussing.`)
+    summary.push("")
+  }
   for (const step of steps) {
     const sv = values[step.id] ?? {}
     const filled: string[] = [], empty: string[] = []
@@ -180,6 +185,7 @@ export function VoiceAssistant({
   const valuesRef = useRef(values); valuesRef.current = values
   const stepsRef = useRef(steps); stepsRef.current = steps
   const errorsRef = useRef(errors); errorsRef.current = errors
+  const currentStepRef = useRef(currentStep); currentStepRef.current = currentStep
   const validateAllRef = useRef(onValidateAllSteps); validateAllRef.current = onValidateAllSteps
   const saveRef = useRef(onSaveAndComplete); saveRef.current = onSaveAndComplete
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -224,7 +230,7 @@ export function VoiceAssistant({
             setFieldValue(params.step_id as string, params.field_id as string, params.entries as unknown[])
             return "Updated"
           },
-          get_current_progress: async () => buildProgressSummary(valuesRef.current, stepsRef.current, errorsRef.current),
+          get_current_progress: async () => buildProgressSummary(valuesRef.current, stepsRef.current, errorsRef.current, currentStepRef.current),
           navigate_to_step: async (params: Record<string, unknown>) => {
             goToStep(params.step_index as number)
             return "Navigated"
@@ -268,7 +274,7 @@ export function VoiceAssistant({
       conversationRef.current = conversation
       isStartingRef.current = false
       setIsStarting(false)
-      const progress = buildProgressSummary(valuesRef.current, stepsRef.current, errorsRef.current)
+      const progress = buildProgressSummary(valuesRef.current, stepsRef.current, errorsRef.current, currentStepRef.current)
       conversation.sendContextualUpdate(`[SYSTEM] Current form state — skip filled fields. Fix any errors:\n\n${progress}`)
     } catch (err) {
       isStartingRef.current = false
@@ -316,7 +322,7 @@ export function VoiceAssistant({
     if (syncTimer.current) clearTimeout(syncTimer.current)
     syncTimer.current = setTimeout(() => {
       conversationRef.current?.sendContextualUpdate(
-        `[SYSTEM] Updated form state:\n\n${buildProgressSummary(valuesRef.current, stepsRef.current, errorsRef.current)}`
+        `[SYSTEM] Updated form state:\n\n${buildProgressSummary(valuesRef.current, stepsRef.current, errorsRef.current, currentStepRef.current)}`
       )
     }, 3000)
     return () => { if (syncTimer.current) clearTimeout(syncTimer.current) }
