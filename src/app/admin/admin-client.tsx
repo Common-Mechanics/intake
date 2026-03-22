@@ -11,6 +11,7 @@ import {
   ClipboardCheck,
   ChevronDown,
   Mic,
+  Trash2,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -94,8 +95,30 @@ function StatusBadge({ status }: { status: OrgStatus }) {
   return <Badge variant={config.variant}>{config.label}</Badge>
 }
 
-function OrgCard({ org }: { org: OrgEntry }) {
+function OrgCard({ org, onDeleted }: { org: OrgEntry; onDeleted: (id: string) => void }) {
   const [copied, setCopied] = useState(false)
+  const [deleteOpen, setDeleteOpen] = useState(false)
+  const [deleteConfirm, setDeleteConfirm] = useState("")
+  const [deleting, setDeleting] = useState(false)
+
+  async function handleDelete() {
+    if (deleteConfirm !== org.name) return
+    setDeleting(true)
+    try {
+      const res = await fetch(`/api/intake/orgs?id=${org.id}&confirm=${encodeURIComponent(org.name)}`, { method: "DELETE" })
+      if (!res.ok) {
+        const data = await res.json()
+        throw new Error(data.error || "Delete failed")
+      }
+      toast.success(`Deleted ${org.name}`)
+      onDeleted(org.id)
+      setDeleteOpen(false)
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to delete")
+    } finally {
+      setDeleting(false)
+    }
+  }
 
   /* Build URL client-side only to avoid SSR hydration mismatch */
   const intakeUrl = typeof window !== "undefined" ? `${window.location.origin}/${org.id}` : `/${org.id}`
@@ -134,11 +157,24 @@ function OrgCard({ org }: { org: OrgEntry }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">{org.name}</CardTitle>
-        <CardDescription className="flex items-center gap-2">
-          <span className="font-mono text-xs">{org.id}</span>
-          <StatusBadge status={org.status} />
-        </CardDescription>
+        <div className="flex items-start justify-between">
+          <div>
+            <CardTitle className="text-lg">{org.name}</CardTitle>
+            <CardDescription className="flex items-center gap-2 mt-1">
+              <span className="font-mono text-xs">{org.id}</span>
+              <StatusBadge status={org.status} />
+            </CardDescription>
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-8 text-muted-foreground hover:text-destructive"
+            onClick={() => setDeleteOpen(true)}
+            aria-label={`Delete ${org.name}`}
+          >
+            <Trash2 aria-hidden="true" className="size-3.5" />
+          </Button>
+        </div>
       </CardHeader>
       <CardContent className="space-y-2">
         <div className="flex items-center justify-between text-sm text-muted-foreground">
@@ -172,6 +208,42 @@ function OrgCard({ org }: { org: OrgEntry }) {
           </Button>
         </Link>
       </CardFooter>
+
+      {/* Delete confirmation dialog */}
+      <Dialog open={deleteOpen} onOpenChange={(open) => { setDeleteOpen(open); if (!open) setDeleteConfirm("") }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Delete Organization</DialogTitle>
+            <DialogDescription>
+              This will permanently delete <strong>{org.name}</strong> and all its intake data. This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3">
+            <p className="text-sm text-muted-foreground">
+              To confirm, type the organization name: <strong>{org.name}</strong>
+            </p>
+            <Input
+              value={deleteConfirm}
+              onChange={(e) => setDeleteConfirm(e.target.value)}
+              placeholder={org.name}
+              autoComplete="off"
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={deleteConfirm !== org.name || deleting}
+            >
+              <Trash2 aria-hidden="true" className="size-3.5" />
+              {deleting ? "Deleting\u2026" : "Delete Forever"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   )
 }
@@ -527,7 +599,7 @@ export function AdminClient({
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
           {orgs.map((org) => (
-            <OrgCard key={org.id} org={org} />
+            <OrgCard key={org.id} org={org} onDeleted={(id) => setOrgs(prev => prev.filter(o => o.id !== id))} />
           ))}
         </div>
       )}

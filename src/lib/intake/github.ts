@@ -140,6 +140,38 @@ export async function writeFile(
 }
 
 /**
+ * Delete a file from the GitHub repo. Requires the file's current SHA.
+ */
+export async function deleteFile(
+  path: string,
+  message: string,
+  sha: string
+): Promise<void> {
+  const { token, repo, branch } = getConfig()
+  const url = `${API_BASE}/repos/${repo}/contents/${path}`
+
+  const res = await fetch(url, {
+    method: "DELETE",
+    headers: headers(token),
+    body: JSON.stringify({ message, sha, branch }),
+  })
+
+  if (!res.ok) {
+    const errorBody = await res.text()
+    logger.error("deleteFile", new Error("GitHub API error"), {
+      path,
+      status: res.status,
+      body: errorBody,
+    })
+    throw new GitHubApiError(
+      `Failed to delete ${path}: ${res.status}`,
+      res.status,
+      errorBody
+    )
+  }
+}
+
+/**
  * Check if a file exists in the repo.
  */
 export async function fileExists(path: string): Promise<boolean> {
