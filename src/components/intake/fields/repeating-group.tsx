@@ -250,7 +250,7 @@ export function RepeatingGroup({
 
       {/* ── INLINE MODE: single-field entries as a clean list ── */}
       {mode === "inline" && (
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1.5">
           {entries.map((entry, index) => {
             const field = fields[0]
             const entryErrors = getEntryErrors(index)
@@ -320,10 +320,8 @@ export function RepeatingGroup({
                   {fields.map((field) => (
                     <div key={field.id} className={cn(
                       "flex flex-col gap-0.5",
-                      /* Last field spans full if odd number of fields */
                       fields.length % 2 !== 0 && field === fields[fields.length - 1] && "md:col-span-2"
                     )}>
-                      <label className="text-[11px] text-muted-foreground/60 font-medium">{field.label}</label>
                       <FieldRenderer
                         field={{ ...field, help: undefined }}
                         value={entry[field.id]}

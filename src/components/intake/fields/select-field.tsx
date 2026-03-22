@@ -49,7 +49,7 @@ export function SelectField({
   colorMap,
 }: SelectFieldProps) {
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-1.5">
       <div className="flex items-center gap-1.5">
         <Label htmlFor={id} className="text-sm font-medium">
           {label}
