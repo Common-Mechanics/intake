@@ -17,7 +17,7 @@ function buildFieldValidator(field: FieldDef, isRequired: boolean): z.ZodTypeAny
       if (isRequired) schema = schema.min(v?.minLength ?? 1, "This field is required")
       else if (v?.minLength) schema = schema.min(v.minLength)
       if (v?.maxLength) schema = schema.max(v.maxLength)
-      if (v?.pattern) schema = schema.regex(new RegExp(v.pattern))
+      if (v?.pattern) schema = schema.regex(new RegExp(v.pattern), "Only letters, numbers, hyphens, and spaces are allowed")
       return schema
     }
 

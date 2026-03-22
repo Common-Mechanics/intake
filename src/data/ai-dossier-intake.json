@@ -190,11 +190,12 @@
               "id": "auto_tags",
               "type": "text",
               "label": "Auto-Tags",
-              "help": "Keywords that help the pipeline sort stories into this category. If a story mentions any of these words, it's a strong signal it belongs here. Comma-separated. Example: \"governance, regulation, legislation, treaty\"",
+              "help": "Keywords that help the pipeline sort stories into this category. If a story mentions any of these words, it's a strong signal it belongs here. Comma-separated, letters and hyphens only. Example: \"governance, regulation, legislation, treaty\"",
               "placeholder": "governance, regulation, legislation",
               "validation": {
                 "required": false,
-                "maxLength": 300
+                "maxLength": 300,
+                "pattern": "^[a-zA-Z0-9\\-\\s,]*$"
               }
             }
           ]
@@ -242,11 +243,12 @@
               "id": "category",
               "type": "text",
               "label": "Category",
-              "help": "Which of your categories does this editor cover? Use the short label (e.g. \"Policy\", \"Science\"). For the Spotlight Editor, use \"spotlight\".",
+              "help": "Which of your categories does this editor cover? Use the short label (e.g. \"Policy\", \"Science\"). For the Spotlight Editor, use \"spotlight\". Letters, numbers, hyphens, and spaces only.",
               "placeholder": "policy",
               "validation": {
                 "required": true,
-                "maxLength": 30
+                "maxLength": 30,
+                "pattern": "^[a-zA-Z0-9\\-\\s]+$"
               }
             },
             {
@@ -446,11 +448,12 @@
               "id": "category_group_key",
               "type": "text",
               "label": "Category Key",
-              "help": "The short label of the category this rule applies to, in lowercase. Example: \"policy\", \"science\", \"finance\"",
+              "help": "The short label of the category this rule applies to, in lowercase. Letters, numbers, and hyphens only. Example: \"policy\", \"science\", \"finance\"",
               "placeholder": "policy",
               "validation": {
                 "required": true,
-                "maxLength": 30
+                "maxLength": 30,
+                "pattern": "^[a-z0-9\\-]+$"
               }
             },
             {
@@ -695,11 +698,12 @@
               "id": "tags",
               "type": "text",
               "label": "Category Tags",
-              "help": "Comma-separated tags using your category slugs. Example: \"policy, governance\"",
+              "help": "Comma-separated tags matching your category labels. Letters, numbers, hyphens, and spaces only. Example: \"policy, governance\"",
               "placeholder": "policy, science",
               "validation": {
                 "required": true,
-                "maxLength": 200
+                "maxLength": 200,
+                "pattern": "^[a-zA-Z0-9\\-\\s,]*$"
               }
             },
             {
