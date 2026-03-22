@@ -38,7 +38,7 @@ export function StepNav({
         "md:sticky md:bottom-0 md:z-auto"
       )}
     >
-      <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3">
+      <div className="mx-auto flex max-w-5xl items-center justify-between gap-2 px-4 py-1.5">
         {/* Back button — hidden on first step to avoid a disabled-looking control */}
         {!isFirstStep ? (
           <Button

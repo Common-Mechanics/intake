@@ -34,7 +34,7 @@ export function SettingsPopover({ className }: { className?: string }) {
           <Button
             variant="ghost"
             size="icon"
-            className={cn("size-8 rounded-full", className)}
+            className={cn("size-10 rounded-full", className)}
             aria-label="Settings"
           />
         }
