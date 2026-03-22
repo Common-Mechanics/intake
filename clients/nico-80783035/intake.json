@@ -1,10 +1,10 @@
 {
   "schemaId": "ai-dossier-intake",
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "orgId": "nico-80783035",
-  "orgName": "Nico Briefing",
+  "orgName": "nico-80783035",
   "data": {},
   "skippedSections": [],
   "completedSteps": [],
-  "lastSaved": "2026-03-22T16:58:10.392Z"
+  "lastSaved": "2026-03-22T16:58:17.650Z"
 }
