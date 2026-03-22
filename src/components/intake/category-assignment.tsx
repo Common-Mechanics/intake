@@ -65,7 +65,7 @@ export function CategoryAssignment({
         )}
       </div>
       <div className="flex flex-wrap gap-1.5">
-        {categories.map((cat) => {
+        {categories.map((cat, catIdx) => {
           const assignedTo = assignedCategories.get(cat.value)
           const isAssigned = !!assignedTo
           const isDuplicate = duplicateCategories.has(cat.value)
@@ -73,7 +73,7 @@ export function CategoryAssignment({
 
           return (
             <Badge
-              key={cat.value}
+              key={`${cat.value}-${catIdx}`}
               variant={isAssigned ? "default" : "outline"}
               className={cn(
                 "text-xs transition-colors",

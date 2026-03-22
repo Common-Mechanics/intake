@@ -211,6 +211,28 @@ export function RepeatingGroup({
         }
       }
     }
+    /* Check for tags shared across entries (e.g. "test" in multiple categories' auto_tags).
+       Overlapping tags confuse the pipeline's auto-classification. */
+    for (const field of fields) {
+      if (field.id !== "auto_tags") continue
+      const tagToEntry = new Map<string, number>() // tag → first entry index
+      for (let i = 0; i < entries.length; i++) {
+        const val = (entries[i][field.id] as string)?.trim()
+        if (!val) continue
+        const tags = val.split(",").map((t) => t.trim().toLowerCase()).filter(Boolean)
+        for (const tag of tags) {
+          if (tagToEntry.has(tag)) {
+            const firstEntry = tagToEntry.get(tag)!
+            const key = `${id}.${i}.${field.id}`
+            const existing = errors[key]
+            const msg = `"${tag}" also used in entry ${firstEntry + 1} — overlapping tags confuse classification`
+            if (!existing) errors[key] = msg
+          } else {
+            tagToEntry.set(tag, i)
+          }
+        }
+      }
+    }
     return errors
   }, [entries, fields, id])
 
