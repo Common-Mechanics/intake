@@ -16,6 +16,8 @@ interface NumberFieldProps {
   disabled?: boolean
   min?: number
   max?: number
+  onBlur?: () => void
+  required?: boolean
 }
 
 export function NumberField({
@@ -30,11 +32,14 @@ export function NumberField({
   disabled,
   min,
   max,
+  onBlur,
+  required,
 }: NumberFieldProps) {
   return (
     <div className="flex flex-col gap-2">
       <Label htmlFor={id} className="text-sm font-medium">
         {label}
+        {!required && <span className="text-muted-foreground text-xs font-normal ml-1">(optional)</span>}
       </Label>
       <Input
         id={id}
@@ -49,21 +54,23 @@ export function NumberField({
             onChange(Number(raw))
           }
         }}
+        onBlur={onBlur}
         readOnly={readOnly}
         disabled={disabled}
         min={min}
         max={max}
         aria-invalid={!!error}
+        aria-describedby={error ? `${id}-error` : help ? `${id}-help` : undefined}
         className={cn(
           "min-h-12",
           error && "border-destructive ring-3 ring-destructive/20"
         )}
       />
-      {help && (
-        <p className="text-sm text-muted-foreground">{help}</p>
-      )}
       {error && (
-        <p className="text-sm text-destructive">{error}</p>
+        <p id={`${id}-error`} role="alert" className="text-sm text-destructive">{error}</p>
+      )}
+      {help && (
+        <p id={`${id}-help`} className="text-sm text-muted-foreground">{help}</p>
       )}
     </div>
   )

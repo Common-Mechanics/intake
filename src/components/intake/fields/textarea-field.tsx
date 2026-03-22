@@ -17,6 +17,7 @@ interface TextareaFieldProps {
   rows?: number
   maxLength?: number
   onBlur?: () => void
+  required?: boolean
 }
 
 export function TextareaField({
@@ -32,6 +33,7 @@ export function TextareaField({
   rows = 4,
   maxLength,
   onBlur,
+  required,
 }: TextareaFieldProps) {
   const currentLength = (value ?? "").length
 
@@ -39,6 +41,7 @@ export function TextareaField({
     <div className="flex flex-col gap-2">
       <Label htmlFor={id} className="text-sm font-medium">
         {label}
+        {!required && <span className="text-muted-foreground text-xs font-normal ml-1">(optional)</span>}
       </Label>
       <Textarea
         id={id}
@@ -51,14 +54,18 @@ export function TextareaField({
         rows={rows}
         maxLength={maxLength}
         aria-invalid={!!error}
+        aria-describedby={error ? `${id}-error` : help ? `${id}-help` : undefined}
         className={cn(
           "min-h-[calc(1.5em*4+1rem)]",
           error && "border-destructive ring-3 ring-destructive/20"
         )}
       />
+      {error && (
+        <p id={`${id}-error`} role="alert" className="text-sm text-destructive">{error}</p>
+      )}
       <div className="flex justify-between gap-4">
         {help && (
-          <p className="text-sm text-muted-foreground">{help}</p>
+          <p id={`${id}-help`} className="text-sm text-muted-foreground">{help}</p>
         )}
         {maxLength != null && (
           <p
@@ -71,9 +78,6 @@ export function TextareaField({
           </p>
         )}
       </div>
-      {error && (
-        <p className="text-sm text-destructive">{error}</p>
-      )}
     </div>
   )
 }

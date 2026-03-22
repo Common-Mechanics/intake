@@ -7,7 +7,9 @@ import { Badge } from "@/components/ui/badge"
 import { Label } from "@/components/ui/label"
 import { Plus, X } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { toast } from "sonner"
 import { FieldRenderer } from "../field-renderer"
+import { BatchInput } from "./batch-input"
 
 interface FieldDefinition {
   id: string
@@ -29,6 +31,12 @@ interface RepeatingGroupValidation {
   warnMessage?: string
 }
 
+interface BatchInputConfig {
+  enabled: boolean
+  csvColumns?: string[]
+  jsonExample?: string
+}
+
 interface RepeatingGroupProps {
   id: string
   label: string
@@ -39,6 +47,7 @@ interface RepeatingGroupProps {
   error?: string
   disabled?: boolean
   validation?: RepeatingGroupValidation
+  batchInput?: BatchInputConfig
 }
 
 export function RepeatingGroup({
@@ -51,6 +60,7 @@ export function RepeatingGroup({
   error,
   disabled,
   validation,
+  batchInput,
 }: RepeatingGroupProps) {
   const entries = Array.isArray(value) ? value : []
   const minItems = validation?.minItems ?? 0
@@ -71,8 +81,19 @@ export function RepeatingGroup({
   const handleRemove = useCallback(
     (index: number) => {
       if (!canRemove) return
-      const updated = entries.filter((_, i) => i !== index)
-      onChange(updated)
+      const removed = entries[index]
+      const newEntries = entries.filter((_, i) => i !== index)
+      onChange(newEntries)
+      toast("Entry removed", {
+        action: {
+          label: "Undo",
+          onClick: () => {
+            const restored = [...newEntries]
+            restored.splice(index, 0, removed)
+            onChange(restored)
+          },
+        },
+      })
     },
     [canRemove, entries, onChange]
   )
@@ -84,6 +105,14 @@ export function RepeatingGroup({
         return { ...entry, [fieldId]: fieldValue }
       })
       onChange(updated)
+    },
+    [entries, onChange]
+  )
+
+  // Append imported entries from BatchInput
+  const handleBatchImport = useCallback(
+    (imported: Record<string, unknown>[]) => {
+      onChange([...entries, ...imported])
     },
     [entries, onChange]
   )
@@ -114,38 +143,67 @@ export function RepeatingGroup({
       )}
 
       <div className="flex flex-col gap-4">
-        {entries.map((entry, index) => (
-          <Card key={index} size="sm" className={cn(disabled && "opacity-50")}>
-            <CardHeader>
-              <CardTitle className="text-sm">#{index + 1}</CardTitle>
-              <CardAction>
-                <Button
-                  variant="ghost"
-                  size="icon-sm"
-                  onClick={() => handleRemove(index)}
-                  disabled={!canRemove || disabled}
-                  aria-label={`Remove entry ${index + 1}`}
-                >
-                  <X />
-                </Button>
-              </CardAction>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col gap-4">
-                {fields.map((field) => (
-                  <FieldRenderer
-                    key={field.id}
-                    field={field}
-                    value={entry[field.id]}
-                    onChange={(val) => handleEntryChange(index, field.id, val)}
-                    disabled={disabled}
-                  />
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+        {entries.map((entry, index) => {
+          // Use first filled text field value as card title
+          const firstFieldValue = entries[index]?.[fields[0]?.id] as string | undefined
+          const itemTitle = firstFieldValue?.trim() ? firstFieldValue.trim() : `#${index + 1}`
+
+          return (
+            <Card key={index} size="sm" className={cn(disabled && "opacity-50")}>
+              <CardHeader>
+                <CardTitle className="text-sm">
+                  <Badge variant="secondary" className="mr-2 font-mono text-xs">{index + 1}</Badge>
+                  {itemTitle}
+                </CardTitle>
+                <CardAction>
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    onClick={() => handleRemove(index)}
+                    disabled={!canRemove || disabled}
+                    aria-label={`Remove entry ${index + 1}`}
+                  >
+                    <X />
+                  </Button>
+                </CardAction>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-col gap-4">
+                  {fields.map((field) => (
+                    <FieldRenderer
+                      key={field.id}
+                      field={field}
+                      value={entry[field.id]}
+                      onChange={(val) => handleEntryChange(index, field.id, val)}
+                      disabled={disabled}
+                    />
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )
+        })}
       </div>
+
+      {/* Empty state when no entries exist */}
+      {entries.length === 0 && (
+        <div className="flex flex-col items-center gap-2 py-8 text-center text-sm text-muted-foreground border border-dashed rounded-lg">
+          <p>No {label.toLowerCase()} added yet</p>
+          {validation?.minItems && validation.minItems > 0 && (
+            <p className="text-xs">You'll need at least {validation.minItems} to continue</p>
+          )}
+        </div>
+      )}
+
+      {/* Batch import for bulk data entry */}
+      {batchInput?.enabled && (
+        <BatchInput
+          id={`${id}-batch`}
+          fields={fields}
+          onImport={handleBatchImport}
+          disabled={disabled}
+        />
+      )}
 
       <Button
         variant="outline"

@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback } from "react"
+import { useCallback, type RefObject } from "react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Info } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -49,6 +49,8 @@ interface StepRendererProps {
   onToggleSkip?: (stepId: string) => void
   /** Called on field blur for per-field validation */
   onFieldBlur?: (fieldId: string) => void
+  /** Ref for the step heading — used for focus management on step transitions */
+  headingRef?: RefObject<HTMLHeadingElement | null>
 }
 
 export function StepRenderer({
@@ -60,6 +62,7 @@ export function StepRenderer({
   isSkipped = false,
   onToggleSkip,
   onFieldBlur,
+  headingRef,
 }: StepRendererProps) {
   const handleFieldChange = useCallback(
     (fieldId: string) => (value: unknown) => {
@@ -72,11 +75,11 @@ export function StepRenderer({
     <div className="flex flex-col gap-8">
       {/* Step header */}
       <div className="flex flex-col gap-3">
-        <h2 className="font-heading text-2xl font-medium tracking-tight">
+        <h2 ref={headingRef} tabIndex={-1} className="font-heading text-2xl font-medium tracking-tight outline-none">
           {step.title}
         </h2>
         {step.description && (
-          <p className="text-base text-muted-foreground leading-relaxed">
+          <p className="text-base text-foreground/70 leading-relaxed">
             {step.description}
           </p>
         )}
@@ -101,6 +104,7 @@ export function StepRenderer({
           checked={isSkipped}
           onChange={() => { onToggleSkip(step.id) }}
           disabled={disabled}
+          stepId={step.id}
         />
       )}
 

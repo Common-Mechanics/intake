@@ -73,6 +73,8 @@ export function FieldRenderer({
     return null
   }
 
+  const isRequired = (field.validation as Record<string, unknown>)?.required === true
+
   const commonProps = {
     id: field.id,
     label: field.label,
@@ -80,6 +82,7 @@ export function FieldRenderer({
     placeholder: field.placeholder,
     error,
     disabled,
+    required: isRequired,
   }
 
   switch (field.type) {
@@ -119,6 +122,7 @@ export function FieldRenderer({
           readOnly={field.readOnly}
           min={field.min}
           max={field.max}
+          onBlur={handleBlur}
         />
       )
 
@@ -129,6 +133,7 @@ export function FieldRenderer({
           value={(value as string) ?? ""}
           onChange={onChange as (v: string) => void}
           options={field.options ?? []}
+          onBlur={handleBlur}
         />
       )
 
@@ -161,6 +166,11 @@ export function FieldRenderer({
             warnAbove?: number
             warnMessage?: string
           }}
+          batchInput={field.batchInput as {
+            enabled: boolean
+            csvColumns?: string[]
+            jsonExample?: string
+          } | undefined}
         />
       )
 

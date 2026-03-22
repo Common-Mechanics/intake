@@ -26,6 +26,8 @@ interface SelectFieldProps {
   readOnly?: boolean
   disabled?: boolean
   options: SelectOption[]
+  onBlur?: () => void
+  required?: boolean
 }
 
 export function SelectField({
@@ -38,20 +40,25 @@ export function SelectField({
   error,
   disabled,
   options,
+  onBlur,
+  required,
 }: SelectFieldProps) {
   return (
     <div className="flex flex-col gap-2">
       <Label htmlFor={id} className="text-sm font-medium">
         {label}
+        {!required && <span className="text-muted-foreground text-xs font-normal ml-1">(optional)</span>}
       </Label>
       <Select
         value={value ?? ""}
         onValueChange={(val) => onChange(val ?? "")}
         disabled={disabled}
+        onOpenChange={(open) => { if (!open) onBlur?.() }}
       >
         <SelectTrigger
           id={id}
           aria-invalid={!!error}
+          aria-describedby={error ? `${id}-error` : help ? `${id}-help` : undefined}
           className={cn(
             "w-full min-h-12",
             error && "border-destructive ring-3 ring-destructive/20"
@@ -67,11 +74,11 @@ export function SelectField({
           ))}
         </SelectContent>
       </Select>
-      {help && (
-        <p className="text-sm text-muted-foreground">{help}</p>
-      )}
       {error && (
-        <p className="text-sm text-destructive">{error}</p>
+        <p id={`${id}-error`} role="alert" className="text-sm text-destructive">{error}</p>
+      )}
+      {help && (
+        <p id={`${id}-help`} className="text-sm text-muted-foreground">{help}</p>
       )}
     </div>
   )

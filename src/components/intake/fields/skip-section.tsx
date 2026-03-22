@@ -11,6 +11,7 @@ interface SkipSectionProps {
   checked: boolean
   onChange: (checked?: boolean) => void
   disabled?: boolean
+  stepId?: string
 }
 
 export function SkipSection({
@@ -19,18 +20,21 @@ export function SkipSection({
   checked,
   onChange,
   disabled,
+  stepId,
 }: SkipSectionProps) {
+  const checkboxId = `skip-section-${stepId ?? 'default'}`
+
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-start gap-3 min-h-12">
         <Checkbox
-          id="skip-section"
+          id={checkboxId}
           checked={checked}
           onCheckedChange={onChange}
           disabled={disabled}
         />
         <Label
-          htmlFor="skip-section"
+          htmlFor={checkboxId}
           className="text-sm font-medium leading-normal cursor-pointer"
         >
           {label}
