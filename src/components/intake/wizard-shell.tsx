@@ -12,6 +12,7 @@ import { CompletionChecklist } from "./completion-checklist"
 import { CategoryAssignment } from "./category-assignment"
 import { CostEstimate } from "./cost-estimate"
 import { SettingsPopover } from "./settings-popover"
+import { VoiceAssistant } from "./voice-assistant"
 
 interface WizardShellProps {
   schema: FormSchema
@@ -378,6 +379,14 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
         isOpen={wizard.saveStatus === "conflict"}
         onResolve={wizard.resolveConflict}
         conflictData={wizard.conflictData}
+      />
+
+      <VoiceAssistant
+        setFieldValue={wizard.setFieldValue}
+        goToStep={wizard.goToStep}
+        values={wizard.values}
+        currentStep={wizard.currentStep}
+        steps={schema.steps}
       />
     </div>
   )
