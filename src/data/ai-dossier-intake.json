@@ -489,11 +489,12 @@
               "id": "handle",
               "type": "text",
               "label": "Bluesky Handle",
-              "help": "Full Bluesky handle. Example: \"climatescientist.bsky.social\"",
+              "help": "Full handle. Example: \"climatescientist.bsky.social\"",
               "placeholder": "username.bsky.social",
               "validation": {
                 "required": false,
-                "maxLength": 100
+                "maxLength": 100,
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9.-]*\\.[a-zA-Z]{2,}$"
               }
             }
           ]
@@ -518,11 +519,12 @@
               "id": "handle",
               "type": "text",
               "label": "X Handle",
-              "help": "X handle with or without @. Example: \"@climatejournalist\" or \"climatejournalist\"",
+              "help": "X handle, 1-15 characters. Example: \"@climatejournalist\"",
               "placeholder": "@username",
               "validation": {
                 "required": false,
-                "maxLength": 100
+                "maxLength": 16,
+                "pattern": "^@?[a-zA-Z0-9_]{1,15}$"
               }
             }
           ]
