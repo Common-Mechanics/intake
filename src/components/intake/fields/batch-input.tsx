@@ -198,197 +198,98 @@ export function BatchInput({
   const jsonPanelId = `batch-panel-json-${fieldId}`
 
   return (
-    <div className="flex flex-col gap-4 rounded-lg border border-border p-4">
-      <div className="flex items-center gap-2">
-        <FileText className="size-4 text-muted-foreground" />
-        <Label className="text-sm font-medium">Bulk Import</Label>
-      </div>
+    <details className="group border border-dashed rounded-md">
+      <summary className="flex items-center gap-2 px-3 py-2 cursor-pointer text-xs text-muted-foreground hover:text-foreground transition-colors select-none">
+        <FileText className="size-3.5" />
+        <span>Bulk import</span>
+      </summary>
 
-      {/* Tab toggle */}
-      <div className="flex gap-1 rounded-lg bg-muted p-1" role="tablist">
-        <button
-          type="button"
-          id={csvTabId}
-          role="tab"
-          aria-selected={mode === "csv"}
-          aria-controls={csvPanelId}
-          onClick={() => {
-            setMode("csv")
-            setPreview(null)
-            setParseError(null)
-          }}
-          className={cn(
-            "flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
-            mode === "csv"
-              ? "bg-background text-foreground shadow-sm"
-              : "text-muted-foreground hover:text-foreground"
-          )}
-        >
-          CSV Paste
-        </button>
-        <button
-          type="button"
-          id={jsonTabId}
-          role="tab"
-          aria-selected={mode === "json"}
-          aria-controls={jsonPanelId}
-          onClick={() => {
-            setMode("json")
-            setPreview(null)
-            setParseError(null)
-          }}
-          className={cn(
-            "flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
-            mode === "json"
-              ? "bg-background text-foreground shadow-sm"
-              : "text-muted-foreground hover:text-foreground"
-          )}
-        >
-          JSON Upload
-        </button>
-      </div>
-
-      {mode === "csv" && (
-        <div
-          className="flex flex-col gap-3"
-          role="tabpanel"
-          id={csvPanelId}
-          aria-labelledby={csvTabId}
-        >
-          <p className="text-sm text-muted-foreground">
-            Columns: {fields.map((f) => f.label).join(", ")}
-          </p>
-          <Textarea
-            id={`${id}-csv`}
-            placeholder={fields.map((f) => f.label).join(", ") + "\nvalue1, value2, ..."}
-            value={csvText}
-            onChange={(e) => {
-              setCsvText(e.target.value)
-              setPreview(null)
-              setParseError(null)
-            }}
-            rows={6}
-            disabled={disabled}
-          />
+      <div className="px-3 pb-3 pt-1 flex flex-col gap-2">
+        {/* Compact tab toggle */}
+        <div className="flex gap-1" role="tablist">
+          {(["csv", "json"] as const).map((tab) => (
+            <button
+              key={tab}
+              type="button"
+              id={tab === "csv" ? csvTabId : jsonTabId}
+              role="tab"
+              aria-selected={mode === tab}
+              onClick={() => { setMode(tab); setPreview(null); setParseError(null) }}
+              className={cn(
+                "px-2.5 py-1 text-xs rounded-md transition-colors",
+                mode === tab
+                  ? "bg-muted text-foreground font-medium"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {tab === "csv" ? "Paste CSV" : "Upload JSON"}
+            </button>
+          ))}
         </div>
-      )}
 
-      {mode === "json" && (
-        <div
-          className="flex flex-col gap-3"
-          role="tabpanel"
-          id={jsonPanelId}
-          aria-labelledby={jsonTabId}
-        >
-          {/* File upload area with drag-and-drop support */}
-          <label
-            htmlFor={`${id}-file`}
-            onDragOver={(e) => { e.preventDefault(); setIsDragging(true) }}
-            onDragLeave={() => setIsDragging(false)}
-            onDrop={(e) => {
-              e.preventDefault()
-              setIsDragging(false)
-              const file = e.dataTransfer.files?.[0]
-              if (file) handleFileRead(file)
-            }}
-            className={cn(
-              "flex cursor-pointer flex-col items-center gap-2 rounded-lg border-2 border-dashed p-6 text-center transition-colors",
-              isDragging
-                ? "border-primary bg-primary/5"
-                : "border-border hover:border-ring hover:bg-muted/50",
-              disabled && "pointer-events-none opacity-50"
-            )}
-          >
-            <Upload className="size-6 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">
-              Drop a .json file here or click to browse
-            </span>
-            <input
-              id={`${id}-file`}
-              type="file"
-              accept=".json"
-              onChange={handleFileUpload}
-              className="hidden"
+        {mode === "csv" && (
+          <div role="tabpanel" id={csvPanelId} aria-labelledby={csvTabId}>
+            <Textarea
+              id={`${id}-csv`}
+              placeholder={fields.map((f) => f.label).join(", ") + "\nvalue1, value2, ..."}
+              value={csvText}
+              onChange={(e) => { setCsvText(e.target.value); setPreview(null); setParseError(null) }}
+              rows={3}
               disabled={disabled}
+              className="text-xs resize-none"
             />
-          </label>
-
-          <p className="text-sm text-muted-foreground">Or paste JSON directly:</p>
-          <Textarea
-            id={`${id}-json`}
-            placeholder={exampleJSON}
-            value={jsonText}
-            onChange={(e) => {
-              setJsonText(e.target.value)
-              setPreview(null)
-              setParseError(null)
-            }}
-            rows={6}
-            disabled={disabled}
-            className="font-mono text-xs"
-          />
-        </div>
-      )}
-
-      {parseError && (
-        <Alert variant="destructive">
-          <AlertCircle />
-          <AlertTitle>Parse error</AlertTitle>
-          <AlertDescription>{parseError}</AlertDescription>
-        </Alert>
-      )}
-
-      {preview && (
-        <div className="flex flex-col gap-2">
-          <Badge variant="secondary" className="w-fit">
-            {preview.length} {preview.length === 1 ? "entry" : "entries"} found
-          </Badge>
-          <div className="max-h-40 overflow-y-auto rounded-md bg-muted/50 p-3 text-xs">
-            {preview.slice(0, 5).map((entry, i) => (
-              <div key={i} className="py-1 border-b border-border last:border-0">
-                {fields.map((f) => (
-                  <span key={f.id} className="mr-3">
-                    <span className="text-muted-foreground">{f.label}:</span>{" "}
-                    {String(entry[f.id] ?? "")}
-                  </span>
-                ))}
-              </div>
-            ))}
-            {preview.length > 5 && (
-              <p className="pt-2 text-muted-foreground">
-                ...and {preview.length - 5} more
-              </p>
-            )}
           </div>
-        </div>
-      )}
-
-      <div className="flex gap-2">
-        {!preview ? (
-          <Button
-            variant="outline"
-            size="lg"
-            onClick={handleParse}
-            disabled={
-              disabled ||
-              (mode === "csv" ? !csvText.trim() : !jsonText.trim())
-            }
-            className="min-h-12"
-          >
-            Preview
-          </Button>
-        ) : (
-          <Button
-            variant="default"
-            size="lg"
-            onClick={handleImport}
-            disabled={disabled}
-            className="min-h-12"
-          >
-            Import {preview.length} {preview.length === 1 ? "entry" : "entries"}
-          </Button>
         )}
+
+        {mode === "json" && (
+          <div role="tabpanel" id={jsonPanelId} aria-labelledby={jsonTabId} className="flex flex-col gap-2">
+            <label
+              htmlFor={`${id}-file`}
+              onDragOver={(e) => { e.preventDefault(); setIsDragging(true) }}
+              onDragLeave={() => setIsDragging(false)}
+              onDrop={(e) => { e.preventDefault(); setIsDragging(false); const f = e.dataTransfer.files?.[0]; if (f) handleFileRead(f) }}
+              className={cn(
+                "flex cursor-pointer items-center gap-2 rounded-md border border-dashed px-3 py-2 text-xs transition-colors",
+                isDragging ? "border-primary bg-primary/5" : "border-border hover:bg-muted/50",
+                disabled && "pointer-events-none opacity-50"
+              )}
+            >
+              <Upload className="size-3.5 text-muted-foreground" />
+              <span className="text-muted-foreground">Drop .json or click</span>
+              <input id={`${id}-file`} type="file" accept=".json" onChange={handleFileUpload} className="hidden" disabled={disabled} />
+            </label>
+            <Textarea
+              id={`${id}-json`}
+              placeholder={exampleJSON}
+              value={jsonText}
+              onChange={(e) => { setJsonText(e.target.value); setPreview(null); setParseError(null) }}
+              rows={3}
+              disabled={disabled}
+              className="font-mono text-xs resize-none"
+            />
+          </div>
+        )}
+
+        {parseError && (
+          <p className="text-xs text-destructive">{parseError}</p>
+        )}
+
+        {preview && (
+          <p className="text-xs text-muted-foreground">
+            {preview.length} {preview.length === 1 ? "entry" : "entries"} ready to import
+          </p>
+        )}
+
+        <Button
+          variant={preview ? "default" : "outline"}
+          size="sm"
+          onClick={preview ? handleImport : handleParse}
+          disabled={disabled || (!preview && (mode === "csv" ? !csvText.trim() : !jsonText.trim()))}
+          className="self-start h-7 text-xs"
+        >
+          {preview ? `Import ${preview.length}` : "Preview"}
+        </Button>
       </div>
-    </div>
+    </details>
   )
 }
