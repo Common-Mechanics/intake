@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useCallback, useRef, useMemo } from "react"
+import { useEffect, useCallback, useRef, useMemo, useState } from "react"
 import { cn } from "@/lib/utils"
 import { useWizard } from "@/lib/intake/use-wizard"
 import type { FormSchema, SavedData } from "@/lib/intake/schemas"
@@ -23,6 +23,7 @@ interface WizardShellProps {
 export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
   const wizard = useWizard(schema, initialData, orgId)
   const stepHeadingRef = useRef<HTMLHeadingElement>(null)
+  const [voicePanelOpen, setVoicePanelOpen] = useState(false)
 
   const scrollToFirstError = useCallback(() => {
     setTimeout(() => {
@@ -298,7 +299,7 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
   const currentValues = wizard.values[wizard.currentStepDef.id] ?? {}
 
   return (
-    <div className="flex min-h-dvh flex-col">
+    <div className={cn("flex min-h-dvh flex-col transition-[margin] duration-300", voicePanelOpen && "sm:ml-[380px]")}>
       {/* Header + progress bar */}
       <div className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur-sm">
         <div className="mx-auto max-w-3xl">
@@ -311,6 +312,7 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
                 values={wizard.values}
                 currentStep={wizard.currentStep}
                 steps={schema.steps}
+                onPanelToggle={setVoicePanelOpen}
               />
               <SettingsPopover />
             </div>
