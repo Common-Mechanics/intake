@@ -63,7 +63,7 @@ export function SentimentRulesEditor({
   const addRule = useCallback(
     (categoryValue: string) => {
       const rules = [...(value[categoryValue] ?? [])]
-      rules.push({ when_this_happens: "", default_sentiment: "", because: "" })
+      rules.push({ when_this_happens: "", default_sentiment: "neutral", because: "" })
       onChange({ ...value, [categoryValue]: rules })
     },
     [value, onChange]
@@ -161,27 +161,27 @@ export function SentimentRulesEditor({
                       </div>
 
                       {/* Because input + remove button */}
-                      <div className="flex gap-1.5 items-end">
-                        <div className="flex-1">
-                          <label className="text-xs text-muted-foreground mb-1 block">Because (optional)</label>
+                      <div>
+                        <label className="text-xs text-muted-foreground mb-1 block">Because (optional)</label>
+                        <div className="flex gap-2 items-center">
                           <Input
                             value={rule.because}
                             onChange={(e) => updateRule(category.value, ruleIdx, "because", e.target.value)}
                             placeholder="governance strengthened..."
                             disabled={disabled}
-                            className="text-sm w-full"
+                            className="text-sm min-h-10 flex-1"
                           />
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="icon-xs"
-                          onClick={() => removeRule(category.value, ruleIdx)}
-                          disabled={disabled}
-                          aria-label="Remove rule"
-                          className="shrink-0 text-muted-foreground hover:text-destructive mb-0.5"
-                        >
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => removeRule(category.value, ruleIdx)}
+                            disabled={disabled}
+                            aria-label="Remove rule"
+                            className="shrink-0 size-8 text-muted-foreground hover:text-destructive"
+                          >
                           <X className="size-3.5" />
                         </Button>
+                        </div>
                       </div>
                     </div>
                   </div>

@@ -347,7 +347,7 @@ export function RepeatingGroup({
 
       {/* ── COMPACT MODE: 2-3 fields per entry, no accordion ── */}
       {mode === "compact" && (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-4">
           {entries.map((entry, index) => {
             const entryErrors = getEntryErrors(index)
             const hasEntryErrors = Object.keys(entryErrors).length > 0
@@ -355,7 +355,7 @@ export function RepeatingGroup({
               <div
                 key={index}
                 className={cn(
-                  "flex items-start gap-2 py-2 px-3 rounded-md border bg-card",
+                  "flex items-start gap-2 py-3 px-4 rounded-md border bg-card",
                   hasEntryErrors && "border-destructive/40",
                   disabled && "opacity-50"
                 )}
@@ -397,7 +397,7 @@ export function RepeatingGroup({
 
       {/* ── ACCORDION MODE: 4+ fields, collapsible ── */}
       {mode === "accordion" && (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-4">
           {entries.map((entry, index) => {
             const firstFieldValue = entries[index]?.[fields[0]?.id] as string | undefined
             const itemTitle = firstFieldValue?.trim() ? firstFieldValue.trim() : `New ${singularLabel}`
