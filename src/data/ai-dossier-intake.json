@@ -187,17 +187,6 @@
               }
             },
             {
-              "id": "slug",
-              "type": "text",
-              "label": "ID Slug",
-              "help": "URL-friendly ID — lowercase, no spaces. Example: \"policy\", \"science\", \"finance\"",
-              "placeholder": "policy",
-              "validation": {
-                "required": true,
-                "maxLength": 30
-              }
-            },
-            {
               "id": "auto_tags",
               "type": "text",
               "label": "Auto-Tags",
