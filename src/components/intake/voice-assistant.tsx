@@ -246,6 +246,13 @@ function VoiceAssistantPanel({
       })
 
       conversationRef.current = conversation
+
+      /* Immediately send current form state so the agent knows what's
+         already filled and doesn't re-ask completed questions */
+      const progress = buildProgressSummary(valuesRef.current, stepsRef.current)
+      conversation.sendContextualUpdate(
+        `[SYSTEM] Current form state — do NOT ask about fields that are already filled. Skip to the first empty required field.\n\n${progress}`
+      )
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err))
     }
