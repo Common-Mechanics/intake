@@ -296,7 +296,7 @@ export function StepRenderer({
         <h2
           ref={headingRef}
           tabIndex={-1}
-          className="text-2xl md:text-[28px] font-semibold tracking-tight leading-tight outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:rounded-sm"
+          className="text-2xl md:text-[28px] font-semibold tracking-tight leading-tight outline-none"
         >
           {step.title}
         </h2>
