@@ -113,7 +113,11 @@
       ],
       "policy2": []
     },
-    "bluesky_handles": []
+    "bluesky_handles": [
+      {
+        "handle": "whatever.bsky.social"
+      }
+    ]
   },
   "skippedSections": [
     "sentiment-rules"
@@ -126,5 +130,5 @@
     "categories",
     "sentiment-rules"
   ],
-  "lastSaved": "2026-03-22T02:33:06.258Z"
+  "lastSaved": "2026-03-22T02:33:11.717Z"
 }
