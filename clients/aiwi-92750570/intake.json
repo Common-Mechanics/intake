@@ -99,7 +99,18 @@
           "because": ""
         }
       ],
-      "test2": [],
+      "test2": [
+        {
+          "when_this_happens": "",
+          "default_sentiment": "",
+          "because": ""
+        },
+        {
+          "when_this_happens": "",
+          "default_sentiment": "",
+          "because": ""
+        }
+      ],
       "policy2": []
     }
   },
@@ -111,5 +122,5 @@
     "audience",
     "categories"
   ],
-  "lastSaved": "2026-03-22T02:22:48.559Z"
+  "lastSaved": "2026-03-22T02:25:32.755Z"
 }
