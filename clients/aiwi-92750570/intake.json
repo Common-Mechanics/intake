@@ -20,11 +20,11 @@
       {
         "short_label": "test",
         "full_name": "test",
-        "auto_tags": "test"
+        "auto_tags": "test,test2"
       },
       {
-        "short_label": "",
-        "full_name": "",
+        "short_label": "test2",
+        "full_name": "test",
         "auto_tags": ""
       },
       {
@@ -151,5 +151,5 @@
   "completedSteps": [
     "your-publication"
   ],
-  "lastSaved": "2026-03-22T15:05:50.874Z"
+  "lastSaved": "2026-03-22T15:06:02.811Z"
 }
