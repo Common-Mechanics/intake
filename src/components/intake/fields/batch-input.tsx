@@ -3,10 +3,7 @@
 import { useState, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import { Badge } from "@/components/ui/badge"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Upload, FileText, AlertCircle } from "lucide-react"
+import { Upload } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface FieldDefinition {

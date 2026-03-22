@@ -25,7 +25,6 @@ interface SelectFieldProps {
   value: string
   onChange: (value: string) => void
   error?: string
-  readOnly?: boolean
   disabled?: boolean
   options: SelectOption[]
   onBlur?: () => void

@@ -27,6 +27,12 @@ interface FieldDefinition {
   placeholder?: string
   options?: { value: string; label: string }[]
   required?: boolean
+  readOnly?: boolean
+  rows?: number
+  maxLength?: number
+  min?: number
+  max?: number
+  fields?: FieldDefinition[]
   validation?: Record<string, unknown>
   condition?: Record<string, unknown>
   [key: string]: unknown

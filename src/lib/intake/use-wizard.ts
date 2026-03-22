@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback, useMemo, useRef, useEffect } from "react"
+import { useState, useCallback, useRef, useEffect } from "react"
 import { toast } from "sonner"
 import type { FormSchema, SavedData, StepDef } from "./schemas"
 import { validateStep } from "./schema-to-zod"
@@ -142,9 +142,6 @@ export function useWizard(
   )
   const [sha, setSha] = useState<string | undefined>(initialData?.sha)
   const [conflictData, setConflictData] = useState<SavedData | null>(null)
-  // Whether localStorage has a draft (gives users confidence their typing isn't lost)
-  const [hasDraft, setHasDraft] = useState<boolean>(() => loadDraft(orgId) !== null)
-
   // Debounce timer refs
   const localDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const serverDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -157,11 +154,6 @@ export function useWizard(
   const isFirstStep = currentStep === 0
   const isLastStep = currentStep === totalSteps - 1
 
-  const progressPercent = useMemo(() => {
-    if (totalSteps === 0) return 0
-    return Math.round((completedSteps.size / totalSteps) * 100)
-  }, [completedSteps.size, totalSteps])
-
   // --- Auto-save: localStorage (fast) + GitHub (debounced) ---
 
   /* localStorage — crash recovery, 500ms debounce */
@@ -169,7 +161,6 @@ export function useWizard(
     if (localDebounceRef.current) clearTimeout(localDebounceRef.current)
     localDebounceRef.current = setTimeout(() => {
       saveDraft(orgId, values)
-      setHasDraft(true)
     }, LOCAL_DEBOUNCE_MS)
     return () => {
       if (localDebounceRef.current) clearTimeout(localDebounceRef.current)
@@ -460,9 +451,5 @@ export function useWizard(
     conflictData,
     resolveConflict,
 
-    // Progress
-    progressPercent,
-
-    // Draft
   }
 }

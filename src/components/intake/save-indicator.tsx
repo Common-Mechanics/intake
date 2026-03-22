@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Check, Loader2, AlertTriangle, Cloud } from "lucide-react"
+import { Loader2, AlertTriangle, Cloud } from "lucide-react"
 
 type SaveStatus = "idle" | "saving" | "saved" | "error" | "conflict"
 

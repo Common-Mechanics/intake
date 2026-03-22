@@ -360,7 +360,6 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
 
       <StepNav
         canGoPrev={wizard.canGoPrev}
-        canGoNext={wizard.canGoNext}
         isFirstStep={wizard.isFirstStep}
         isLastStep={wizard.isLastStep}
         onPrev={wizard.prevStep}

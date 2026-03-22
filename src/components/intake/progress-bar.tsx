@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import { ChevronLeft, ChevronRight, ChevronDown, Check, Minus, AlertCircle, Info } from "lucide-react"
+import { ChevronLeft, ChevronRight, ChevronDown, Check, AlertCircle, Info } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import type { StepDef } from "@/lib/intake/schemas"

@@ -9,7 +9,6 @@ type SaveStatus = "idle" | "saving" | "saved" | "error" | "conflict"
 
 interface StepNavProps {
   canGoPrev: boolean
-  canGoNext: boolean
   isFirstStep: boolean
   isLastStep: boolean
   onPrev: () => void
