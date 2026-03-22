@@ -213,7 +213,7 @@ function VoiceAssistantInner({
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetContent
           side="left"
-          className="w-full sm:max-w-md flex flex-col"
+          className="w-full sm:max-w-md flex flex-col overflow-hidden"
           showCloseButton
         >
           <SheetHeader className="px-4 pt-4 pb-2">
@@ -227,8 +227,8 @@ function VoiceAssistantInner({
             </div>
           </SheetHeader>
 
-          {/* Transcript */}
-          <ScrollArea className="flex-1 px-4" ref={scrollRef}>
+          {/* Transcript — min-h-0 allows flex-1 to shrink and scroll */}
+          <ScrollArea className="flex-1 min-h-0 px-4" ref={scrollRef}>
             <div className="flex flex-col gap-3 py-4">
               {transcript.length === 0 && !isConnected && (
                 <p className="text-sm text-muted-foreground text-center py-8">
