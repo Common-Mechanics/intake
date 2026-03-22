@@ -123,17 +123,11 @@
       },
       {
         "handle": "b.bsky.social"
-      },
-      {
-        "handle": ""
       }
     ],
     "x_handles": [
       {
         "handle": "@2"
-      },
-      {
-        "handle": ""
       },
       {
         "handle": ""
@@ -167,5 +161,5 @@
     "organizations-and-topics",
     "sources"
   ],
-  "lastSaved": "2026-03-22T03:59:32.674Z"
+  "lastSaved": "2026-03-22T03:59:42.046Z"
 }
