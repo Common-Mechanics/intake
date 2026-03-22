@@ -17,6 +17,7 @@ interface FieldDefinition {
 
 interface BatchInputProps {
   id: string
+  fieldId: string
   fields: FieldDefinition[]
   onImport: (entries: Record<string, unknown>[]) => void
   disabled?: boolean
@@ -112,6 +113,7 @@ function parseJSON(
 
 export function BatchInput({
   id,
+  fieldId,
   fields,
   onImport,
   disabled,
@@ -121,6 +123,7 @@ export function BatchInput({
   const [jsonText, setJsonText] = useState("")
   const [preview, setPreview] = useState<Record<string, unknown>[] | null>(null)
   const [parseError, setParseError] = useState<string | null>(null)
+  const [isDragging, setIsDragging] = useState(false)
 
   const fieldIds = fields.map((f) => f.id)
 
@@ -154,21 +157,26 @@ export function BatchInput({
     setJsonText("")
   }, [preview, onImport])
 
+  /** Shared handler for reading a JSON file (used by both file input and drag-drop) */
+  const handleFileRead = useCallback((file: File) => {
+    if (!file || file.type !== "application/json") return
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      const text = event.target?.result as string
+      setJsonText(text)
+    }
+    reader.readAsText(file)
+  }, [])
+
   const handleFileUpload = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0]
       if (!file) return
-
-      const reader = new FileReader()
-      reader.onload = (event) => {
-        const text = event.target?.result as string
-        setJsonText(text)
-      }
-      reader.readAsText(file)
+      handleFileRead(file)
       // Reset the input so the same file can be selected again
       e.target.value = ""
     },
-    []
+    [handleFileRead]
   )
 
   const exampleJSON = JSON.stringify(
@@ -182,6 +190,13 @@ export function BatchInput({
     2
   )
 
+  // ARIA IDs scoped to this field instance to avoid collisions when
+  // multiple batch inputs appear on the same page
+  const csvTabId = `batch-tab-csv-${fieldId}`
+  const jsonTabId = `batch-tab-json-${fieldId}`
+  const csvPanelId = `batch-panel-csv-${fieldId}`
+  const jsonPanelId = `batch-panel-json-${fieldId}`
+
   return (
     <div className="flex flex-col gap-4 rounded-lg border border-border p-4">
       <div className="flex items-center gap-2">
@@ -190,9 +205,13 @@ export function BatchInput({
       </div>
 
       {/* Tab toggle */}
-      <div className="flex gap-1 rounded-lg bg-muted p-1">
+      <div className="flex gap-1 rounded-lg bg-muted p-1" role="tablist">
         <button
           type="button"
+          id={csvTabId}
+          role="tab"
+          aria-selected={mode === "csv"}
+          aria-controls={csvPanelId}
           onClick={() => {
             setMode("csv")
             setPreview(null)
@@ -209,6 +228,10 @@ export function BatchInput({
         </button>
         <button
           type="button"
+          id={jsonTabId}
+          role="tab"
+          aria-selected={mode === "json"}
+          aria-controls={jsonPanelId}
           onClick={() => {
             setMode("json")
             setPreview(null)
@@ -226,7 +249,12 @@ export function BatchInput({
       </div>
 
       {mode === "csv" && (
-        <div className="flex flex-col gap-3">
+        <div
+          className="flex flex-col gap-3"
+          role="tabpanel"
+          id={csvPanelId}
+          aria-labelledby={csvTabId}
+        >
           <p className="text-sm text-muted-foreground">
             Columns: {fields.map((f) => f.label).join(", ")}
           </p>
@@ -246,12 +274,28 @@ export function BatchInput({
       )}
 
       {mode === "json" && (
-        <div className="flex flex-col gap-3">
-          {/* File upload area */}
+        <div
+          className="flex flex-col gap-3"
+          role="tabpanel"
+          id={jsonPanelId}
+          aria-labelledby={jsonTabId}
+        >
+          {/* File upload area with drag-and-drop support */}
           <label
             htmlFor={`${id}-file`}
+            onDragOver={(e) => { e.preventDefault(); setIsDragging(true) }}
+            onDragLeave={() => setIsDragging(false)}
+            onDrop={(e) => {
+              e.preventDefault()
+              setIsDragging(false)
+              const file = e.dataTransfer.files?.[0]
+              if (file) handleFileRead(file)
+            }}
             className={cn(
-              "flex cursor-pointer flex-col items-center gap-2 rounded-lg border-2 border-dashed border-border p-6 text-center transition-colors hover:border-ring hover:bg-muted/50",
+              "flex cursor-pointer flex-col items-center gap-2 rounded-lg border-2 border-dashed p-6 text-center transition-colors",
+              isDragging
+                ? "border-primary bg-primary/5"
+                : "border-border hover:border-ring hover:bg-muted/50",
               disabled && "pointer-events-none opacity-50"
             )}
           >

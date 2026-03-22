@@ -71,7 +71,11 @@ export function TextareaField({
           <p
             className={cn(
               "ml-auto text-sm text-muted-foreground tabular-nums",
-              currentLength > maxLength * 0.9 && "text-destructive"
+              currentLength >= maxLength
+                ? "text-destructive"
+                : currentLength > maxLength * 0.95
+                  ? "text-destructive/70"
+                  : ""
             )}
           >
             {currentLength}/{maxLength}

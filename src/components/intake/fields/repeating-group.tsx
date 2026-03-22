@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardAction } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Label } from "@/components/ui/label"
-import { Plus, X } from "lucide-react"
+import { Plus, X, ChevronUp, ChevronDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 import { FieldRenderer } from "../field-renderer"
@@ -109,6 +109,18 @@ export function RepeatingGroup({
     [entries, onChange]
   )
 
+  const handleMove = useCallback(
+    (index: number, direction: -1 | 1) => {
+      const newIndex = index + direction
+      if (newIndex < 0 || newIndex >= entries.length) return
+      const newEntries = [...entries]
+      const [moved] = newEntries.splice(index, 1)
+      newEntries.splice(newIndex, 0, moved)
+      onChange(newEntries)
+    },
+    [entries, onChange]
+  )
+
   // Append imported entries from BatchInput
   const handleBatchImport = useCallback(
     (imported: Record<string, unknown>[]) => {
@@ -156,15 +168,40 @@ export function RepeatingGroup({
                   {itemTitle}
                 </CardTitle>
                 <CardAction>
-                  <Button
-                    variant="ghost"
-                    size="icon-sm"
-                    onClick={() => handleRemove(index)}
-                    disabled={!canRemove || disabled}
-                    aria-label={`Remove entry ${index + 1}`}
-                  >
-                    <X />
-                  </Button>
+                  <div className="flex items-center gap-1">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon-sm"
+                      className="size-7"
+                      onClick={() => handleMove(index, -1)}
+                      disabled={disabled || index === 0}
+                      aria-label="Move up"
+                    >
+                      <ChevronUp className="size-4" />
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon-sm"
+                      className="size-7"
+                      onClick={() => handleMove(index, 1)}
+                      disabled={disabled || index === entries.length - 1}
+                      aria-label="Move down"
+                    >
+                      <ChevronDown className="size-4" />
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon-sm"
+                      onClick={() => handleRemove(index)}
+                      disabled={!canRemove || disabled}
+                      aria-label={`Remove entry ${index + 1}`}
+                    >
+                      <X />
+                    </Button>
+                  </div>
                 </CardAction>
               </CardHeader>
               <CardContent>
@@ -199,6 +236,7 @@ export function RepeatingGroup({
       {batchInput?.enabled && (
         <BatchInput
           id={`${id}-batch`}
+          fieldId={id}
           fields={fields}
           onImport={handleBatchImport}
           disabled={disabled}
