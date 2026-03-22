@@ -61,8 +61,8 @@
       }
     ],
     "tracker_name": "1",
-    "tracker_subtitle": "1",
-    "positive_signal_label": "1",
+    "tracker_subtitle": "",
+    "positive_signal_label": "progre",
     "negative_signal_label": "ris",
     "tracker_nav_label": "1",
     "what_positive_means": "1",
@@ -140,5 +140,5 @@
     "organizations-and-topics",
     "sources"
   ],
-  "lastSaved": "2026-03-22T03:43:40.969Z"
+  "lastSaved": "2026-03-22T03:44:23.842Z"
 }
