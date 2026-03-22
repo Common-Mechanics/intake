@@ -31,7 +31,7 @@ export function CheckboxField({
           disabled={disabled}
           className="mt-0.5"
         />
-        <div className="flex items-center gap-1.5">
+        <div className="flex flex-col gap-0.5">
           <Label
             htmlFor={id}
             className="text-sm font-medium leading-normal cursor-pointer"
