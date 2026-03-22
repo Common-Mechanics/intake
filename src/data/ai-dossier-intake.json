@@ -698,7 +698,7 @@
           "id": "triage_topics",
           "type": "repeating",
           "label": "Triage Topics",
-          "help": "First filter \u2014 anything not matching gets discarded. Be generous. Aim for 4\u20136.",
+          "help": "Triage topics are broad subject areas the pipeline uses as a first filter. Every incoming story is checked against these topics \u2014 if it doesn\u2019t match any, it gets discarded before editors even see it. Think of them as \u201cwhat is this publication about?\u201d in topic form. Be generous: 4\u20136 topics, phrased broadly enough to catch relevant stories without letting noise through.",
           "validation": {
             "required": false,
             "minItems": 0
