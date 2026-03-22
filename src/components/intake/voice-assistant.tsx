@@ -1,16 +1,9 @@
 "use client"
 
 import { useState, useCallback, useRef } from "react"
-import { Mic, MicOff, Phone, PhoneOff, Pause, Play } from "lucide-react"
+import { Mic, Phone, PhoneOff, Pause, Play, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet"
 import { Badge } from "@/components/ui/badge"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import { cn } from "@/lib/utils"
 import type { StepDef } from "@/lib/intake/schemas"
 
@@ -20,6 +13,7 @@ interface VoiceAssistantProps {
   values: Record<string, Record<string, unknown>>
   currentStep: number
   steps: StepDef[]
+  onPanelToggle?: (isOpen: boolean) => void
 }
 
 interface TranscriptEntry {
@@ -119,6 +113,7 @@ export function VoiceAssistant({
   values,
   currentStep,
   steps,
+  onPanelToggle,
 }: VoiceAssistantProps) {
   const agentId = process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID
   if (!agentId) return null
@@ -130,6 +125,7 @@ export function VoiceAssistant({
     values={values}
     currentStep={currentStep}
     steps={steps}
+    onPanelToggle={onPanelToggle}
   />
 }
 
@@ -140,8 +136,14 @@ function VoiceAssistantInner({
   goToStep,
   values,
   steps,
+  onPanelToggle,
 }: VoiceAssistantProps & { agentId: string }) {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpenState] = useState(false)
+
+  const setIsOpen = useCallback((open: boolean) => {
+    setIsOpenState(open)
+    onPanelToggle?.(open)
+  }, [onPanelToggle])
   const [isConnected, setIsConnected] = useState(false)
   const [isSpeaking, setIsSpeaking] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
@@ -278,31 +280,30 @@ function VoiceAssistantInner({
         <span className="hidden sm:inline">Assisted Setup</span>
       </Button>
 
-      {/* Voice panel */}
-      <Sheet open={isOpen} onOpenChange={setIsOpen}>
-        <SheetContent
-          side="left"
-          className="w-full sm:max-w-md flex flex-col overflow-hidden"
-          showCloseButton
-        >
-          <SheetHeader className="px-4 pt-4 pb-2">
+      {/* Side panel — pushes form content, no overlay */}
+      {isOpen && (
+        <div className="fixed top-0 left-0 bottom-0 z-40 w-full sm:w-[380px] border-r bg-background flex flex-col">
+          {/* Header */}
+          <div className="flex items-center justify-between px-4 py-3 border-b shrink-0">
             <div className="flex items-center gap-2">
-              <SheetTitle className="text-base">Voice Assistant</SheetTitle>
+              <span className="text-sm font-semibold">Voice Assistant</span>
               {isConnected && (
                 <Badge variant={isMuted ? "outline" : isSpeaking ? "default" : "secondary"} className="text-xs">
                   {isMuted ? "Paused" : isSpeaking ? "Speaking" : "Listening"}
                 </Badge>
               )}
             </div>
-          </SheetHeader>
+            <Button variant="ghost" size="icon" className="size-7" onClick={() => setIsOpen(false)} aria-label="Close">
+              <X aria-hidden="true" className="size-4" />
+            </Button>
+          </div>
 
-          {/* Transcript — min-h-0 allows flex-1 to shrink and scroll */}
-          <ScrollArea className="flex-1 min-h-0 px-4" ref={scrollRef}>
+          {/* Transcript */}
+          <div className="flex-1 min-h-0 overflow-y-auto px-4" ref={scrollRef}>
             <div className="flex flex-col gap-3 py-4">
               {transcript.length === 0 && !isConnected && (
                 <p className="text-sm text-muted-foreground text-center py-8">
-                  Click the button below to start a voice conversation.
-                  The assistant will guide you through the form.
+                  Start a voice conversation. The assistant will guide you through the form.
                 </p>
               )}
               {transcript.map((entry, i) => (
@@ -325,7 +326,7 @@ function VoiceAssistantInner({
                 </div>
               )}
             </div>
-          </ScrollArea>
+          </div>
 
           {/* Error display */}
           {error && (
@@ -335,50 +336,29 @@ function VoiceAssistantInner({
           )}
 
           {/* Controls */}
-          <div className="border-t px-4 py-3 flex items-center justify-center gap-3">
+          <div className="border-t px-4 py-3 flex items-center justify-center gap-3 shrink-0">
             {!isConnected ? (
-              <Button
-                onClick={startConversation}
-                className="gap-2"
-                size="lg"
-              >
+              <Button onClick={startConversation} className="gap-2" size="lg">
                 <Phone aria-hidden="true" className="size-4" />
                 Start Conversation
               </Button>
             ) : (
               <>
-                <Button
-                  onClick={toggleMute}
-                  variant="outline"
-                  className="gap-2"
-                  size="lg"
-                >
+                <Button onClick={toggleMute} variant="outline" className="gap-2" size="lg">
                   {isMuted ? (
-                    <>
-                      <Play aria-hidden="true" className="size-4" />
-                      Resume
-                    </>
+                    <><Play aria-hidden="true" className="size-4" /> Resume</>
                   ) : (
-                    <>
-                      <Pause aria-hidden="true" className="size-4" />
-                      Pause
-                    </>
+                    <><Pause aria-hidden="true" className="size-4" /> Pause</>
                   )}
                 </Button>
-                <Button
-                  onClick={endConversation}
-                  variant="destructive"
-                  className="gap-2"
-                  size="lg"
-                >
-                  <PhoneOff aria-hidden="true" className="size-4" />
-                  End
+                <Button onClick={endConversation} variant="destructive" className="gap-2" size="lg">
+                  <PhoneOff aria-hidden="true" className="size-4" /> End
                 </Button>
               </>
             )}
           </div>
-        </SheetContent>
-      </Sheet>
+        </div>
+      )}
     </>
   )
 }
