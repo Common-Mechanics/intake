@@ -36,6 +36,8 @@ interface FieldRendererProps {
   allValues?: Record<string, unknown>
   /** Called on blur with the field ID for per-field validation */
   onBlur?: (fieldId: string) => void
+  /** Full errors map — passed to repeating groups for sub-field errors */
+  allErrors?: Record<string, string>
 }
 
 /**
@@ -66,6 +68,7 @@ export function FieldRenderer({
   disabled,
   allValues = {},
   onBlur,
+  allErrors = {},
 }: FieldRendererProps) {
   const handleBlur = () => onBlur?.(field.id)
   // Check conditional visibility
@@ -159,6 +162,7 @@ export function FieldRenderer({
           value={(value as Record<string, unknown>[]) ?? []}
           onChange={onChange as (v: Record<string, unknown>[]) => void}
           error={error}
+          allErrors={allErrors}
           disabled={disabled}
           validation={field.validation as {
             minItems?: number

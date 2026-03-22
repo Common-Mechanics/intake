@@ -122,6 +122,7 @@ export function StepRenderer({
             value={values[field.id]}
             onChange={handleFieldChange(field.id)}
             error={errors[field.id]}
+            allErrors={errors}
             disabled={disabled || isSkipped}
             allValues={values}
             onBlur={onFieldBlur}

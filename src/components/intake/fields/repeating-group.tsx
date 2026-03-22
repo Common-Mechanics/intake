@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useState } from "react"
+import { useCallback, useState, useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Label } from "@/components/ui/label"
@@ -44,6 +44,8 @@ interface RepeatingGroupProps {
   value: Record<string, unknown>[]
   onChange: (value: Record<string, unknown>[]) => void
   error?: string
+  /** Full errors map from wizard — contains nested keys like "categories.0.short_label" */
+  allErrors?: Record<string, string>
   disabled?: boolean
   validation?: RepeatingGroupValidation
   batchInput?: BatchInputConfig
@@ -57,6 +59,7 @@ export function RepeatingGroup({
   value = [],
   onChange,
   error,
+  allErrors = {},
   disabled,
   validation,
   batchInput,
@@ -152,6 +155,50 @@ export function RepeatingGroup({
     entries.length > validation.warnAbove &&
     validation.warnMessage
 
+  /* Client-side uniqueness and duplicate tag validation */
+  const duplicateErrors = useMemo(() => {
+    const errors: Record<string, string> = {}
+    if (entries.length < 2) return errors
+
+    /* Check uniqueness across entries for text fields */
+    for (const field of fields) {
+      if (field.type !== "text") continue
+      const seen = new Map<string, number>() // value → first index
+      for (let i = 0; i < entries.length; i++) {
+        const val = (entries[i][field.id] as string)?.trim().toLowerCase()
+        if (!val) continue
+        if (seen.has(val)) {
+          errors[`${id}.${i}.${field.id}`] = `Duplicate — "${entries[i][field.id]}" is already used in entry ${(seen.get(val) ?? 0) + 1}`
+        } else {
+          seen.set(val, i)
+        }
+      }
+    }
+
+    /* Check for duplicate tags within comma-separated fields */
+    for (let i = 0; i < entries.length; i++) {
+      for (const field of fields) {
+        const val = entries[i][field.id] as string
+        if (!val || field.type !== "text") continue
+        if (!val.includes(",")) continue // only check comma-separated fields
+        const tags = val.split(",").map((t) => t.trim().toLowerCase()).filter(Boolean)
+        const uniqueTags = new Set(tags)
+        if (uniqueTags.size < tags.length) {
+          const dupes = tags.filter((t, idx) => tags.indexOf(t) !== idx)
+          const uniqueDupes = [...new Set(dupes)]
+          errors[`${id}.${i}.${field.id}`] = `Duplicate tags: ${uniqueDupes.join(", ")}`
+        }
+      }
+    }
+
+    return errors
+  }, [entries, fields, id])
+
+  /* Merge server errors with client-side duplicate errors */
+  const mergedErrors = useMemo(() => {
+    return { ...allErrors, ...duplicateErrors }
+  }, [allErrors, duplicateErrors])
+
   return (
     <div className={cn(
       "flex flex-col gap-4 rounded-lg",
@@ -172,7 +219,13 @@ export function RepeatingGroup({
       </div>
 
       {error && (
-        <p id={`${id}-error`} role="alert" className="text-sm text-destructive">{error}</p>
+        <div id={`${id}-error`} role="alert" className="text-sm text-destructive flex flex-col gap-1">
+          <p>{error}</p>
+          {/* Show count-specific help when below minimum */}
+          {validation?.minItems && entries.length < validation.minItems && (
+            <p className="text-xs">You have {entries.length} — add at least {validation.minItems - entries.length} more</p>
+          )}
+        </div>
       )}
 
       <div className="flex flex-col gap-2">
@@ -182,12 +235,23 @@ export function RepeatingGroup({
           const itemTitle = firstFieldValue?.trim() ? firstFieldValue.trim() : `New ${singularLabel}`
           const isOpen = expanded.has(index)
 
+          /* Collect sub-field errors for this entry from both server + duplicate checks */
+          const entryErrors: Record<string, string> = {}
+          const prefix = `${id}.${index}.`
+          for (const [key, msg] of Object.entries(mergedErrors)) {
+            if (key.startsWith(prefix)) {
+              entryErrors[key.slice(prefix.length)] = msg
+            }
+          }
+          const hasEntryErrors = Object.keys(entryErrors).length > 0
+
           return (
             <div
               key={index}
               className={cn(
                 "border rounded-lg overflow-hidden transition-colors",
-                disabled && "opacity-50"
+                disabled && "opacity-50",
+                hasEntryErrors && "border-destructive/50"
               )}
             >
               {/* Accordion header — always visible */}
@@ -200,7 +264,15 @@ export function RepeatingGroup({
                   isOpen && "rotate-180"
                 )} />
                 <Badge variant="secondary" className="font-mono text-xs shrink-0">{index + 1}</Badge>
-                <span className="text-sm font-medium truncate flex-1">{itemTitle}</span>
+                <span className={cn(
+                  "text-sm font-medium truncate flex-1",
+                  hasEntryErrors && "text-destructive"
+                )}>{itemTitle}</span>
+                {hasEntryErrors && !isOpen && (
+                  <span className="text-xs text-destructive shrink-0">
+                    {Object.keys(entryErrors).length} {Object.keys(entryErrors).length === 1 ? "issue" : "issues"}
+                  </span>
+                )}
                 <Button
                   type="button"
                   variant="ghost"
@@ -224,6 +296,7 @@ export function RepeatingGroup({
                         field={field}
                         value={entry[field.id]}
                         onChange={(val) => handleEntryChange(index, field.id, val)}
+                        error={entryErrors[field.id]}
                         disabled={disabled}
                       />
                     ))}

@@ -128,14 +128,21 @@ export function buildStepValidator(
 
 /**
  * Validates a step's data against its field definitions.
- * Returns a map of field_id -> error_message, or null if everything is valid.
+ * Returns a map of error keys -> error messages, or null if valid.
+ *
+ * Error keys can be:
+ * - "field_id" — top-level field error
+ * - "field_id" — repeating group count error (e.g. "Add at least 3")
+ * - "field_id.0.sub_field" — error on a sub-field inside a repeating entry
+ *
+ * This allows the UI to show errors on individual sub-fields within
+ * repeating groups, not just a generic group-level message.
  */
 export function validateStep(
   fields: FieldDef[],
   data: Record<string, unknown>,
   allData?: Record<string, unknown>
 ): Record<string, string> | null {
-  // Merge step data into allData so conditions can reference same-step fields
   const merged = { ...(allData ?? {}), ...data }
   const schema = buildStepValidator(fields, merged)
   const result = schema.safeParse(data)
@@ -144,11 +151,30 @@ export function validateStep(
 
   const errors: Record<string, string> = {}
   for (const issue of result.error.issues) {
-    // Use the first path segment as the field id
+    // Build a dotted key from the full path: "categories.0.short_label"
+    const fullKey = issue.path.join(".")
+    // Also keep the top-level field ID for group-level display
     const fieldId = String(issue.path[0] ?? "unknown")
-    // Keep first error per field (don't overwrite)
-    if (!errors[fieldId]) {
-      errors[fieldId] = issue.message
+
+    if (issue.path.length >= 3) {
+      // Sub-field error inside a repeating group: categories.0.short_label
+      if (!errors[fullKey]) {
+        errors[fullKey] = issue.message
+      }
+      // Also set a group-level summary if not already set
+      if (!errors[fieldId]) {
+        errors[fieldId] = "Some entries have missing or invalid fields"
+      }
+    } else if (issue.path.length === 1) {
+      // Top-level field error or repeating group count error
+      if (!errors[fieldId]) {
+        errors[fieldId] = issue.message
+      }
+    } else {
+      // Other nested paths
+      if (!errors[fullKey]) {
+        errors[fullKey] = issue.message
+      }
     }
   }
 
