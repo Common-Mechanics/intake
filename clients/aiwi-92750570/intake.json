@@ -2,9 +2,86 @@
   "schemaId": "ai-dossier-intake",
   "schemaVersion": 1,
   "orgId": "aiwi-92750570",
-  "orgName": "aiwi",
-  "data": {},
+  "orgName": "Testiko",
+  "data": {
+    "publication_name": "Testiko",
+    "full_title": "Testiko publishing",
+    "tagline": "Blabla",
+    "site_url": "abc.de",
+    "publisher_name": "AIWI",
+    "publisher_url": "abc.de",
+    "audience_description": "proleten",
+    "publication_type": "hot takes",
+    "topic_label": "whistling",
+    "key_question": "Why is this important to the ai community?",
+    "community_label": "the whistleblowing ",
+    "reader_profile": "Drunk pirates",
+    "categories": [
+      {
+        "short_label": "Policy",
+        "full_name": "Super Duper Policy",
+        "slug": "policy",
+        "auto_tags": "mega, policy"
+      },
+      {
+        "short_label": "test2",
+        "full_name": "Ralf",
+        "auto_tags": "fumpy, dumpy"
+      },
+      {
+        "short_label": "Policy2",
+        "full_name": "jajaja",
+        "auto_tags": "oh,my,god"
+      }
+    ],
+    "editors": [
+      {
+        "editor_name": "Editor 1",
+        "category": "test2",
+        "is_spotlight": false,
+        "expertise": "You are [Editor Title] — an expert in [your domain area]. You specialize in:\n\n- [Sub-area 1: e.g. international policy, regulatory frameworks]\n- [Sub-area 2: e.g. industry standards, compliance]\n- [Sub-area 3: e.g. enforcement, legal precedents]\n\nYou notice when [what makes this editor's perspective unique — e.g. 'policy language signals real commitment vs. performative gestures']. You track [key organizations or processes this editor follows]."
+      },
+      {
+        "editor_name": "Editor 2",
+        "category": "policy2",
+        "is_spotlight": false,
+        "expertise": "You are [Editor Title] — an expert in [your domain area]. You specialize in:\n\n- [Sub-area 1: e.g. market trends, financial instruments]\n- [Sub-area 2: e.g. investment patterns, risk analysis]\n- [Sub-area 3: e.g. emerging technologies, disruptions]\n\nYou notice when [what makes this editor's perspective unique — e.g. 'a technical announcement has real commercial implications']. You track [key organizations or processes this editor follows]."
+      },
+      {
+        "editor_name": "Editor 3",
+        "category": "policy",
+        "is_spotlight": false,
+        "expertise": "You are [Editor Title] — an expert in [your domain area]. You specialize in:\n\n- [Sub-area 1: e.g. research publications, data analysis]\n- [Sub-area 2: e.g. methodology, peer review]\n- [Sub-area 3: e.g. public communication, media coverage]\n\nYou notice when [what makes this editor's perspective unique — e.g. 'a study's methodology is flawed despite impressive headlines']. You track [key organizations or processes this editor follows]."
+      },
+      {
+        "editor_name": "Spotlight Editor",
+        "category": "spotlight",
+        "is_spotlight": true,
+        "expertise": "You are the Spotlight Editor. Your job is to find the most interesting, surprising, or entertaining content related to the publication's topic — podcasts worth listening to, videos worth watching, demos worth trying, and stories that make people smile or think differently.\n\nYou look for:\n- Notable podcast episodes and interviews\n- Compelling video content and documentaries\n- Interactive demos, tools, and visualizations\n- Unusual angles, human interest stories, and cultural moments\n\nYou notice when something is genuinely interesting to a curious professional, not just technically relevant."
+      }
+    ],
+    "tracker_name": "1",
+    "tracker_subtitle": "1",
+    "positive_signal_label": "1",
+    "negative_signal_label": "1",
+    "tracker_nav_label": "1",
+    "what_positive_means": "1",
+    "what_negative_means": "1",
+    "fallback_sentiment_question": "1",
+    "scoring_positive": "1",
+    "scoring_negative": "1",
+    "scoring_neutral": "1",
+    "sentiment_rules": [
+      {
+        "category_group": "",
+        "category_group_key": "",
+        "when_this_happens": "",
+        "default_sentiment": "",
+        "because": ""
+      }
+    ]
+  },
   "skippedSections": [],
   "completedSteps": [],
-  "lastSaved": "2026-03-22T00:57:02.325Z"
+  "lastSaved": "2026-03-22T01:51:07.249Z"
 }
