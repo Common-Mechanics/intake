@@ -75,11 +75,6 @@
       "policy": [
         {
           "when_this_happens": "",
-          "default_sentiment": "positive",
-          "because": ""
-        },
-        {
-          "when_this_happens": "",
           "default_sentiment": "",
           "because": ""
         }
@@ -145,5 +140,5 @@
     "organizations-and-topics",
     "sources"
   ],
-  "lastSaved": "2026-03-22T03:33:19.664Z"
+  "lastSaved": "2026-03-22T03:40:49.143Z"
 }
