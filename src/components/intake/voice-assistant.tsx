@@ -181,6 +181,7 @@ export function VoiceAssistant({
     transcript: [], error: null,
   })
   const [isStarting, setIsStarting] = useState(false)
+  const isPausingRef = useRef(false) // true when we're intentionally pausing (not an unexpected disconnect)
   const conversationRef = useRef<ConversationHandle | null>(null)
   const valuesRef = useRef(values); valuesRef.current = values
   const stepsRef = useRef(steps); stepsRef.current = steps
@@ -266,9 +267,16 @@ export function VoiceAssistant({
           playTone("connect")
         },
         onDisconnect: () => {
-          setVoice(prev => ({ ...prev, isConnected: false, isSpeaking: false, isMuted: false }))
           conversationRef.current = null
-          playTone("disconnect")
+          if (isPausingRef.current) {
+            /* Intentional pause — keep isMuted true, don't play disconnect sound */
+            isPausingRef.current = false
+            setVoice(prev => ({ ...prev, isConnected: false, isSpeaking: false }))
+          } else {
+            /* Unexpected disconnect or user ended the call */
+            setVoice(prev => ({ ...prev, isConnected: false, isSpeaking: false, isMuted: false }))
+            playTone("disconnect")
+          }
         },
         onError: (err: unknown) => {
           setVoice(prev => ({ ...prev, error: err instanceof Error ? err.message : String(err), isConnected: false }))
@@ -316,7 +324,8 @@ export function VoiceAssistant({
         )
       }, 500)
     } else {
-      /* Pause — fully end the session */
+      /* Pause — set flag so onDisconnect knows this is intentional */
+      isPausingRef.current = true
       try { await conversationRef.current?.endSession() } catch { /* ignore */ }
       conversationRef.current = null
       isStartingRef.current = false
