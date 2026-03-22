@@ -86,7 +86,8 @@ export function RepeatingGroup({
   const fieldCount = fields.length
   const mode = fieldCount <= 1 ? "inline" : fieldCount <= 3 ? "compact" : "accordion"
 
-  const [expanded, setExpanded] = useState<Set<number>>(() => new Set(entries.map((_, i) => i)))
+  /* Only first entry open by default — less overwhelming initial impression */
+  const [expanded, setExpanded] = useState<Set<number>>(() => new Set(entries.length > 0 ? [0] : []))
 
   const toggleExpanded = useCallback((index: number) => {
     setExpanded((prev) => {
