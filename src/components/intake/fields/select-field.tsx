@@ -64,7 +64,7 @@ export function SelectField({
           aria-invalid={!!error}
           aria-describedby={error ? `${id}-error` : help ? `${id}-help` : undefined}
           className={cn(
-            "w-full min-h-12",
+            "w-full min-h-10",
             error && "border-destructive ring-3 ring-destructive/20"
           )}
         >
@@ -95,7 +95,9 @@ export function SelectField({
         <p id={`${id}-error`} role="alert" className="text-sm font-medium text-destructive">{error}</p>
       )}
       {help && (
-        <div id={`${id}-help`}>
+        /* md:sr-only: on desktop, help is shown in the sidebar (aria-hidden there).
+           Here it stays accessible via aria-describedby but visually hidden on md+. */
+        <div id={`${id}-help`} className="md:sr-only">
           <HelpTooltip text={help} />
         </div>
       )}

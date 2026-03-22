@@ -28,7 +28,7 @@ export function ProgressBar({
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  /* Close dropdown on outside click */
+  /* Close dropdown on outside click or Escape */
   useEffect(() => {
     if (!dropdownOpen) return
     function handleClick(e: MouseEvent) {
@@ -36,8 +36,15 @@ export function ProgressBar({
         setDropdownOpen(false)
       }
     }
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") setDropdownOpen(false)
+    }
     document.addEventListener("mousedown", handleClick)
-    return () => document.removeEventListener("mousedown", handleClick)
+    document.addEventListener("keydown", handleKeyDown)
+    return () => {
+      document.removeEventListener("mousedown", handleClick)
+      document.removeEventListener("keydown", handleKeyDown)
+    }
   }, [dropdownOpen])
 
   const currentStepDef = steps[currentStep]
@@ -73,6 +80,9 @@ export function ProgressBar({
         <button
           type="button"
           onClick={() => setDropdownOpen(!dropdownOpen)}
+          aria-expanded={dropdownOpen}
+          aria-haspopup="listbox"
+          aria-label={`Step ${currentStep + 1} of ${totalSteps}: ${currentStepDef.title}. Open step menu`}
           className="flex items-center gap-2 w-full min-h-[36px] px-3 py-1.5 rounded-md hover:bg-accent transition-colors"
         >
           <span className="text-sm font-medium tabular-nums text-muted-foreground shrink-0">

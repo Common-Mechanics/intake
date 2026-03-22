@@ -45,7 +45,7 @@ export function StepNav({
             variant="outline"
             onClick={onPrev}
             disabled={!canGoPrev}
-            className="min-h-[48px] min-w-[48px] gap-1.5"
+            className="min-h-11 min-w-[48px] gap-1.5"
           >
             <ChevronLeft className="size-4" data-icon="inline-start" />
             <span className="hidden sm:inline">Back</span>
@@ -63,7 +63,7 @@ export function StepNav({
         {isLastStep ? (
           <Button
             onClick={onSave}
-            className="min-h-[48px] gap-1.5 font-semibold"
+            className="min-h-11 gap-1.5 font-semibold"
           >
             <Save className="size-4" data-icon="inline-start" />
             <span>Save & Complete</span>
@@ -71,7 +71,7 @@ export function StepNav({
         ) : (
           <Button
             onClick={onNext}
-            className="min-h-[48px] min-w-[48px] gap-1.5"
+            className="min-h-11 min-w-[48px] gap-1.5"
           >
             <span className="hidden sm:inline">Next</span>
             <ChevronRight className="size-4" data-icon="inline-end" />

@@ -319,6 +319,7 @@ export function RepeatingGroup({
                     className="size-6 shrink-0 text-muted-foreground hover:text-destructive"
                     onClick={() => handleRemove(index)}
                     disabled={!canRemove || disabled}
+                    aria-label={`Remove entry ${index + 1}`}
                   >
                     <X className="size-3" />
                   </Button>
@@ -413,9 +414,11 @@ export function RepeatingGroup({
                   hasEntryErrors && "border-destructive/50"
                 )}
               >
-                <div
-                  className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-accent/50 transition-colors"
+                <button
+                  type="button"
+                  className="flex items-center gap-2 px-3 py-2 w-full text-left cursor-pointer hover:bg-accent/50 transition-colors"
                   onClick={() => toggleExpanded(index)}
+                  aria-expanded={isOpen}
                 >
                   <ChevronDown className={cn(
                     "size-3.5 text-muted-foreground shrink-0 transition-transform",
@@ -443,7 +446,7 @@ export function RepeatingGroup({
                   >
                     <X className="size-3" />
                   </Button>
-                </div>
+                </button>
 
                 {isOpen && (
                   <div className="px-3 pb-3 pt-2 border-t">
@@ -484,7 +487,7 @@ export function RepeatingGroup({
           variant="outline"
           onClick={handleAdd}
           disabled={!canAdd || disabled}
-          className="w-full h-9 text-sm"
+          className="self-start h-9 text-sm"
         >
           <Plus className="size-3.5" />
           Add {singularLabel}

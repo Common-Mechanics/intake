@@ -66,7 +66,9 @@ export function TextareaField({
       )}
       <div className="flex justify-between gap-4">
         {help && (
-          <div id={`${id}-help`} className="flex-1">
+          /* md:sr-only: on desktop, help is shown in the sidebar (aria-hidden there).
+             Here it stays accessible via aria-describedby but visually hidden on md+. */
+          <div id={`${id}-help`} className="flex-1 md:sr-only">
             <HelpTooltip text={help} />
           </div>
         )}

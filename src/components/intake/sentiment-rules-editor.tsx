@@ -31,17 +31,17 @@ const SENTIMENT_OPTIONS = [
   {
     value: "positive",
     label: "Positive",
-    selectedClass: "bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-700",
+    selectedClass: "bg-emerald-600 text-white dark:bg-emerald-500",
   },
   {
     value: "negative",
     label: "Negative",
-    selectedClass: "bg-red-100 text-red-700 border-red-300 dark:bg-red-900/30 dark:text-red-300 dark:border-red-700",
+    selectedClass: "bg-red-600 text-white dark:bg-red-500",
   },
   {
     value: "neutral",
     label: "Neutral",
-    selectedClass: "bg-muted text-muted-foreground border-border",
+    selectedClass: "bg-foreground text-background",
   },
 ] as const
 
@@ -136,21 +136,22 @@ export function SentimentRulesEditor({
 
                     {/* Right: sentiment pills + because + remove */}
                     <div className="flex flex-col gap-2 md:w-[220px]">
-                      {/* Sentiment pill selector */}
+                      {/* Sentiment segmented control */}
                       <div>
                         <label className="text-xs text-muted-foreground mb-1 block">Sentiment</label>
-                        <div className="flex gap-1">
+                        <div className="inline-flex rounded-lg border border-input bg-muted p-0.5 gap-0.5">
                           {SENTIMENT_OPTIONS.map((opt) => (
                             <button
                               key={opt.value}
                               type="button"
                               disabled={disabled}
                               onClick={() => updateRule(category.value, ruleIdx, "default_sentiment", opt.value)}
+                              aria-pressed={rule.default_sentiment === opt.value}
                               className={cn(
-                                "px-2.5 py-1 text-xs font-medium rounded-md border transition-colors",
+                                "px-3 py-1.5 text-xs font-medium rounded-md transition-colors",
                                 rule.default_sentiment === opt.value
                                   ? opt.selectedClass
-                                  : "border-border text-muted-foreground hover:bg-muted"
+                                  : "text-muted-foreground hover:text-foreground"
                               )}
                             >
                               {opt.label}
@@ -176,6 +177,7 @@ export function SentimentRulesEditor({
                           size="icon-xs"
                           onClick={() => removeRule(category.value, ruleIdx)}
                           disabled={disabled}
+                          aria-label="Remove rule"
                           className="shrink-0 text-muted-foreground hover:text-destructive mb-0.5"
                         >
                           <X className="size-3.5" />
@@ -193,11 +195,11 @@ export function SentimentRulesEditor({
               rules.length > 0 && "border-t border-dashed border-border/60"
             )}>
               <Button
-                variant="ghost"
+                variant="outline"
                 size="sm"
                 onClick={() => addRule(category.value)}
                 disabled={disabled}
-                className="text-muted-foreground"
+                className="self-start"
               >
                 <Plus className="size-3.5" />
                 Add rule

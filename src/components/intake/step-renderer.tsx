@@ -87,7 +87,7 @@ export function StepRenderer({
   }
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6">
       {/* ── STEP HEADER ── */}
       <div className="flex flex-col gap-4">
         <h2
@@ -125,7 +125,7 @@ export function StepRenderer({
 
       {/* ── FIELD SECTIONS ── */}
       <div className={cn(
-        "flex flex-col gap-10 transition-opacity duration-200",
+        "flex flex-col gap-8 transition-opacity duration-200",
         isSkipped && "pointer-events-none opacity-40"
       )}>
         {sections.map((section, sectionIdx) => (
@@ -141,7 +141,7 @@ export function StepRenderer({
             )}
 
             {/* Fields — each field is a row with help text on the right */}
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-5">
               {section.fields.map((field) => {
                 const hasHelp = !!field.help
                 const isWideType = field.type === "repeating" || field.type === "custom"
@@ -155,13 +155,18 @@ export function StepRenderer({
                       !isWideType && "md:flex-row md:gap-8"
                     )}
                   >
-                    {/* The field itself */}
+                    {/* The field itself.
+                        For simple fields (not repeating/custom): pass help through so
+                        aria-describedby works. The HelpTooltip inside the field is
+                        md:sr-only so it stays accessible but the sidebar shows it visually.
+                        For wide types (repeating/custom): strip help to avoid duplicating
+                        what the field component already renders internally. */}
                     <div className={cn(
                       "min-w-0",
                       !isWideType ? "md:flex-[3]" : "w-full"
                     )}>
                       <FieldRenderer
-                        field={{ ...field, help: undefined }}
+                        field={isWideType ? { ...field, help: undefined } : field}
                         value={values[field.id]}
                         onChange={handleFieldChange(field.id)}
                         error={errors[field.id]}
@@ -172,12 +177,17 @@ export function StepRenderer({
                       />
                     </div>
 
-                    {/* Help text — right side on desktop, below on mobile */}
+                    {/* Help text sidebar — visible on desktop alongside the field.
+                        aria-hidden: the field component already renders help with
+                        the correct id for aria-describedby. This is purely visual. */}
                     {hasHelp && !isWideType && (
-                      <p className={cn(
-                        "text-[13px] leading-relaxed text-muted-foreground",
-                        "md:flex-[2] md:pt-7"
-                      )}>
+                      <p
+                        aria-hidden="true"
+                        className={cn(
+                          "text-[13px] leading-relaxed text-muted-foreground",
+                          "md:flex-[2] md:pt-7"
+                        )}
+                      >
                         {field.help}
                       </p>
                     )}
