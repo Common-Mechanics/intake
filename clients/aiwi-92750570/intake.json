@@ -137,6 +137,11 @@
       {
         "handle": ""
       }
+    ],
+    "linkedin_urls": [
+      {
+        "url": ""
+      }
     ]
   },
   "skippedSections": [],
@@ -149,5 +154,5 @@
     "sentiment-rules",
     "social-profiles"
   ],
-  "lastSaved": "2026-03-22T02:45:56.522Z"
+  "lastSaved": "2026-03-22T02:46:08.103Z"
 }
