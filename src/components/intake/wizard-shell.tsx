@@ -24,6 +24,7 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
   const wizard = useWizard(schema, initialData, orgId)
   const stepHeadingRef = useRef<HTMLHeadingElement>(null)
   const [voicePanelOpen, setVoicePanelOpen] = useState(false)
+  const [voiceConnected, setVoiceConnected] = useState(false)
 
   const scrollToFirstError = useCallback(() => {
     setTimeout(() => {
@@ -308,6 +309,7 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
         currentStep={wizard.currentStep}
         steps={schema.steps}
         onPanelToggle={setVoicePanelOpen}
+        onConnectionChange={setVoiceConnected}
         isOpen={voicePanelOpen}
       />
     <div className="flex-1 flex flex-col min-w-0">
@@ -317,7 +319,7 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
           <div className="flex items-center justify-between px-4 pt-3 pb-0">
             <h1 className="text-base font-semibold tracking-tight">Onboarding Form</h1>
             <div className="flex items-center gap-1">
-              <VoiceAssistantTrigger isOpen={voicePanelOpen} onToggle={() => setVoicePanelOpen(!voicePanelOpen)} />
+              <VoiceAssistantTrigger isOpen={voicePanelOpen} isConnected={voiceConnected} onToggle={() => setVoicePanelOpen(!voicePanelOpen)} />
               <SettingsPopover />
             </div>
           </div>

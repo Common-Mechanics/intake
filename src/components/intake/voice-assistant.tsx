@@ -1,11 +1,34 @@
 "use client"
 
 import { useState, useCallback, useRef, useEffect } from "react"
-import { Mic, Phone, PhoneOff, Pause, Play, X } from "lucide-react"
+import { Mic, Phone, PhoneOff, Pause, Play, X, GripHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import type { StepDef } from "@/lib/intake/schemas"
+
+/* ── Types ── */
+
+interface TranscriptEntry {
+  role: "user" | "assistant"
+  text: string
+  timestamp: number
+}
+
+interface ConversationHandle {
+  endSession: () => Promise<void>
+  setMicMuted: (muted: boolean) => void
+  setVolume: (opts: { volume: number }) => void
+  sendContextualUpdate: (text: string) => void
+}
+
+interface VoiceState {
+  isConnected: boolean
+  isSpeaking: boolean
+  isMuted: boolean
+  transcript: TranscriptEntry[]
+  error: string | null
+}
 
 interface VoiceAssistantProps {
   setFieldValue: (stepId: string, fieldId: string, value: unknown) => void
@@ -14,107 +37,63 @@ interface VoiceAssistantProps {
   currentStep: number
   steps: StepDef[]
   onPanelToggle?: (isOpen: boolean) => void
-  /** Whether the panel should be visible */
+  onConnectionChange?: (isConnected: boolean) => void
   isOpen?: boolean
 }
 
-interface TranscriptEntry {
-  role: "user" | "assistant"
-  text: string
-  timestamp: number
-}
+/* ── Helpers ── */
 
-/** Play a short synthesized tone via Web Audio API */
 function playTone(type: "connect" | "disconnect") {
   try {
     const ctx = new AudioContext()
     const gain = ctx.createGain()
     gain.connect(ctx.destination)
     gain.gain.value = 0.15
-
     if (type === "connect") {
-      const o1 = ctx.createOscillator()
-      o1.type = "sine"
-      o1.frequency.value = 660
-      o1.connect(gain)
-      o1.start(ctx.currentTime)
-      o1.stop(ctx.currentTime + 0.1)
-
-      const o2 = ctx.createOscillator()
-      o2.type = "sine"
-      o2.frequency.value = 880
-      o2.connect(gain)
-      o2.start(ctx.currentTime + 0.12)
-      o2.stop(ctx.currentTime + 0.22)
-
+      const o1 = ctx.createOscillator(); o1.type = "sine"; o1.frequency.value = 660; o1.connect(gain); o1.start(ctx.currentTime); o1.stop(ctx.currentTime + 0.1)
+      const o2 = ctx.createOscillator(); o2.type = "sine"; o2.frequency.value = 880; o2.connect(gain); o2.start(ctx.currentTime + 0.12); o2.stop(ctx.currentTime + 0.22)
       setTimeout(() => ctx.close(), 300)
     } else {
-      const o1 = ctx.createOscillator()
-      o1.type = "sine"
-      o1.frequency.value = 440
-      o1.connect(gain)
-      o1.start(ctx.currentTime)
-      o1.stop(ctx.currentTime + 0.12)
-
-      const o2 = ctx.createOscillator()
-      o2.type = "sine"
-      o2.frequency.value = 294
-      o2.connect(gain)
-      o2.start(ctx.currentTime + 0.15)
-      o2.stop(ctx.currentTime + 0.3)
-
+      const o1 = ctx.createOscillator(); o1.type = "sine"; o1.frequency.value = 440; o1.connect(gain); o1.start(ctx.currentTime); o1.stop(ctx.currentTime + 0.12)
+      const o2 = ctx.createOscillator(); o2.type = "sine"; o2.frequency.value = 294; o2.connect(gain); o2.start(ctx.currentTime + 0.15); o2.stop(ctx.currentTime + 0.3)
       setTimeout(() => ctx.close(), 400)
     }
-  } catch { /* AudioContext not available */ }
+  } catch { /* noop */ }
 }
 
-/** Briefly highlight a form field when the assistant fills it */
 function highlightField(fieldId: string) {
   const el = document.getElementById(fieldId)
   if (!el) return
   el.scrollIntoView({ behavior: "smooth", block: "center" })
   el.classList.add("ring-2", "ring-primary", "transition-shadow")
-  setTimeout(() => {
-    el.classList.remove("ring-2", "ring-primary", "transition-shadow")
-  }, 2000)
+  setTimeout(() => el.classList.remove("ring-2", "ring-primary", "transition-shadow"), 2000)
 }
 
-/** Build a progress summary for the get_current_progress tool */
-function buildProgressSummary(
-  values: Record<string, Record<string, unknown>>,
-  steps: StepDef[]
-): string {
+function buildProgressSummary(values: Record<string, Record<string, unknown>>, steps: StepDef[]): string {
   const summary: string[] = []
   for (const step of steps) {
-    const stepValues = values[step.id] ?? {}
-    const filled: string[] = []
-    const empty: string[] = []
-    for (const field of step.fields) {
-      if (field.type === "section") continue
-      const val = stepValues[field.id]
-      const hasVal = val !== undefined && val !== null && val !== "" &&
-        !(Array.isArray(val) && val.length === 0)
-      if (hasVal) filled.push(field.id)
-      else empty.push(field.id)
+    const sv = values[step.id] ?? {}
+    const filled: string[] = [], empty: string[] = []
+    for (const f of step.fields) {
+      if (f.type === "section") continue
+      const v = sv[f.id]
+      const has = v !== undefined && v !== null && v !== "" && !(Array.isArray(v) && v.length === 0)
+      if (has) filled.push(f.id); else empty.push(f.id)
     }
-    summary.push(
-      `${step.title}: ${filled.length}/${filled.length + empty.length} filled` +
-      (empty.length > 0 ? ` (missing: ${empty.join(", ")})` : " (complete)")
-    )
+    summary.push(`${step.title}: ${filled.length}/${filled.length + empty.length} filled` + (empty.length > 0 ? ` (missing: ${empty.join(", ")})` : " (complete)"))
   }
   return summary.join("\n")
 }
 
-/**
- * Header trigger button — rendered inline in the nav bar.
- * Separate from the panel so it can live in the header while the panel
- * is a flex sibling at the layout level.
- */
+/* ── Header trigger button ── */
+
 export function VoiceAssistantTrigger({
   isOpen,
+  isConnected,
   onToggle,
 }: {
   isOpen: boolean
+  isConnected: boolean
   onToggle: () => void
 }) {
   const agentId = process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID
@@ -125,18 +104,27 @@ export function VoiceAssistantTrigger({
       variant="ghost"
       size="sm"
       onClick={onToggle}
-      className={cn("h-10 gap-1.5 text-xs touch-manipulation", isOpen && "text-primary")}
+      className={cn(
+        "h-10 gap-1.5 text-xs touch-manipulation",
+        isConnected && "bg-emerald-100 text-emerald-700 hover:bg-emerald-200 dark:bg-emerald-950 dark:text-emerald-400 dark:hover:bg-emerald-900",
+        isOpen && !isConnected && "text-primary"
+      )}
     >
-      <Mic aria-hidden="true" className="size-4" />
-      <span className="hidden sm:inline">Assisted Setup</span>
+      {isConnected ? (
+        <span className="relative flex size-2">
+          <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-500 opacity-75" />
+          <span className="relative inline-flex size-2 rounded-full bg-emerald-600" />
+        </span>
+      ) : (
+        <Mic aria-hidden="true" className="size-4" />
+      )}
+      <span className="hidden sm:inline">{isConnected ? "Call Active" : "Assisted Setup"}</span>
     </Button>
   )
 }
 
-/**
- * Voice assistant panel — renders as a flex sibling to the form column.
- * Takes up space in the layout (not an overlay).
- */
+/* ── Main panel component ── */
+
 export function VoiceAssistant({
   setFieldValue,
   goToStep,
@@ -144,62 +132,41 @@ export function VoiceAssistant({
   currentStep,
   steps,
   onPanelToggle,
+  onConnectionChange,
   isOpen,
 }: VoiceAssistantProps) {
   const agentId = process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID
-  if (!agentId) return null
-  if (!isOpen) return null
 
-  return <VoiceAssistantPanel
-    agentId={agentId}
-    setFieldValue={setFieldValue}
-    goToStep={goToStep}
-    values={values}
-    currentStep={currentStep}
-    steps={steps}
-    onPanelToggle={onPanelToggle}
-  />
-}
-
-function VoiceAssistantPanel({
-  agentId,
-  setFieldValue,
-  goToStep,
-  values,
-  steps,
-  onPanelToggle,
-}: VoiceAssistantProps & { agentId: string }) {
-  const [isConnected, setIsConnected] = useState(false)
-  const [isSpeaking, setIsSpeaking] = useState(false)
-  const [isMuted, setIsMuted] = useState(false)
-  const [transcript, setTranscript] = useState<TranscriptEntry[]>([])
-  const [error, setError] = useState<string | null>(null)
+  /* All conversation state lives HERE (persists when panel closes) */
+  const [voice, setVoice] = useState<VoiceState>({
+    isConnected: false, isSpeaking: false, isMuted: false,
+    transcript: [], error: null,
+  })
+  const conversationRef = useRef<ConversationHandle | null>(null)
+  const valuesRef = useRef(values); valuesRef.current = values
+  const stepsRef = useRef(steps); stepsRef.current = steps
   const scrollRef = useRef<HTMLDivElement>(null)
 
-  const valuesRef = useRef(values)
-  valuesRef.current = values
-  const stepsRef = useRef(steps)
-  stepsRef.current = steps
+  /* Notify parent of connection state changes */
+  useEffect(() => {
+    onConnectionChange?.(voice.isConnected)
+  }, [voice.isConnected, onConnectionChange])
 
-  const conversationRef = useRef<{
-    endSession: () => Promise<void>
-    setMicMuted: (muted: boolean) => void
-    setVolume: (opts: { volume: number }) => void
-    sendContextualUpdate: (text: string) => void
-  } | null>(null)
+  /* Auto-scroll transcript */
+  useEffect(() => {
+    if (!scrollRef.current) return
+    scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" })
+  }, [voice.transcript.length])
 
   const addToTranscript = useCallback((role: "user" | "assistant", text: string) => {
-    setTranscript(prev => [...prev, { role, text, timestamp: Date.now() }])
-    setTimeout(() => {
-      scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" })
-    }, 50)
+    setVoice(prev => ({ ...prev, transcript: [...prev.transcript, { role, text, timestamp: Date.now() }] }))
   }, [])
 
   const startConversation = useCallback(async () => {
-    setError(null)
+    if (!agentId) return
+    setVoice(prev => ({ ...prev, error: null }))
     try {
       const { Conversation } = await import("@11labs/client")
-
       const conversation = await Conversation.startSession({
         agentId,
         connectionType: "websocket",
@@ -210,109 +177,139 @@ function VoiceAssistantPanel({
             return "Field updated successfully"
           },
           update_repeating_group: async (params: Record<string, unknown>) => {
-            const entries = params.entries as unknown[]
-            setFieldValue(params.step_id as string, params.field_id as string, entries)
-            return `Updated with ${entries.length} entries`
+            setFieldValue(params.step_id as string, params.field_id as string, params.entries as unknown[])
+            return "Updated"
           },
-          get_current_progress: async () => {
-            return buildProgressSummary(valuesRef.current, stepsRef.current)
-          },
+          get_current_progress: async () => buildProgressSummary(valuesRef.current, stepsRef.current),
           navigate_to_step: async (params: Record<string, unknown>) => {
             goToStep(params.step_index as number)
-            return `Navigated to step ${params.step_index}`
+            return "Navigated"
           },
         },
         onConnect: () => {
-          setIsConnected(true)
-          setError(null)
+          setVoice(prev => ({ ...prev, isConnected: true, error: null }))
           playTone("connect")
         },
         onDisconnect: () => {
-          setIsConnected(false)
-          setIsSpeaking(false)
+          setVoice(prev => ({ ...prev, isConnected: false, isSpeaking: false, isMuted: false }))
           conversationRef.current = null
           playTone("disconnect")
         },
         onError: (err: unknown) => {
-          setError(err instanceof Error ? err.message : String(err))
-          setIsConnected(false)
+          setVoice(prev => ({ ...prev, error: err instanceof Error ? err.message : String(err), isConnected: false }))
         },
         onMessage: (msg: { source: "user" | "ai"; message: string }) => {
           addToTranscript(msg.source === "user" ? "user" : "assistant", msg.message)
         },
         onModeChange: (mode: { mode: "speaking" | "listening" }) => {
-          setIsSpeaking(mode.mode === "speaking")
+          setVoice(prev => ({ ...prev, isSpeaking: mode.mode === "speaking" }))
         },
       })
-
       conversationRef.current = conversation
-
-      /* Immediately send current form state so the agent knows what's
-         already filled and doesn't re-ask completed questions */
       const progress = buildProgressSummary(valuesRef.current, stepsRef.current)
-      conversation.sendContextualUpdate(
-        `[SYSTEM] Current form state — do NOT ask about fields that are already filled. Skip to the first empty required field.\n\n${progress}`
-      )
+      conversation.sendContextualUpdate(`[SYSTEM] Current form state — skip filled fields:\n\n${progress}`)
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err))
+      setVoice(prev => ({ ...prev, error: err instanceof Error ? err.message : String(err) }))
     }
   }, [agentId, setFieldValue, goToStep, addToTranscript])
 
   const endConversation = useCallback(async () => {
     try { await conversationRef.current?.endSession() } catch { /* ignore */ }
     conversationRef.current = null
-    setIsConnected(false)
-    setIsSpeaking(false)
-    setIsMuted(false)
+    setVoice(prev => ({ ...prev, isConnected: false, isSpeaking: false, isMuted: false }))
   }, [])
 
   const toggleMute = useCallback(() => {
     if (!conversationRef.current) return
-    const next = !isMuted
+    const next = !voice.isMuted
     conversationRef.current.setMicMuted(next)
     conversationRef.current.setVolume({ volume: next ? 0 : 1 })
     conversationRef.current.sendContextualUpdate(
-      next
-        ? "[SYSTEM] The user has paused the conversation to work on the form manually. Do NOT speak, do NOT ask questions, do NOT respond until the user resumes. Stay completely silent."
-        : "[SYSTEM] The user has resumed the conversation. Continue where you left off — ask the next question."
+      next ? "[SYSTEM] User paused. Stay silent until resumed." : "[SYSTEM] User resumed. Continue where you left off."
     )
-    setIsMuted(next)
-  }, [isMuted])
+    setVoice(prev => ({ ...prev, isMuted: next }))
+  }, [voice.isMuted])
 
-  /* Keep the agent aware of manual form edits during an active conversation.
-     Debounced to avoid spamming on every keystroke. */
-  const syncTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  /* Sync form edits to agent (debounced) */
+  const syncTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   useEffect(() => {
-    if (!isConnected || !conversationRef.current) return
-    if (syncTimerRef.current) clearTimeout(syncTimerRef.current)
-    syncTimerRef.current = setTimeout(() => {
-      const progress = buildProgressSummary(valuesRef.current, stepsRef.current)
+    if (!voice.isConnected || !conversationRef.current) return
+    if (syncTimer.current) clearTimeout(syncTimer.current)
+    syncTimer.current = setTimeout(() => {
       conversationRef.current?.sendContextualUpdate(
-        `[SYSTEM] Updated form state — skip fields that are already filled:\n\n${progress}`
+        `[SYSTEM] Updated form state:\n\n${buildProgressSummary(valuesRef.current, stepsRef.current)}`
       )
     }, 3000)
-    return () => { if (syncTimerRef.current) clearTimeout(syncTimerRef.current) }
-  }, [values, isConnected])
+    return () => { if (syncTimer.current) clearTimeout(syncTimer.current) }
+  }, [values, voice.isConnected])
+
+  /* ── Mobile bottom sheet drag ── */
+  const [sheetHeight, setSheetHeight] = useState(75) // percentage of viewport
+  const dragRef = useRef<{ startY: number; startHeight: number } | null>(null)
+
+  const onDragStart = useCallback((e: React.TouchEvent | React.MouseEvent) => {
+    const clientY = "touches" in e ? e.touches[0].clientY : e.clientY
+    dragRef.current = { startY: clientY, startHeight: sheetHeight }
+  }, [sheetHeight])
+
+  const onDragMove = useCallback((e: React.TouchEvent | React.MouseEvent) => {
+    if (!dragRef.current) return
+    const clientY = "touches" in e ? e.touches[0].clientY : e.clientY
+    const deltaY = clientY - dragRef.current.startY
+    const deltaPercent = (deltaY / window.innerHeight) * 100
+    const newHeight = Math.max(20, Math.min(90, dragRef.current.startHeight - deltaPercent))
+    setSheetHeight(newHeight)
+  }, [])
+
+  const onDragEnd = useCallback(() => {
+    if (!dragRef.current) return
+    /* If dragged below 30%, close the panel */
+    if (sheetHeight < 30) {
+      onPanelToggle?.(false)
+      setSheetHeight(75)
+    }
+    dragRef.current = null
+  }, [sheetHeight, onPanelToggle])
+
+  if (!agentId) return null
+  if (!isOpen) return null
 
   return (
-    <div className={cn(
-      /* Mobile: bottom sheet */
-      "fixed inset-x-0 bottom-0 z-50 bg-background border-t rounded-t-2xl shadow-2xl flex flex-col",
-      "max-h-[70dvh]",
-      /* Desktop: side panel */
-      "sm:static sm:inset-auto sm:z-auto sm:w-[380px] sm:shrink-0 sm:border-r sm:border-t-0 sm:rounded-none sm:shadow-none sm:h-dvh sm:sticky sm:top-0 sm:max-h-none"
-    )}>
+    <div
+      className={cn(
+        /* Mobile: bottom sheet */
+        "fixed inset-x-0 bottom-0 z-50 bg-background border-t rounded-t-2xl shadow-2xl flex flex-col",
+        /* Desktop: side panel, full viewport height — !important via sm:h-dvh overrides the inline style */
+        "sm:static sm:inset-auto sm:z-auto sm:w-[380px] sm:shrink-0 sm:border-r sm:border-t-0 sm:rounded-none sm:shadow-none sm:sticky sm:top-0"
+      )}
+      style={{ height: `${sheetHeight}dvh` }}
+      /* On desktop, CSS class overrides the inline height */
+      data-voice-panel
+    >
+      {/* Drag handle — mobile only */}
+      <div
+        className="sm:hidden flex justify-center py-2 cursor-grab active:cursor-grabbing touch-none"
+        onTouchStart={onDragStart}
+        onTouchMove={onDragMove}
+        onTouchEnd={onDragEnd}
+        onMouseDown={onDragStart}
+        onMouseMove={onDragMove}
+        onMouseUp={onDragEnd}
+      >
+        <div className="w-10 h-1 rounded-full bg-border" />
+      </div>
+
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b shrink-0">
+      <div className="flex items-center justify-between px-4 py-2 border-b shrink-0">
         <div className="flex items-center gap-2">
           <span className="text-sm font-semibold">Voice Assistant</span>
-          {isConnected && (
-            <Badge variant={isMuted ? "outline" : isSpeaking ? "default" : "secondary"} className="text-xs">
-              {isMuted ? "Paused" : isSpeaking ? "Speaking" : "Listening"}
+          {voice.isConnected && (
+            <Badge variant={voice.isMuted ? "outline" : voice.isSpeaking ? "default" : "secondary"} className="text-xs">
+              {voice.isMuted ? "Paused" : voice.isSpeaking ? "Speaking" : "Listening"}
             </Badge>
           )}
         </div>
-        <Button variant="ghost" size="icon" className="size-7" onClick={() => onPanelToggle?.(false)} aria-label="Close">
+        <Button variant="ghost" size="icon" className="size-8" onClick={() => onPanelToggle?.(false)} aria-label="Close panel">
           <X aria-hidden="true" className="size-4" />
         </Button>
       </div>
@@ -320,12 +317,17 @@ function VoiceAssistantPanel({
       {/* Transcript */}
       <div className="flex-1 min-h-0 overflow-y-auto px-4" ref={scrollRef}>
         <div className="flex flex-col gap-3 py-4">
-          {transcript.length === 0 && !isConnected && (
+          {voice.transcript.length === 0 && !voice.isConnected && (
             <p className="text-sm text-muted-foreground text-center py-8">
               Start a voice conversation. The assistant will guide you through the form.
             </p>
           )}
-          {transcript.map((entry, i) => (
+          {voice.transcript.length === 0 && voice.isConnected && (
+            <p className="text-sm text-muted-foreground text-center py-8">
+              Connected — the assistant will start speaking shortly.
+            </p>
+          )}
+          {voice.transcript.map((entry, i) => (
             <div
               key={i}
               className={cn(
@@ -338,7 +340,7 @@ function VoiceAssistantPanel({
               {entry.text}
             </div>
           ))}
-          {isConnected && !isSpeaking && !isMuted && transcript.length > 0 && (
+          {voice.isConnected && !voice.isSpeaking && !voice.isMuted && voice.transcript.length > 0 && (
             <div className="self-start flex items-center gap-1.5 text-xs text-muted-foreground px-1">
               <span className="size-2 rounded-full bg-primary animate-pulse" />
               Listening...
@@ -348,15 +350,15 @@ function VoiceAssistantPanel({
       </div>
 
       {/* Error */}
-      {error && (
+      {voice.error && (
         <div className="mx-4 mb-2 rounded-md bg-destructive/10 px-3 py-2 text-xs text-destructive">
-          {error}
+          {voice.error}
         </div>
       )}
 
       {/* Controls */}
-      <div className="border-t px-4 py-3 flex items-center justify-center gap-3 shrink-0">
-        {!isConnected ? (
+      <div className="border-t px-4 py-2.5 flex items-center justify-center gap-3 shrink-0 pb-[max(0.625rem,env(safe-area-inset-bottom))]">
+        {!voice.isConnected ? (
           <Button onClick={startConversation} className="gap-2" size="lg">
             <Phone aria-hidden="true" className="size-4" />
             Start Conversation
@@ -364,11 +366,7 @@ function VoiceAssistantPanel({
         ) : (
           <>
             <Button onClick={toggleMute} variant="outline" className="gap-2" size="lg">
-              {isMuted ? (
-                <><Play aria-hidden="true" className="size-4" /> Resume</>
-              ) : (
-                <><Pause aria-hidden="true" className="size-4" /> Pause</>
-              )}
+              {voice.isMuted ? <><Play aria-hidden="true" className="size-4" /> Resume</> : <><Pause aria-hidden="true" className="size-4" /> Pause</>}
             </Button>
             <Button onClick={endConversation} variant="destructive" className="gap-2" size="lg">
               <PhoneOff aria-hidden="true" className="size-4" /> End
