@@ -124,6 +124,7 @@
         {
           "id": "key_question",
           "type": "textarea",
+          "rows": 5,
           "label": "Key Question",
           "help": "The single analytical question every story is evaluated against. This shapes how importance is scored. Example: \"How does this affect the trajectory of global decarbonization? Think through policy incentives, corporate behavior, and public pressure dynamics.\"",
           "placeholder": "How does this affect...?",
@@ -147,6 +148,7 @@
         {
           "id": "reader_profile",
           "type": "textarea",
+          "rows": 6,
           "label": "Reader Profile",
           "help": "Describe your ideal reader in 3-5 sentences. Who are they? What's their expertise level? What should they take away? Example: \"You are writing for smart professionals who follow climate policy but are not scientists. Think: a policy advisor at a national environment ministry, a reporter covering COP negotiations, or an ESG analyst screening investments. They should understand WHY a development matters without needing atmospheric chemistry.\"",
           "placeholder": "You are writing for...",
@@ -283,6 +285,11 @@
       "description": "Your publication includes a sentiment tracker that measures whether things in your domain are getting better or worse over time. Every story gets scored as positive, negative, or neutral. Name your tracker and define what those directions mean.",
       "fields": [
         {
+          "id": "_section_config",
+          "type": "section",
+          "label": "Tracker Configuration"
+        },
+        {
           "id": "tracker_name",
           "type": "text",
           "layout": "half",
@@ -342,8 +349,14 @@
           }
         },
         {
+          "id": "_section_meaning",
+          "type": "section",
+          "label": "What Your Signals Mean"
+        },
+        {
           "id": "what_positive_means",
           "type": "textarea",
+          "rows": 3,
           "layout": "half",
           "label": "What Positive Means",
           "help": "In one sentence, what does a positive signal mean in your domain? Example: \"Decarbonization is accelerating — policy, finance, or technology moving in the right direction.\"",
@@ -356,6 +369,7 @@
         {
           "id": "what_negative_means",
           "type": "textarea",
+          "rows": 3,
           "layout": "half",
           "label": "What Negative Means",
           "help": "In one sentence, what does a negative signal mean? Example: \"Decarbonization is slowing — rollbacks, delays, or new obstacles.\"",
@@ -368,6 +382,7 @@
         {
           "id": "fallback_sentiment_question",
           "type": "textarea",
+          "rows": 3,
           "layout": "half",
           "label": "Fallback Sentiment Question",
           "help": "When a story's sentiment isn't obvious, the pipeline uses this question as a tiebreaker. Frame it as a yes/no question about direction. Example: \"Is the world's trajectory toward net-zero getting better or worse?\"",
@@ -388,8 +403,14 @@
           }
         },
         {
+          "id": "_section_scoring",
+          "type": "section",
+          "label": "Scoring Calibration"
+        },
+        {
           "id": "scoring_positive",
           "type": "textarea",
+          "rows": 4,
           "layout": "half",
           "label": "Positive Scoring — What Does It Look Like?",
           "help": "Describe what positive signals look like in your domain. Give 2-3 concrete examples of stories your audience would instantly recognize as good news. Example: \"New binding emissions targets signed into law. Major fossil fuel company announces accelerated phase-out timeline. Record-breaking renewable energy deployment in a G20 country.\"",
@@ -402,6 +423,7 @@
         {
           "id": "scoring_negative",
           "type": "textarea",
+          "rows": 4,
           "layout": "half",
           "label": "Negative Scoring — What Does It Look Like?",
           "help": "Describe what negative signals look like. Give 2-3 concrete examples. Example: \"Climate legislation repealed or weakened. Major emitter misses its own targets. New fossil fuel infrastructure approved despite net-zero pledges.\"",
@@ -414,6 +436,7 @@
         {
           "id": "scoring_neutral",
           "type": "textarea",
+          "rows": 4,
           "layout": "half",
           "label": "Neutral Scoring — What Counts as Neutral?",
           "help": "Describe what counts as neutral — neither clearly positive nor negative. Example: \"Routine data releases without clear trend direction. Personnel changes at agencies without policy implications. Conference announcements or procedural updates.\"",
@@ -681,8 +704,14 @@
       },
       "fields": [
         {
+          "id": "_section_about",
+          "type": "section",
+          "label": "About Page Content"
+        },
+        {
           "id": "about_what_is_this",
           "type": "textarea",
+          "rows": 5,
           "layout": "half",
           "label": "What Is This?",
           "help": "Describe your publication in 2-3 sentences for a first-time visitor. What will they find here and why should they care?",
@@ -695,6 +724,7 @@
         {
           "id": "about_tracker",
           "type": "textarea",
+          "rows": 4,
           "layout": "half",
           "label": "About the Tracker",
           "help": "Explain your sentiment tracker — what it measures and why it matters. 2-3 sentences.",
@@ -707,6 +737,7 @@
         {
           "id": "about_built_by",
           "type": "textarea",
+          "rows": 3,
           "layout": "half",
           "label": "Built By",
           "help": "Describe your organization in 1-2 sentences. Who are you and why did you build this?",
@@ -717,8 +748,14 @@
           }
         },
         {
+          "id": "_section_deployment",
+          "type": "section",
+          "label": "Technical Details"
+        },
+        {
           "id": "llms_description",
           "type": "textarea",
+          "rows": 2,
           "layout": "half",
           "label": "LLMs Description",
           "help": "One-sentence description for AI crawlers (llms.txt). Example: \"Daily climate policy intelligence briefing curated from 60+ sources.\"",

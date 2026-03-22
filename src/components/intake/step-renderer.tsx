@@ -74,12 +74,12 @@ export function StepRenderer({
   return (
     <div className="flex flex-col gap-8">
       {/* Step header */}
-      <div className="flex flex-col gap-3">
-        <h2 ref={headingRef} tabIndex={-1} className="font-heading text-2xl font-medium tracking-tight outline-none">
+      <div className="flex flex-col gap-4">
+        <h2 ref={headingRef} tabIndex={-1} className="font-heading text-[28px] md:text-[32px] font-semibold tracking-tight leading-tight outline-none">
           {step.title}
         </h2>
         {step.description && (
-          <p className="text-base text-foreground/70 leading-relaxed">
+          <p className="text-[15px] md:text-base text-foreground/70 leading-relaxed">
             {step.description}
           </p>
         )}
@@ -111,7 +111,7 @@ export function StepRenderer({
       {/* Fields — responsive 2-column grid on desktop, single column on mobile */}
       <div
         className={cn(
-          "grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6 transition-opacity duration-200",
+          "grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-7 transition-opacity duration-200",
           isSkipped && "pointer-events-none opacity-40"
         )}
       >
@@ -119,7 +119,7 @@ export function StepRenderer({
           /* Determine grid column span from layout hint in schema.
              Repeating groups and textareas without explicit "half" layout always span full width. */
           const layout = (field as Record<string, unknown>).layout as string | undefined
-          const isFullWidthType = field.type === "repeating" || field.type === "custom"
+          const isFullWidthType = field.type === "repeating" || field.type === "custom" || field.type === "section"
           const spanFull = isFullWidthType || !layout || layout === "full"
 
           return (

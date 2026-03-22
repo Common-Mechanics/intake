@@ -182,6 +182,16 @@ export function FieldRenderer({
         />
       )
 
+    case "section":
+      return (
+        <div className="flex items-center gap-3 pt-2">
+          <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+            {field.label}
+          </span>
+          <div className="flex-1 h-px bg-border" />
+        </div>
+      )
+
     case "custom": {
       // Route custom fields to their dedicated components by field ID
       if (field.id === "sentiment_rules_by_category") {

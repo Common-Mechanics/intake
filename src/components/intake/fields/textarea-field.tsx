@@ -38,7 +38,7 @@ export function TextareaField({
   const currentLength = (value ?? "").length
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-1.5">
       <Label htmlFor={id} className="text-sm font-medium">
         {label}
         {!required && <span className="text-muted-foreground text-xs font-normal ml-1">(optional)</span>}
@@ -63,7 +63,7 @@ export function TextareaField({
       {error && (
         <p id={`${id}-error`} role="alert" className="text-sm font-medium text-destructive">{error}</p>
       )}
-      <div className="flex justify-between gap-4">
+      <div className="mt-1 flex justify-between gap-4">
         {help && (
           <p id={`${id}-help`} className="text-[13px] leading-relaxed text-muted-foreground/70">{help}</p>
         )}

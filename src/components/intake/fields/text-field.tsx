@@ -53,7 +53,7 @@ export function TextField({
   )
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-1.5">
       <Label htmlFor={id} className="text-sm font-medium">
         {label}
         {!required && <span className="text-muted-foreground text-xs font-normal ml-1">(optional)</span>}
@@ -73,7 +73,7 @@ export function TextField({
         <p id={`${id}-error`} role="alert" className="text-sm font-medium text-destructive">{error}</p>
       )}
       {help && (
-        <p id={`${id}-help`} className="text-[13px] leading-relaxed text-muted-foreground/70">{help}</p>
+        <p id={`${id}-help`} className="mt-1 text-[13px] leading-relaxed text-muted-foreground/70">{help}</p>
       )}
     </div>
   )
