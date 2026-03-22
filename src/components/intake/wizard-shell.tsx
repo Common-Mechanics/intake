@@ -156,6 +156,7 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
                 errors={wizard.errors}
                 isSkipped={wizard.skippedSections.has(wizard.currentStepDef.id)}
                 onToggleSkip={wizard.toggleSkipSection}
+                onFieldBlur={wizard.validateField}
                 headingRef={stepHeadingRef}
               />
             </CardContent>
