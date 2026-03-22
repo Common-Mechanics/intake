@@ -111,6 +111,9 @@ export function useWizard(
   })
 
   const [errors, setErrors] = useState<Record<string, string>>({})
+  /* Track which fields the user has actually typed in — blur validation
+     only fires on dirty fields so empty untouched fields don't show errors */
+  const [dirtyFields, setDirtyFields] = useState<Set<string>>(new Set())
 
   const [skippedSections, setSkippedSections] = useState<Set<string>>(() => {
     return new Set(initialData?.skippedSections ?? [])
@@ -189,6 +192,9 @@ export function useWizard(
       const stepDef = steps[currentStep]
       if (skippedSections.has(stepDef.id)) return undefined
 
+      /* Only validate on blur if user has actually typed in this field */
+      if (!dirtyFields.has(fieldId)) return undefined
+
       const field = stepDef.fields.find((f) => f.id === fieldId)
       if (!field) return undefined
 
@@ -209,7 +215,7 @@ export function useWizard(
       })
       return undefined
     },
-    [currentStep, steps, values, skippedSections, getAllData]
+    [currentStep, steps, values, skippedSections, dirtyFields, getAllData]
   )
 
   // --- Navigation ---
@@ -246,6 +252,7 @@ export function useWizard(
 
   const setFieldValue = useCallback(
     (stepId: string, fieldId: string, value: unknown) => {
+      setDirtyFields((prev) => { const next = new Set(prev); next.add(fieldId); return next })
       setValues((prev) => ({
         ...prev,
         [stepId]: {

@@ -7,23 +7,24 @@ import type { FieldDef } from "./schemas"
  * Zod's programmatic validation — so we don't maintain two sets of rules.
  */
 
-function buildFieldValidator(field: FieldDef): z.ZodTypeAny {
+function buildFieldValidator(field: FieldDef, isRequired: boolean): z.ZodTypeAny {
   const v = field.validation
 
   switch (field.type) {
     case "text":
     case "textarea": {
-      let schema = z.string()
-      if (v?.minLength) schema = schema.min(v.minLength)
+      let schema = z.string({ error: "This field is required" })
+      if (isRequired) schema = schema.min(v?.minLength ?? 1, "This field is required")
+      else if (v?.minLength) schema = schema.min(v.minLength)
       if (v?.maxLength) schema = schema.max(v.maxLength)
       if (v?.pattern) schema = schema.regex(new RegExp(v.pattern))
       return schema
     }
 
     case "url": {
-      /* Accept "www.abc.xyz" and "abc.xyz" as well as "https://abc.xyz" */
       const urlPattern = /^(https?:\/\/)?[\w.-]+\.[a-z]{2,}(\/\S*)?$/i
-      let schema = z.string()
+      let schema = z.string({ error: "This field is required" })
+      if (isRequired) schema = schema.min(1, "This field is required")
       if (v?.minLength) schema = schema.min(v.minLength)
       if (v?.maxLength) schema = schema.max(v.maxLength)
       return schema.refine(
@@ -33,7 +34,7 @@ function buildFieldValidator(field: FieldDef): z.ZodTypeAny {
     }
 
     case "number": {
-      let schema = z.number()
+      let schema = z.number({ error: "Please enter a number" })
       if (v?.min !== undefined) schema = schema.min(v.min)
       if (v?.max !== undefined) schema = schema.max(v.max)
       return schema
@@ -49,26 +50,27 @@ function buildFieldValidator(field: FieldDef): z.ZodTypeAny {
           string,
           ...string[],
         ]
-        return z.enum(values)
+        let schema = z.enum(values, { message: "Please select an option" })
+        if (isRequired) schema = schema
+        return schema
       }
-      return z.string()
+      let schema = z.string({ error: "Please select an option" })
+      if (isRequired) schema = schema.min(1, "Please select an option")
+      return schema
     }
 
     case "repeating": {
-      // Build a sub-object schema from the repeating group's fields
       const subFields = field.fields ?? []
       const shape: Record<string, z.ZodTypeAny> = {}
       for (const subField of subFields) {
-        let subValidator = buildFieldValidator(subField)
-        const isRequired = subField.validation?.required === true
-        if (!isRequired) {
-          subValidator = subValidator.optional()
-        }
+        const subRequired = subField.validation?.required === true
+        let subValidator = buildFieldValidator(subField, subRequired)
+        if (!subRequired) subValidator = subValidator.optional()
         shape[subField.id] = subValidator
       }
 
       let arraySchema = z.array(z.object(shape))
-      if (v?.minItems) arraySchema = arraySchema.min(v.minItems)
+      if (v?.minItems) arraySchema = arraySchema.min(v.minItems, `Add at least ${v.minItems}`)
       if (v?.maxItems) arraySchema = arraySchema.max(v.maxItems)
       return arraySchema
     }
@@ -107,13 +109,14 @@ export function buildStepValidator(
     // Skip fields in skipped sections (step-level skip)
     if (skippedSections?.has(field.id)) continue
 
-    let validator = buildFieldValidator(field)
-
     const isRequired = field.validation?.required === true
     const conditionMet = isConditionMet(field, allData ?? {})
+    const effectiveRequired = isRequired && conditionMet
 
-    // If condition isn't met or field isn't required, make it optional
-    if (!isRequired || !conditionMet) {
+    let validator = buildFieldValidator(field, effectiveRequired)
+
+    // If not effectively required, make it optional so undefined is accepted
+    if (!effectiveRequired) {
       validator = validator.optional()
     }
 
