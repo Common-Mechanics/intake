@@ -171,6 +171,20 @@
   }
 }
 
+/* Mobile: move toasts to top-center so they don't obstruct form input.
+   Sonner uses data-sonner-toaster with inline styles for positioning,
+   so we override with !important on small screens. */
+@media (max-width: 767px) {
+  [data-sonner-toaster] {
+    --offset: 12px !important;
+    left: 50% !important;
+    right: auto !important;
+    bottom: auto !important;
+    top: var(--offset) !important;
+    transform: translateX(-50%) !important;
+  }
+}
+
 /*
  * Form typography hierarchy (documented for reference, implemented via Tailwind):
  *

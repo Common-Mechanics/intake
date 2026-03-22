@@ -61,13 +61,28 @@ export async function PUT(
       const entryIdx = index.findIndex((e) => e.id === orgId)
       if (entryIdx !== -1) {
         const entry = index[entryIdx]
-        const completedCount = inputData.completedSteps.length
-        // Determine status based on completed steps vs total
+        /* Load the schema to get the actual step count and IDs.
+           completedSteps from the client may contain old step IDs,
+           so we only count IDs that match current schema steps. */
+        let schemaStepCount = 5 // fallback
+        let schemaStepIds: string[] = []
+        try {
+          const schema = await import("@/data/ai-dossier-intake.json")
+          schemaStepCount = schema.default.steps.length
+          schemaStepIds = schema.default.steps.map((s: { id: string }) => s.id)
+        } catch { /* use fallback */ }
+
+        /* Only count completedSteps that match current schema step IDs */
+        const validCompleted = inputData.completedSteps.filter(
+          (id: string) => schemaStepIds.length === 0 || schemaStepIds.includes(id)
+        )
+        const completedCount = validCompleted.length
+
         let status: "not_started" | "in_progress" | "completed" =
           "not_started"
-        if (completedCount > 0 && completedCount < entry.totalSteps) {
+        if (completedCount > 0 && completedCount < schemaStepCount) {
           status = "in_progress"
-        } else if (completedCount >= entry.totalSteps) {
+        } else if (completedCount >= schemaStepCount) {
           status = "completed"
         }
 
@@ -76,6 +91,7 @@ export async function PUT(
           lastModified: new Date().toISOString(),
           status,
           completedSteps: completedCount,
+          totalSteps: schemaStepCount,
         }
         await writeOrgIndex(index)
       }
