@@ -121,13 +121,13 @@
         "handle": "whatever.bsky.social"
       },
       {
-        "handle": "whatever.bsky.social"
+        "handle": "w.bsky.social"
       },
       {
-        "handle": "whatever.bsky.social"
+        "handle": "b.bsky.social"
       },
       {
-        "handle": "whatever.bsky.social"
+        "handle": "c.bsky.social"
       }
     ]
   },
@@ -140,5 +140,5 @@
     "categories",
     "sentiment-rules"
   ],
-  "lastSaved": "2026-03-22T02:38:50.992Z"
+  "lastSaved": "2026-03-22T02:38:56.913Z"
 }
