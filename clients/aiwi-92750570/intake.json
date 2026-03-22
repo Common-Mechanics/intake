@@ -119,6 +119,9 @@
       },
       {
         "handle": "whatever.bsky.sociala"
+      },
+      {
+        "handle": "whatever.bsky.sociala"
       }
     ]
   },
@@ -133,5 +136,5 @@
     "categories",
     "sentiment-rules"
   ],
-  "lastSaved": "2026-03-22T02:35:18.769Z"
+  "lastSaved": "2026-03-22T02:35:22.957Z"
 }
