@@ -1,11 +1,10 @@
 "use client"
 
-import { useCallback } from "react"
+import { useCallback, useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle, CardAction } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Label } from "@/components/ui/label"
-import { Plus, X, ChevronUp, ChevronDown } from "lucide-react"
+import { Plus, X, ChevronDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 import { FieldRenderer } from "../field-renderer"
@@ -68,14 +67,30 @@ export function RepeatingGroup({
   const canRemove = entries.length > minItems
   const canAdd = maxItems == null || entries.length < maxItems
 
+  /* Track which entries are expanded — new entries open by default */
+  const [expanded, setExpanded] = useState<Set<number>>(() => {
+    return new Set(entries.map((_, i) => i))
+  })
+
+  const toggleExpanded = useCallback((index: number) => {
+    setExpanded((prev) => {
+      const next = new Set(prev)
+      if (next.has(index)) next.delete(index)
+      else next.add(index)
+      return next
+    })
+  }, [])
+
   const handleAdd = useCallback(() => {
     if (!canAdd) return
-    // Create empty entry with default empty values for each field
     const newEntry: Record<string, unknown> = {}
     for (const field of fields) {
       newEntry[field.id] = field.type === "checkbox" ? false : ""
     }
+    const newIndex = entries.length
     onChange([...entries, newEntry])
+    /* Auto-expand the new entry */
+    setExpanded((prev) => { const next = new Set(prev); next.add(newIndex); return next })
   }, [canAdd, fields, entries, onChange])
 
   const handleRemove = useCallback(
@@ -84,6 +99,15 @@ export function RepeatingGroup({
       const removed = entries[index]
       const newEntries = entries.filter((_, i) => i !== index)
       onChange(newEntries)
+      /* Clean up expanded state */
+      setExpanded((prev) => {
+        const next = new Set<number>()
+        for (const i of prev) {
+          if (i < index) next.add(i)
+          else if (i > index) next.add(i - 1)
+        }
+        return next
+      })
       toast("Entry removed", {
         action: {
           label: "Undo",
@@ -109,22 +133,16 @@ export function RepeatingGroup({
     [entries, onChange]
   )
 
-  const handleMove = useCallback(
-    (index: number, direction: -1 | 1) => {
-      const newIndex = index + direction
-      if (newIndex < 0 || newIndex >= entries.length) return
-      const newEntries = [...entries]
-      const [moved] = newEntries.splice(index, 1)
-      newEntries.splice(newIndex, 0, moved)
-      onChange(newEntries)
-    },
-    [entries, onChange]
-  )
-
-  // Append imported entries from BatchInput
   const handleBatchImport = useCallback(
     (imported: Record<string, unknown>[]) => {
+      const startIndex = entries.length
       onChange([...entries, ...imported])
+      /* Auto-expand imported entries */
+      setExpanded((prev) => {
+        const next = new Set(prev)
+        for (let i = 0; i < imported.length; i++) next.add(startIndex + i)
+        return next
+      })
     },
     [entries, onChange]
   )
@@ -135,7 +153,10 @@ export function RepeatingGroup({
     validation.warnMessage
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className={cn(
+      "flex flex-col gap-4 rounded-lg",
+      error && "ring-2 ring-destructive/20 border-destructive p-4 -mx-1"
+    )}>
       <div className="flex items-center justify-between gap-4">
         <div className="flex flex-col gap-1">
           <Label className="text-sm font-medium">{label}</Label>
@@ -151,88 +172,79 @@ export function RepeatingGroup({
       </div>
 
       {error && (
-        <p className="text-sm text-destructive">{error}</p>
+        <p id={`${id}-error`} role="alert" className="text-sm text-destructive">{error}</p>
       )}
 
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-2">
         {entries.map((entry, index) => {
-          // Use first filled text field value as card title
           const firstFieldValue = entries[index]?.[fields[0]?.id] as string | undefined
           const itemTitle = firstFieldValue?.trim() ? firstFieldValue.trim() : `#${index + 1}`
+          const isOpen = expanded.has(index)
 
           return (
-            <Card key={index} size="sm" className={cn(disabled && "opacity-50")}>
-              <CardHeader>
-                <CardTitle className="text-sm">
-                  <Badge variant="secondary" className="mr-2 font-mono text-xs">{index + 1}</Badge>
-                  {itemTitle}
-                </CardTitle>
-                <CardAction>
-                  <div className="flex items-center gap-1">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon-sm"
-                      className="size-7"
-                      onClick={() => handleMove(index, -1)}
-                      disabled={disabled || index === 0}
-                      aria-label="Move up"
-                    >
-                      <ChevronUp className="size-4" />
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon-sm"
-                      className="size-7"
-                      onClick={() => handleMove(index, 1)}
-                      disabled={disabled || index === entries.length - 1}
-                      aria-label="Move down"
-                    >
-                      <ChevronDown className="size-4" />
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon-sm"
-                      onClick={() => handleRemove(index)}
-                      disabled={!canRemove || disabled}
-                      aria-label={`Remove entry ${index + 1}`}
-                    >
-                      <X />
-                    </Button>
+            <div
+              key={index}
+              className={cn(
+                "border rounded-lg overflow-hidden transition-colors",
+                disabled && "opacity-50"
+              )}
+            >
+              {/* Accordion header — always visible */}
+              <div
+                className="flex items-center gap-2 px-3 py-2.5 cursor-pointer hover:bg-accent/50 transition-colors"
+                onClick={() => toggleExpanded(index)}
+              >
+                <ChevronDown className={cn(
+                  "size-4 text-muted-foreground shrink-0 transition-transform",
+                  isOpen && "rotate-180"
+                )} />
+                <Badge variant="secondary" className="font-mono text-xs shrink-0">{index + 1}</Badge>
+                <span className="text-sm font-medium truncate flex-1">{itemTitle}</span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="size-7 shrink-0"
+                  onClick={(e) => { e.stopPropagation(); handleRemove(index) }}
+                  disabled={!canRemove || disabled}
+                  aria-label={`Remove ${itemTitle}`}
+                >
+                  <X className="size-3.5" />
+                </Button>
+              </div>
+
+              {/* Accordion body — collapsible */}
+              {isOpen && (
+                <div className="px-3 pb-3 pt-1 border-t">
+                  <div className="flex flex-col gap-4">
+                    {fields.map((field) => (
+                      <FieldRenderer
+                        key={field.id}
+                        field={field}
+                        value={entry[field.id]}
+                        onChange={(val) => handleEntryChange(index, field.id, val)}
+                        disabled={disabled}
+                      />
+                    ))}
                   </div>
-                </CardAction>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-col gap-4">
-                  {fields.map((field) => (
-                    <FieldRenderer
-                      key={field.id}
-                      field={field}
-                      value={entry[field.id]}
-                      onChange={(val) => handleEntryChange(index, field.id, val)}
-                      disabled={disabled}
-                    />
-                  ))}
                 </div>
-              </CardContent>
-            </Card>
+              )}
+            </div>
           )
         })}
       </div>
 
-      {/* Empty state when no entries exist */}
+      {/* Empty state */}
       {entries.length === 0 && (
         <div className="flex flex-col items-center gap-2 py-8 text-center text-sm text-muted-foreground border border-dashed rounded-lg">
           <p>No {label.toLowerCase()} added yet</p>
           {validation?.minItems && validation.minItems > 0 && (
-            <p className="text-xs">You'll need at least {validation.minItems} to continue</p>
+            <p className="text-xs">You&apos;ll need at least {validation.minItems} to continue</p>
           )}
         </div>
       )}
 
-      {/* Batch import for bulk data entry */}
+      {/* Batch import */}
       {batchInput?.enabled && (
         <BatchInput
           id={`${id}-batch`}

@@ -103,7 +103,19 @@ export function useWizard(
 
   // --- State ---
 
-  const [currentStep, setCurrentStep] = useState(0)
+  /* Initialize step from URL ?step= param if present */
+  const [currentStep, setCurrentStep] = useState(() => {
+    if (typeof window === "undefined") return 0
+    const params = new URLSearchParams(window.location.search)
+    const stepParam = params.get("step")
+    if (stepParam) {
+      const idx = steps.findIndex((s) => s.id === stepParam)
+      if (idx >= 0) return idx
+      const num = parseInt(stepParam, 10)
+      if (!isNaN(num) && num >= 1 && num <= steps.length) return num - 1
+    }
+    return 0
+  })
 
   const [values, setValues] = useState<Record<string, Record<string, unknown>>>(() => {
     const draft = loadDraft(orgId)
@@ -220,13 +232,27 @@ export function useWizard(
 
   // --- Navigation ---
 
+  /* Update URL query param to reflect current step */
+  const syncStepToUrl = useCallback(
+    (index: number) => {
+      if (typeof window === "undefined") return
+      const stepId = steps[index]?.id
+      if (!stepId) return
+      const url = new URL(window.location.href)
+      url.searchParams.set("step", stepId)
+      window.history.replaceState({}, "", url.toString())
+    },
+    [steps]
+  )
+
   const goToStep = useCallback(
     (index: number) => {
       if (index < 0 || index >= totalSteps) return
       setErrors({})
       setCurrentStep(index)
+      syncStepToUrl(index)
     },
-    [totalSteps]
+    [totalSteps, syncStepToUrl]
   )
 
   const nextStep = useCallback((): boolean => {
@@ -237,16 +263,20 @@ export function useWizard(
     // Mark current step as completed
     const stepId = steps[currentStep].id
     setCompletedSteps((prev) => { const next = new Set(prev); next.add(stepId); return next })
-    setCurrentStep((prev) => prev + 1)
+    const newStep = currentStep + 1
+    setCurrentStep(newStep)
+    syncStepToUrl(newStep)
     setErrors({})
     return true
-  }, [isLastStep, validateCurrentStep, currentStep, steps])
+  }, [isLastStep, validateCurrentStep, currentStep, steps, syncStepToUrl])
 
   const prevStep = useCallback(() => {
     if (!canGoPrev) return
     setErrors({})
-    setCurrentStep((prev) => prev - 1)
-  }, [canGoPrev])
+    const newStep = currentStep - 1
+    setCurrentStep(newStep)
+    syncStepToUrl(newStep)
+  }, [canGoPrev, currentStep, syncStepToUrl])
 
   // --- Data ---
 
