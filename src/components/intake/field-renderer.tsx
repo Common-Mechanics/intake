@@ -175,6 +175,7 @@ export function FieldRenderer({
             csvColumns?: string[]
             jsonExample?: string
           } | undefined}
+          defaultEntries={field.defaultEntries as Record<string, unknown>[] | undefined}
         />
       )
 

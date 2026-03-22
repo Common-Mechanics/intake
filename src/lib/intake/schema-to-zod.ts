@@ -13,9 +13,9 @@ function buildFieldValidator(field: FieldDef, isRequired: boolean): z.ZodTypeAny
   switch (field.type) {
     case "text":
     case "textarea": {
-      let schema = z.string({ error: "This field is required" })
-      if (isRequired) schema = schema.min(v?.minLength ?? 1, "This field is required")
-      else if (v?.minLength) schema = schema.min(v.minLength)
+      let schema = z.string({ error: "Please fill this in" })
+      if (isRequired) schema = schema.min(v?.minLength ?? 1, "Please fill this in")
+      else if (v?.minLength) schema = schema.min(v.minLength, `Needs at least ${v.minLength} characters`)
       if (v?.maxLength) schema = schema.max(v.maxLength)
       if (v?.pattern) schema = schema.regex(new RegExp(v.pattern), "Only letters, numbers, hyphens, and spaces are allowed")
       return schema
@@ -24,7 +24,7 @@ function buildFieldValidator(field: FieldDef, isRequired: boolean): z.ZodTypeAny
     case "url": {
       const urlPattern = /^(https?:\/\/)?[\w.-]+\.[a-z]{2,}(\/\S*)?$/i
       let schema = z.string({ error: "This field is required" })
-      if (isRequired) schema = schema.min(1, "This field is required")
+      if (isRequired) schema = schema.min(1, "Please fill this in")
       if (v?.minLength) schema = schema.min(v.minLength)
       if (v?.maxLength) schema = schema.max(v.maxLength)
       return schema.refine(
@@ -34,7 +34,7 @@ function buildFieldValidator(field: FieldDef, isRequired: boolean): z.ZodTypeAny
     }
 
     case "number": {
-      let schema = z.number({ error: "Please enter a number" })
+      let schema = z.number({ error: "This needs to be a number" })
       if (v?.min !== undefined) schema = schema.min(v.min)
       if (v?.max !== undefined) schema = schema.max(v.max)
       return schema
@@ -54,8 +54,8 @@ function buildFieldValidator(field: FieldDef, isRequired: boolean): z.ZodTypeAny
         if (isRequired) schema = schema
         return schema
       }
-      let schema = z.string({ error: "Please select an option" })
-      if (isRequired) schema = schema.min(1, "Please select an option")
+      let schema = z.string({ error: "Pick one of the options" })
+      if (isRequired) schema = schema.min(1, "Pick one of the options")
       return schema
     }
 
@@ -69,9 +69,10 @@ function buildFieldValidator(field: FieldDef, isRequired: boolean): z.ZodTypeAny
         shape[subField.id] = subValidator
       }
 
-      let arraySchema = z.array(z.object(shape))
-      if (v?.minItems) arraySchema = arraySchema.min(v.minItems, `Add at least ${v.minItems}`)
-      if (v?.maxItems) arraySchema = arraySchema.max(v.maxItems)
+      const singularLabel = field.label.replace(/ies$/i, "y").replace(/ses$/i, "s").replace(/s$/i, "")
+      let arraySchema = z.array(z.object(shape), { error: `Add at least one ${singularLabel.toLowerCase()}` })
+      if (v?.minItems) arraySchema = arraySchema.min(v.minItems, `You need at least ${v.minItems} — add some more`)
+      if (v?.maxItems) arraySchema = arraySchema.max(v.maxItems, `Too many — the maximum is ${v.maxItems}`)
       return arraySchema
     }
 
@@ -163,7 +164,7 @@ export function validateStep(
       }
       // Also set a group-level summary if not already set
       if (!errors[fieldId]) {
-        errors[fieldId] = "Some entries have missing or invalid fields"
+        errors[fieldId] = "Some entries still need your attention"
       }
     } else if (issue.path.length === 1) {
       // Top-level field error or repeating group count error

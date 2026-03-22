@@ -49,6 +49,8 @@ interface RepeatingGroupProps {
   disabled?: boolean
   validation?: RepeatingGroupValidation
   batchInput?: BatchInputConfig
+  /** Pre-filled entries to show when the group is empty (templates) */
+  defaultEntries?: Record<string, unknown>[]
 }
 
 export function RepeatingGroup({
@@ -63,8 +65,17 @@ export function RepeatingGroup({
   disabled,
   validation,
   batchInput,
+  defaultEntries,
 }: RepeatingGroupProps) {
   const entries = Array.isArray(value) ? value : []
+
+  /* Auto-populate with default entries on first render when empty */
+  const [didPrefill, setDidPrefill] = useState(false)
+  if (!didPrefill && entries.length === 0 && defaultEntries && defaultEntries.length > 0) {
+    setDidPrefill(true)
+    /* Use setTimeout to avoid updating parent during render */
+    setTimeout(() => onChange(defaultEntries), 0)
+  }
   const minItems = validation?.minItems ?? 0
   const maxItems = validation?.maxItems
   const canRemove = entries.length > minItems
