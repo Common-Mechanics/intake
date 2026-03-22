@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback, useRef } from "react"
+import { useState, useCallback, useRef, useEffect } from "react"
 import { Mic, Phone, PhoneOff, Pause, Play, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -278,6 +278,21 @@ function VoiceAssistantPanel({
     )
     setIsMuted(next)
   }, [isMuted])
+
+  /* Keep the agent aware of manual form edits during an active conversation.
+     Debounced to avoid spamming on every keystroke. */
+  const syncTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  useEffect(() => {
+    if (!isConnected || !conversationRef.current) return
+    if (syncTimerRef.current) clearTimeout(syncTimerRef.current)
+    syncTimerRef.current = setTimeout(() => {
+      const progress = buildProgressSummary(valuesRef.current, stepsRef.current)
+      conversationRef.current?.sendContextualUpdate(
+        `[SYSTEM] Updated form state — skip fields that are already filled:\n\n${progress}`
+      )
+    }, 3000)
+    return () => { if (syncTimerRef.current) clearTimeout(syncTimerRef.current) }
+  }, [values, isConnected])
 
   return (
     <div className={cn(
