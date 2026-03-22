@@ -39,6 +39,8 @@ interface FieldRendererProps {
   onBlur?: (fieldId: string) => void
   /** Full errors map — passed to repeating groups for sub-field errors */
   allErrors?: Record<string, string>
+  /** Override whether this field is required (from step-renderer section logic) */
+  required?: boolean
 }
 
 /**
@@ -70,6 +72,7 @@ export function FieldRenderer({
   allValues = {},
   onBlur,
   allErrors = {},
+  required: requiredOverride,
 }: FieldRendererProps) {
   const handleBlur = () => onBlur?.(field.id)
   // Check conditional visibility
@@ -77,7 +80,7 @@ export function FieldRenderer({
     return null
   }
 
-  const isRequired = (field.validation as Record<string, unknown>)?.required === true
+  const isRequired = requiredOverride ?? (field.validation as Record<string, unknown>)?.required === true
 
   const commonProps = {
     id: field.id,

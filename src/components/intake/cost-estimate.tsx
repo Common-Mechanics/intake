@@ -19,13 +19,13 @@ interface CostEstimateProps {
  */
 export function CostEstimate({ values }: CostEstimateProps) {
   const estimate = useMemo(() => {
-    const editors = values["editorial-team"]?.["editors"] as Record<string, unknown>[] | undefined
-    const sources = values["sources"]?.["sources"] as Record<string, unknown>[] | undefined
-    const sentimentRules = values["sentiment-rules"]?.["sentiment_rules"] as Record<string, unknown>[] | undefined
+    const editors = values["categories-and-editors"]?.["editors"] as Record<string, unknown>[] | undefined
+    const sources = values["sources-and-discovery"]?.["sources"] as Record<string, unknown>[] | undefined
+    const sentimentRules = values["sentiment-and-scoring"]?.["sentiment_rules_by_category"] as Record<string, unknown> | undefined
 
     const editorCount = editors?.length ?? 0
     const sourceCount = sources?.length ?? 0
-    const hasRules = (sentimentRules?.length ?? 0) > 0
+    const hasRules = sentimentRules ? Object.values(sentimentRules).some((rules) => Array.isArray(rules) && rules.length > 0) : false
 
     /* Cost model (approximate, based on Claude API pricing) */
     const baseCost = 1.50 // daily base pipeline overhead

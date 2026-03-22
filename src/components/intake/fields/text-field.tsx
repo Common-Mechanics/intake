@@ -52,7 +52,7 @@ export function TextField({
   }
 
   const inputClassName = cn(
-    "min-h-10",
+    "min-h-12",
     error && "border-destructive ring-3 ring-destructive/20"
   )
 
@@ -77,9 +77,7 @@ export function TextField({
         <p id={`${id}-error`} role="alert" className="text-sm font-medium text-destructive">{error}</p>
       )}
       {help && (
-        /* md:sr-only: on desktop, the help is shown in the sidebar (aria-hidden there).
-           Here it stays accessible via aria-describedby but visually hidden on md+. */
-        <div id={`${id}-help`} className="md:sr-only">
+        <div id={`${id}-help`}>
           <HelpTooltip text={help} />
         </div>
       )}

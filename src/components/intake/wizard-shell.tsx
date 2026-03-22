@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useCallback, useRef, useMemo } from "react"
-import { Card, CardContent } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { useWizard } from "@/lib/intake/use-wizard"
 import type { FormSchema, SavedData } from "@/lib/intake/schemas"
@@ -25,7 +24,6 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
   const stepHeadingRef = useRef<HTMLHeadingElement>(null)
 
   const scrollToFirstError = useCallback(() => {
-    // Small delay to let React render the error state
     setTimeout(() => {
       const firstErrorId = Object.keys(wizard.errors)[0]
       if (firstErrorId) {
@@ -38,7 +36,6 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
 
   const handleNext = useCallback(() => {
     if (wizard.isLastStep) {
-      // On last step, validate then save
       const valid = wizard.validateCurrentStep()
       if (valid) {
         wizard.saveToServer()
@@ -54,7 +51,6 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
   // Focus heading and scroll to top on step transitions
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" })
-    // Small delay to let the new step render
     setTimeout(() => {
       stepHeadingRef.current?.focus()
     }, 100)
@@ -95,9 +91,79 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
     return () => window.removeEventListener("keydown", handleKeyDown)
   }, [handleNext])
 
-  /* Build category options from the categories step for use in editor dropdowns */
+  /* ── Auto-derivation: suggest values for fields based on earlier answers ── */
+
+  const deriveRef = useRef(new Set<string>())
+
+  /* Derive field values from earlier answers. Only fills empty fields, only once per field. */
+  useEffect(() => {
+    const pubValues = wizard.values["your-publication"] ?? {}
+    const name = (pubValues.publication_name as string)?.trim() ?? ""
+    const tagline = (pubValues.tagline as string)?.trim() ?? ""
+    const topic = (pubValues.topic_label as string)?.trim() ?? ""
+
+    function derive(stepId: string, fieldId: string, value: string) {
+      if (!value) return
+      const key = `${stepId}.${fieldId}`
+      if (deriveRef.current.has(key)) return
+      const current = (wizard.values[stepId]?.[fieldId] as string)?.trim()
+      if (current) return // user already filled it
+      deriveRef.current.add(key)
+      wizard.setFieldValue(stepId, fieldId, value)
+    }
+
+    // publication_name + tagline → full_title
+    if (name && tagline) {
+      derive("your-publication", "full_title", `${name} — ${tagline}`)
+    }
+
+    // topic_label → community_label, publication_type
+    if (topic) {
+      const capitalized = topic.replace(/\b\w/g, (c) => c.toUpperCase())
+      derive("your-publication", "community_label", `the ${topic} community`)
+      derive("your-publication", "publication_type", `${topic} intelligence briefing`)
+      derive("sentiment-and-scoring", "tracker_name", `${capitalized} Index`)
+    }
+
+    // publication_name → site_url suggestion
+    if (name) {
+      const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "").slice(0, 20)
+      derive("your-publication", "site_url", `https://${slug}.org`)
+    }
+
+    // tagline → llms_description
+    if (tagline) {
+      derive("review-and-launch", "llms_description", tagline)
+    }
+  }, [wizard.values, wizard.setFieldValue])
+
+  /* Sentiment tracker defaults — pre-fill once when arriving at the step */
+  const didPrefillTracker = useRef(false)
+  useEffect(() => {
+    if (wizard.currentStepDef.id !== "sentiment-and-scoring") {
+      didPrefillTracker.current = false
+      return
+    }
+    if (didPrefillTracker.current) return
+    didPrefillTracker.current = true
+
+    const trackerValues = wizard.values["sentiment-and-scoring"] ?? {}
+
+    if (!trackerValues["tracker_nav_label"]) {
+      wizard.setFieldValue("sentiment-and-scoring", "tracker_nav_label", "Tracker")
+    }
+    if (!trackerValues["positive_signal_label"]) {
+      wizard.setFieldValue("sentiment-and-scoring", "positive_signal_label", "progress")
+    }
+    if (!trackerValues["negative_signal_label"]) {
+      wizard.setFieldValue("sentiment-and-scoring", "negative_signal_label", "risk")
+    }
+  }, [wizard.currentStepDef.id, wizard.values, wizard.setFieldValue])
+
+  /* ── Category ↔ Editor logic ── */
+
   const categoryEntries = useMemo(() => {
-    const cats = wizard.values["categories"]?.["categories"] as Record<string, unknown>[] | undefined
+    const cats = wizard.values["categories-and-editors"]?.["categories"] as Record<string, unknown>[] | undefined
     if (!cats || !Array.isArray(cats)) return []
     return cats.filter((c) => (c.short_label as string)?.trim())
   }, [wizard.values])
@@ -110,12 +176,22 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
     }))
   }, [categoryEntries])
 
-  /* Auto-populate editors from categories when arriving at editorial-team step */
+  /* Auto-populate editors from categories.
+     Triggers on category changes (not step entry) since both are on the same step. */
+  const didAutoPopEditors = useRef(false)
   useEffect(() => {
-    if (wizard.currentStepDef.id !== "editorial-team") return
-    const currentEditors = wizard.values["editorial-team"]?.["editors"] as Record<string, unknown>[] | undefined
-    if (currentEditors && currentEditors.length > 0) return // already has editors
+    if (wizard.currentStepDef.id !== "categories-and-editors") {
+      didAutoPopEditors.current = false
+      return
+    }
+    const currentEditors = wizard.values["categories-and-editors"]?.["editors"] as Record<string, unknown>[] | undefined
+    if (currentEditors && currentEditors.length > 0) {
+      didAutoPopEditors.current = true
+      return
+    }
+    if (didAutoPopEditors.current) return
     if (categoryEntries.length === 0) return
+    didAutoPopEditors.current = true
 
     const editors: Record<string, unknown>[] = categoryEntries.map((cat) => ({
       editor_name: `${cat.short_label} Editor`,
@@ -123,50 +199,20 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
       is_spotlight: false,
       expertise: `You are the ${cat.short_label} Editor — an expert in ${cat.full_name || cat.short_label}. You specialize in:\n\n- [Sub-area 1]\n- [Sub-area 2]\n- [Sub-area 3]\n\nYou notice when [what makes your perspective unique]. You track [key organizations and developments in this area].`,
     }))
-    /* Add Spotlight editor */
     editors.push({
       editor_name: "Spotlight Editor",
       category: "spotlight",
       is_spotlight: true,
       expertise: "You are the Spotlight Editor. Your job is to find the most interesting, surprising, or entertaining content — podcasts worth listening to, videos worth watching, demos worth trying, and stories that make people smile or think differently.\n\nYou look for:\n- Notable podcast episodes and interviews\n- Compelling video content and documentaries\n- Interactive demos, tools, and visualizations\n- Unusual angles, human interest stories, and cultural moments\n\nYou notice when something is genuinely interesting to a curious professional, not just technically relevant.",
     })
-    wizard.setFieldValue("editorial-team", "editors", editors)
+    wizard.setFieldValue("categories-and-editors", "editors", editors)
   }, [wizard.currentStepDef.id, categoryEntries, wizard.values, wizard.setFieldValue])
 
-  /* Auto-populate sentiment tracker defaults ONCE when first arriving at the step.
-     Uses a ref so it doesn't fight the user when they clear a field. */
-  const didPrefillTracker = useRef(false)
+  /* Auto-populate sentiment_rules_by_category structure */
   useEffect(() => {
-    if (wizard.currentStepDef.id !== "sentiment-tracker") {
-      didPrefillTracker.current = false
-      return
-    }
-    if (didPrefillTracker.current) return
-    didPrefillTracker.current = true
-
-    const trackerValues = wizard.values["sentiment-tracker"] ?? {}
-    const topicLabel = (wizard.values["audience"]?.["topic_label"] as string)?.trim()
-
-    if (!trackerValues["tracker_name"] && topicLabel) {
-      const capitalized = topicLabel.replace(/\b\w/g, (c) => c.toUpperCase())
-      wizard.setFieldValue("sentiment-tracker", "tracker_name", `${capitalized} Index`)
-    }
-    if (!trackerValues["tracker_nav_label"]) {
-      wizard.setFieldValue("sentiment-tracker", "tracker_nav_label", "Tracker")
-    }
-    if (!trackerValues["positive_signal_label"]) {
-      wizard.setFieldValue("sentiment-tracker", "positive_signal_label", "progress")
-    }
-    if (!trackerValues["negative_signal_label"]) {
-      wizard.setFieldValue("sentiment-tracker", "negative_signal_label", "risk")
-    }
-  }, [wizard.currentStepDef.id, wizard.values, wizard.setFieldValue])
-
-  /* Auto-populate sentiment_rules_by_category with empty arrays per category */
-  useEffect(() => {
-    if (wizard.currentStepDef.id !== "sentiment-rules") return
-    const current = wizard.values["sentiment-rules"]?.["sentiment_rules_by_category"] as Record<string, unknown[]> | undefined
-    if (current && Object.keys(current).length > 0) return // already has data
+    if (wizard.currentStepDef.id !== "sentiment-and-scoring") return
+    const current = wizard.values["sentiment-and-scoring"]?.["sentiment_rules_by_category"] as Record<string, unknown[]> | undefined
+    if (current && Object.keys(current).length > 0) return
     if (categoryEntries.length === 0) return
 
     const initial: Record<string, unknown[]> = {}
@@ -174,24 +220,20 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
       const key = (cat.short_label as string).toLowerCase()
       initial[key] = []
     }
-    wizard.setFieldValue("sentiment-rules", "sentiment_rules_by_category", initial)
+    wizard.setFieldValue("sentiment-and-scoring", "sentiment_rules_by_category", initial)
   }, [wizard.currentStepDef.id, categoryEntries, wizard.values, wizard.setFieldValue])
 
-  // Adapt step-renderer's expected shape from schema types.
-  // For the editorial-team step, inject dynamic category options from step 3.
+  /* Inject dynamic category options into editor fields */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let rendererFields = wizard.currentStepDef.fields as any[]
 
-  if (wizard.currentStepDef.id === "editorial-team" && categoryOptions.length > 0) {
+  if (wizard.currentStepDef.id === "categories-and-editors" && categoryOptions.length > 0) {
     rendererFields = rendererFields.map((field: Record<string, unknown>) => {
-      if (field.type !== "repeating" || !Array.isArray(field.fields)) return field
+      if (field.type !== "repeating" || field.id !== "editors" || !Array.isArray(field.fields)) return field
       return {
         ...field,
         fields: (field.fields as Record<string, unknown>[]).map((subField) => {
           if (subField.id !== "category") return subField
-          /* Turn category text input into a select with dynamic options.
-             Editors can cover 1+ categories, so users type comma-separated values.
-             The select shows the available options but the field stays text-based. */
           const spotlightOption = { label: "Spotlight", value: "spotlight", colorIndex: -1 }
           const allOptions = [...categoryOptions, spotlightOption]
           return {
@@ -209,8 +251,8 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
     })
   }
 
-  /* For sentiment-rules step, inject categories into the custom field */
-  if (wizard.currentStepDef.id === "sentiment-rules" && categoryOptions.length > 0) {
+  /* Inject categories into sentiment-rules custom field */
+  if (wizard.currentStepDef.id === "sentiment-and-scoring" && categoryOptions.length > 0) {
     rendererFields = rendererFields.map((field: Record<string, unknown>) => {
       if (field.id === "sentiment_rules_by_category") {
         return { ...field, customProps: { categories: categoryOptions } }
@@ -219,11 +261,11 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
     })
   }
 
-  /* Track which categories are assigned to which editors, and detect duplicates */
+  /* Category assignment tracking */
   const { assignedCategories, duplicateCategories } = useMemo(() => {
     const assigned = new Map<string, string>()
-    const allAssignments = new Map<string, string[]>() // cat → [editor names]
-    const editors = wizard.values["editorial-team"]?.["editors"] as Record<string, unknown>[] | undefined
+    const allAssignments = new Map<string, string[]>()
+    const editors = wizard.values["categories-and-editors"]?.["editors"] as Record<string, unknown>[] | undefined
     if (!editors) return { assignedCategories: assigned, duplicateCategories: new Map<string, string[]>() }
     for (const editor of editors) {
       const cat = (editor.category as string)?.trim().toLowerCase()
@@ -242,17 +284,13 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
     return { assignedCategories: assigned, duplicateCategories: dupes }
   }, [wizard.values])
 
-  /* Should we show the category assignment panel? */
-  const showCategoryAssignment = wizard.currentStepDef.id === "editorial-team" && categoryOptions.length > 0
+  const showCategoryAssignment = wizard.currentStepDef.id === "categories-and-editors" && categoryOptions.length > 0
 
   const stepForRenderer = {
     id: wizard.currentStepDef.id,
     title: wizard.currentStepDef.title,
     description: wizard.currentStepDef.description,
-    hint: wizard.currentStepDef.hint,
-    optional: wizard.currentStepDef.optional ? true : undefined,
-    skipLabel: wizard.currentStepDef.optional?.label,
-    skipConsequences: wizard.currentStepDef.optional?.consequences,
+    sections: (wizard.currentStepDef as Record<string, unknown>).sections as import("@/lib/intake/schemas").SectionDef[] | undefined,
     fields: rendererFields,
   }
 
@@ -262,7 +300,7 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
     <div className="flex min-h-dvh flex-col">
       {/* Header + progress bar */}
       <div className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur-sm">
-        <div className="mx-auto max-w-5xl">
+        <div className="mx-auto max-w-3xl">
           <div className="flex items-center justify-between px-4 pt-3 pb-0">
             <h1 className="text-base font-semibold tracking-tight">Onboarding Form</h1>
             <SettingsPopover />
@@ -277,24 +315,23 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
         </div>
       </div>
 
-      {/* Main content area */}
+      {/* Main content — single responsive render */}
       <div id="main-content" className="flex-1 flex flex-col">
-        <div
-          className={cn(
-            "mx-auto w-full flex-1 py-6 md:py-10",
-            "max-w-5xl",
-            /* Mobile: edge-to-edge with padding inside */
-            "px-0 md:px-4"
-          )}
-        >
-          {/* Desktop: card wrapper. Mobile: no card chrome */}
-          <div key={`mobile-${wizard.currentStep}`} className="md:hidden px-5 py-2 animate-step-enter">
+        <div className="mx-auto w-full flex-1 py-6 md:py-10 max-w-3xl px-5 md:px-4">
+          <div
+            key={wizard.currentStep}
+            className={cn(
+              "animate-step-enter",
+              /* Desktop: card-like wrapper */
+              "md:rounded-xl md:border md:bg-card md:shadow-sm md:px-8 md:py-6"
+            )}
+          >
             <StepRenderer
               step={stepForRenderer}
               values={currentValues}
               onChange={handleFieldChange}
               errors={wizard.errors}
-              isSkipped={wizard.skippedSections.has(wizard.currentStepDef.id)}
+              skippedSections={wizard.skippedSections}
               onToggleSkip={wizard.toggleSkipSection}
               onFieldBlur={wizard.validateField}
               headingRef={stepHeadingRef}
@@ -320,45 +357,10 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
               </>
             )}
           </div>
-
-          <Card key={`desktop-${wizard.currentStep}`} className="hidden md:flex shadow-sm animate-step-enter">
-            <CardContent className="py-6 px-8">
-              <StepRenderer
-                step={stepForRenderer}
-                values={currentValues}
-                onChange={handleFieldChange}
-                errors={wizard.errors}
-                isSkipped={wizard.skippedSections.has(wizard.currentStepDef.id)}
-                onToggleSkip={wizard.toggleSkipSection}
-                onFieldBlur={wizard.validateField}
-                headingRef={stepHeadingRef}
-                headerExtra={showCategoryAssignment ? (
-                  <CategoryAssignment
-                    categories={categoryOptions}
-                    assignedCategories={assignedCategories}
-                    duplicateCategories={duplicateCategories}
-                    hasError={!!wizard.errors["editors"]}
-                  />
-                ) : undefined}
-              />
-              {wizard.isLastStep && (
-                <>
-                  <CompletionChecklist
-                    steps={schema.steps}
-                    values={wizard.values}
-                    completedSteps={wizard.completedSteps}
-                    skippedSections={wizard.skippedSections}
-                    onGoToStep={wizard.goToStep}
-                  />
-                  <CostEstimate values={wizard.values} />
-                </>
-              )}
-            </CardContent>
-          </Card>
         </div>
       </div>
 
-      {/* Bottom nav — extra bottom padding on mobile to clear fixed nav */}
+      {/* Bottom nav spacer for mobile fixed nav */}
       <div className="h-20 md:hidden" aria-hidden="true" />
 
       <StepNav
@@ -372,7 +374,6 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
         lastSaved={wizard.lastSaved}
       />
 
-      {/* Conflict resolution dialog */}
       <ConflictDialog
         isOpen={wizard.saveStatus === "conflict"}
         onResolve={wizard.resolveConflict}
