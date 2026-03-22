@@ -73,7 +73,7 @@
     "scoring_neutral": "1",
     "sentiment_rules": [
       {
-        "category_group": "",
+        "category_group": "policy",
         "category_group_key": "",
         "when_this_happens": "",
         "default_sentiment": "",
@@ -86,5 +86,5 @@
     "editorial-team",
     "sentiment-tracker"
   ],
-  "lastSaved": "2026-03-22T02:01:42.084Z"
+  "lastSaved": "2026-03-22T02:01:48.240Z"
 }
