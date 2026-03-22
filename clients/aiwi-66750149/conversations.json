@@ -392,5 +392,48 @@
         "timestamp": 1774199278577
       }
     ]
+  },
+  {
+    "id": "2026-03-22_170823_smtw",
+    "startedAt": "2026-03-22T17:08:23.131Z",
+    "endedAt": "2026-03-22T17:09:16.775Z",
+    "messageCount": 7,
+    "messages": [
+      {
+        "role": "assistant",
+        "text": "Hi! I'm here to help you set up your publication. I'll ask you some questions and fill in the form as we go. Let's start — what's your publication called?",
+        "timestamp": 1774199306332
+      },
+      {
+        "role": "user",
+        "text": "This is an emergency.",
+        "timestamp": 1774199320016
+      },
+      {
+        "role": "assistant",
+        "text": "Let's stay focused on getting your publication set up. So — what's your publication called?",
+        "timestamp": 1774199320194
+      },
+      {
+        "role": "user",
+        "text": "This is the name. It's called This is an Emergency.",
+        "timestamp": 1774199332193
+      },
+      {
+        "role": "assistant",
+        "text": "I'll set your publication name as \"This is an Emergency\". Sound right?",
+        "timestamp": 1774199332316
+      },
+      {
+        "role": "user",
+        "text": "Yes.",
+        "timestamp": 1774199339153
+      },
+      {
+        "role": "assistant",
+        "text": "Great. Now, give me a one-line tagline — something that captures what This is an Emergency does. This helps describe your publication for search results and social shares.",
+        "timestamp": 1774199340572
+      }
+    ]
   }
 ]
