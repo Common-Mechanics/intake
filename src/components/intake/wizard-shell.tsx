@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useCallback, useRef } from "react"
+import { useEffect, useCallback, useRef, useMemo } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { useWizard } from "@/lib/intake/use-wizard"
@@ -92,9 +92,73 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
     return () => window.removeEventListener("keydown", handleKeyDown)
   }, [handleNext])
 
+  /* Build category options from the categories step for use in editor dropdowns */
+  const categoryEntries = useMemo(() => {
+    const cats = wizard.values["categories"]?.["categories"] as Record<string, unknown>[] | undefined
+    if (!cats || !Array.isArray(cats)) return []
+    return cats.filter((c) => (c.short_label as string)?.trim())
+  }, [wizard.values])
+
+  const categoryOptions = useMemo(() => {
+    return categoryEntries.map((c) => ({
+      label: c.short_label as string,
+      value: (c.short_label as string).toLowerCase(),
+    }))
+  }, [categoryEntries])
+
+  /* Auto-populate editors from categories when arriving at editorial-team step */
+  useEffect(() => {
+    if (wizard.currentStepDef.id !== "editorial-team") return
+    const currentEditors = wizard.values["editorial-team"]?.["editors"] as Record<string, unknown>[] | undefined
+    if (currentEditors && currentEditors.length > 0) return // already has editors
+    if (categoryEntries.length === 0) return
+
+    const editors: Record<string, unknown>[] = categoryEntries.map((cat) => ({
+      editor_name: `${cat.short_label} Editor`,
+      category: (cat.short_label as string).toLowerCase(),
+      is_spotlight: false,
+      expertise: `You are the ${cat.short_label} Editor — an expert in ${cat.full_name || cat.short_label}. You specialize in:\n\n- [Sub-area 1]\n- [Sub-area 2]\n- [Sub-area 3]\n\nYou notice when [what makes your perspective unique]. You track [key organizations and developments in this area].`,
+    }))
+    /* Add Spotlight editor */
+    editors.push({
+      editor_name: "Spotlight Editor",
+      category: "spotlight",
+      is_spotlight: true,
+      expertise: "You are the Spotlight Editor. Your job is to find the most interesting, surprising, or entertaining content — podcasts worth listening to, videos worth watching, demos worth trying, and stories that make people smile or think differently.\n\nYou look for:\n- Notable podcast episodes and interviews\n- Compelling video content and documentaries\n- Interactive demos, tools, and visualizations\n- Unusual angles, human interest stories, and cultural moments\n\nYou notice when something is genuinely interesting to a curious professional, not just technically relevant.",
+    })
+    wizard.setFieldValue("editorial-team", "editors", editors)
+  }, [wizard.currentStepDef.id, categoryEntries, wizard.values, wizard.setFieldValue])
+
   // Adapt step-renderer's expected shape from schema types.
-  // Cast fields to satisfy StepRenderer's looser FieldDefinition interface
-  // which has an index signature that our strict FieldDef type lacks.
+  // For the editorial-team step, inject dynamic category options from step 3.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let rendererFields = wizard.currentStepDef.fields as any[]
+
+  if (wizard.currentStepDef.id === "editorial-team" && categoryOptions.length > 0) {
+    rendererFields = rendererFields.map((field: Record<string, unknown>) => {
+      if (field.type !== "repeating" || !Array.isArray(field.fields)) return field
+      return {
+        ...field,
+        fields: (field.fields as Record<string, unknown>[]).map((subField) => {
+          if (subField.id !== "category") return subField
+          /* Turn category text input into a select with dynamic options.
+             Editors can cover 1+ categories, so users type comma-separated values.
+             The select shows the available options but the field stays text-based. */
+          const allOptions = [
+            ...categoryOptions,
+            { label: "Spotlight", value: "spotlight" },
+          ]
+          return {
+            ...subField,
+            type: "select",
+            options: allOptions,
+            help: "Which category does this editor cover? Each category can only be assigned to one editor.",
+          }
+        }),
+      }
+    })
+  }
+
   const stepForRenderer = {
     id: wizard.currentStepDef.id,
     title: wizard.currentStepDef.title,
@@ -103,8 +167,7 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
     optional: wizard.currentStepDef.optional ? true : undefined,
     skipLabel: wizard.currentStepDef.optional?.label,
     skipConsequences: wizard.currentStepDef.optional?.consequences,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    fields: wizard.currentStepDef.fields as any,
+    fields: rendererFields,
   }
 
   const currentValues = wizard.values[wizard.currentStepDef.id] ?? {}

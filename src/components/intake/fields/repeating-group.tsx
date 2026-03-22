@@ -171,9 +171,9 @@ export function RepeatingGroup({
     const errors: Record<string, string> = {}
     if (entries.length < 2) return errors
 
-    /* Check uniqueness across entries for text fields */
+    /* Check uniqueness across entries for text and select fields */
     for (const field of fields) {
-      if (field.type !== "text") continue
+      if (field.type !== "text" && field.type !== "select") continue
       const seen = new Map<string, number>() // value → first index
       for (let i = 0; i < entries.length; i++) {
         const val = (entries[i][field.id] as string)?.trim().toLowerCase()

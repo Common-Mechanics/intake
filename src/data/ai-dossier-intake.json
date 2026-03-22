@@ -213,39 +213,12 @@
           "id": "editors",
           "type": "repeating",
           "label": "Editors",
-          "help": "We've pre-filled 3 editor templates plus a Spotlight editor to get you started. Customize them to match your categories, or remove and add your own.",
+          "help": "One editor per category, plus a Spotlight editor. We'll pre-fill these from your categories — just add the expertise descriptions.",
           "validation": {
             "required": true,
-            "minItems": 3,
-            "warnAbove": 6,
-            "warnMessage": "More than 6 editors will significantly increase API costs and processing time. Each editor reviews every story, so costs scale linearly."
+            "minItems": 3
           },
-          "defaultEntries": [
-            {
-              "editor_name": "Policy & Governance Editor",
-              "category": "",
-              "is_spotlight": false,
-              "expertise": "You are the Policy & Governance Editor — an expert in [your domain]'s regulatory and institutional landscape. You specialize in:\n\n- International treaties, frameworks, and negotiations\n- National and regional legislation and enforcement\n- Institutional decisions and governance structures\n\nYou notice when policy language signals real commitment vs. performative gestures. You track [key regulatory bodies, government agencies, and international organizations in your field]."
-            },
-            {
-              "editor_name": "Industry & Markets Editor",
-              "category": "",
-              "is_spotlight": false,
-              "expertise": "You are the Industry & Markets Editor — an expert in [your domain]'s commercial and economic dimensions. You specialize in:\n\n- Market trends, investment patterns, and financial instruments\n- Corporate strategy, M&A, and competitive dynamics\n- Emerging technologies and their commercial implications\n\nYou notice when a technical announcement has real commercial implications that others miss. You track [key companies, industry bodies, and market indicators in your field]."
-            },
-            {
-              "editor_name": "Research & Analysis Editor",
-              "category": "",
-              "is_spotlight": false,
-              "expertise": "You are the Research & Analysis Editor — an expert in [your domain]'s scientific and analytical foundations. You specialize in:\n\n- Research publications, data releases, and methodology\n- Academic institutions and think tank output\n- Public communication of complex findings\n\nYou notice when a study's methodology is flawed despite impressive headlines, and when genuinely important findings are buried in technical language. You track [key research institutions, journals, and data sources in your field]."
-            },
-            {
-              "editor_name": "Spotlight Editor",
-              "category": "spotlight",
-              "is_spotlight": true,
-              "expertise": "You are the Spotlight Editor. Your job is to find the most interesting, surprising, or entertaining content related to the publication's topic — podcasts worth listening to, videos worth watching, demos worth trying, and stories that make people smile or think differently.\n\nYou look for:\n- Notable podcast episodes and interviews\n- Compelling video content and documentaries\n- Interactive demos, tools, and visualizations\n- Unusual angles, human interest stories, and cultural moments\n\nYou notice when something is genuinely interesting to a curious professional, not just technically relevant."
-            }
-          ],
+          "autoPopulateFromCategories": true,
           "fields": [
             {
               "id": "editor_name",
