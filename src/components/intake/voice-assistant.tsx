@@ -413,30 +413,50 @@ export function VoiceAssistant({
   }, [sheetHeight, onPanelToggle])
 
   if (!agentId) return null
+  /* Reset sheet height when panel opens */
+  useEffect(() => {
+    if (isOpen) setSheetHeight(75)
+  }, [isOpen])
+
+  /* Lock body scroll on mobile when panel is open */
+  useEffect(() => {
+    if (!isOpen) return
+    /* Only lock on mobile (< 640px) */
+    const mq = window.matchMedia("(max-width: 639px)")
+    if (!mq.matches) return
+    document.body.style.overflow = "hidden"
+    return () => { document.body.style.overflow = "" }
+  }, [isOpen])
+
   if (!isOpen) return null
 
   return (
-    <div
-      className={cn(
-        /* Mobile: bottom sheet */
-        "fixed inset-x-0 bottom-0 z-50 bg-background border-t rounded-t-2xl shadow-2xl flex flex-col",
-        /* Desktop: side panel, full viewport height */
-        "sm:static sm:inset-auto sm:z-auto sm:w-[380px] sm:shrink-0 sm:border-r sm:border-t-0 sm:rounded-none sm:shadow-none sm:sticky sm:top-0 sm:!h-dvh"
-      )}
-      style={{ "--voice-sheet-h": `${sheetHeight}dvh`, height: "var(--voice-sheet-h)" } as React.CSSProperties}
-    >
-      {/* Drag handle — mobile only */}
+    <>
+      {/* Dark overlay — mobile only */}
       <div
-        className="sm:hidden flex justify-center py-2 cursor-grab active:cursor-grabbing touch-none"
-        onTouchStart={onDragStart}
-        onTouchMove={onDragMove}
-        onTouchEnd={onDragEnd}
-        onMouseDown={onDragStart}
-        onMouseMove={onDragMove}
-        onMouseUp={onDragEnd}
+        className="fixed inset-0 z-40 bg-black/40 sm:hidden"
+        onClick={() => onPanelToggle?.(false)}
+        aria-hidden="true"
+      />
+
+      <div
+        className={cn(
+          /* Mobile: bottom sheet above overlay */
+          "fixed inset-x-0 bottom-0 z-50 bg-background border-t rounded-t-2xl shadow-2xl flex flex-col",
+          /* Desktop: side panel, full viewport height */
+          "sm:static sm:inset-auto sm:z-auto sm:w-[380px] sm:shrink-0 sm:border-r sm:border-t-0 sm:rounded-none sm:shadow-none sm:sticky sm:top-0 sm:!h-dvh"
+        )}
+        style={{ "--voice-sheet-h": `${sheetHeight}dvh`, height: "var(--voice-sheet-h)" } as React.CSSProperties}
       >
-        <div className="w-10 h-1 rounded-full bg-border" />
-      </div>
+        {/* Drag handle — mobile only. Swipe down to close. */}
+        <div
+          className="sm:hidden flex justify-center py-2 cursor-grab active:cursor-grabbing touch-none"
+          onTouchStart={onDragStart}
+          onTouchMove={onDragMove}
+          onTouchEnd={onDragEnd}
+        >
+          <div className="w-10 h-1 rounded-full bg-border" />
+        </div>
 
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-2 border-b shrink-0">
@@ -529,5 +549,6 @@ export function VoiceAssistant({
         )}
       </div>
     </div>
+    </>
   )
 }
