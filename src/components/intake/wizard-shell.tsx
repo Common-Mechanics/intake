@@ -161,6 +161,25 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
     })
   }
 
+  /* For any step with category references, inject dynamic dropdowns */
+  if (wizard.currentStepDef.id === "sentiment-rules" && categoryOptions.length > 0) {
+    rendererFields = rendererFields.map((field: Record<string, unknown>) => {
+      if (field.type !== "repeating" || !Array.isArray(field.fields)) return field
+      return {
+        ...field,
+        fields: (field.fields as Record<string, unknown>[]).map((subField) => {
+          if (subField.id !== "category_group") return subField
+          return {
+            ...subField,
+            type: "select",
+            options: categoryOptions,
+            help: "Which category does this rule apply to?",
+          }
+        }),
+      }
+    })
+  }
+
   /* Track which categories are assigned to which editors, and detect duplicates */
   const { assignedCategories, duplicateCategories } = useMemo(() => {
     const assigned = new Map<string, string>()

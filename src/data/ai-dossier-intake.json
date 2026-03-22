@@ -429,23 +429,11 @@
               "id": "category_group",
               "type": "text",
               "label": "Category",
-              "help": "Which category do these rules apply to? Use the full name. Example: \"Climate Policy & Governance\"",
-              "placeholder": "Climate Policy & Governance",
+              "help": "Which category does this rule apply to?",
+              "placeholder": "Policy",
               "validation": {
                 "required": true,
                 "maxLength": 100
-              }
-            },
-            {
-              "id": "category_group_key",
-              "type": "text",
-              "label": "Category Key",
-              "help": "The short label of the category this rule applies to, in lowercase. Letters, numbers, and hyphens only. Example: \"policy\", \"science\", \"finance\"",
-              "placeholder": "policy",
-              "validation": {
-                "required": true,
-                "maxLength": 30,
-                "pattern": "^[a-z0-9\\-]+$"
               }
             },
             {
