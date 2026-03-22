@@ -85,12 +85,17 @@
         "default_sentiment": "",
         "because": ""
       }
-    ]
+    ],
+    "sentiment_rules_by_category": {
+      "policy": [],
+      "test2": [],
+      "policy2": []
+    }
   },
   "skippedSections": [],
   "completedSteps": [
     "editorial-team",
     "sentiment-tracker"
   ],
-  "lastSaved": "2026-03-22T02:10:16.051Z"
+  "lastSaved": "2026-03-22T02:21:27.529Z"
 }
