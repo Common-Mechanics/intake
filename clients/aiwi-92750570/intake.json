@@ -138,17 +138,7 @@
       }
     ],
     "key_organizations": [],
-    "triage_topics": [
-      {
-        "topic": ""
-      },
-      {
-        "topic": ""
-      },
-      {
-        "topic": ""
-      }
-    ]
+    "triage_topics": []
   },
   "skippedSections": [],
   "completedSteps": [
@@ -160,5 +150,5 @@
     "sentiment-rules",
     "social-profiles"
   ],
-  "lastSaved": "2026-03-22T02:53:31.483Z"
+  "lastSaved": "2026-03-22T02:53:35.141Z"
 }
