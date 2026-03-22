@@ -10,6 +10,8 @@ import { StepRenderer } from "./step-renderer"
 import { StepNav } from "./step-nav"
 import { ConflictDialog } from "./conflict-dialog"
 import { CompletionChecklist } from "./completion-checklist"
+import { CategoryAssignment } from "./category-assignment"
+import { CostEstimate } from "./cost-estimate"
 
 interface WizardShellProps {
   schema: FormSchema
@@ -159,6 +161,32 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
     })
   }
 
+  /* Track which categories are assigned to which editors, and detect duplicates */
+  const { assignedCategories, duplicateCategories } = useMemo(() => {
+    const assigned = new Map<string, string>()
+    const allAssignments = new Map<string, string[]>() // cat → [editor names]
+    const editors = wizard.values["editorial-team"]?.["editors"] as Record<string, unknown>[] | undefined
+    if (!editors) return { assignedCategories: assigned, duplicateCategories: new Map<string, string[]>() }
+    for (const editor of editors) {
+      const cat = (editor.category as string)?.trim().toLowerCase()
+      const name = (editor.editor_name as string)?.trim()
+      if (cat && cat !== "spotlight" && name) {
+        assigned.set(cat, name)
+        const existing = allAssignments.get(cat) ?? []
+        existing.push(name)
+        allAssignments.set(cat, existing)
+      }
+    }
+    const dupes = new Map<string, string[]>()
+    for (const [cat, names] of allAssignments) {
+      if (names.length > 1) dupes.set(cat, names)
+    }
+    return { assignedCategories: assigned, duplicateCategories: dupes }
+  }, [wizard.values])
+
+  /* Should we show the category assignment panel? */
+  const showCategoryAssignment = wizard.currentStepDef.id === "editorial-team" && categoryOptions.length > 0
+
   const stepForRenderer = {
     id: wizard.currentStepDef.id,
     title: wizard.currentStepDef.title,
@@ -202,6 +230,16 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
         >
           {/* Desktop: card wrapper. Mobile: no card chrome */}
           <div key={`mobile-${wizard.currentStep}`} className="md:hidden px-5 py-2 animate-step-enter">
+            {showCategoryAssignment && (
+              <div className="mb-6">
+                <CategoryAssignment
+                  categories={categoryOptions}
+                  assignedCategories={assignedCategories}
+                  duplicateCategories={duplicateCategories}
+                  hasError={!!wizard.errors["editors"]}
+                />
+              </div>
+            )}
             <StepRenderer
               step={stepForRenderer}
               values={currentValues}
@@ -213,18 +251,29 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
               headingRef={stepHeadingRef}
             />
             {wizard.isLastStep && (
-              <CompletionChecklist
-                steps={schema.steps}
-                values={wizard.values}
-                completedSteps={wizard.completedSteps}
-                skippedSections={wizard.skippedSections}
-                onGoToStep={wizard.goToStep}
-              />
+              <>
+                <CompletionChecklist
+                  steps={schema.steps}
+                  values={wizard.values}
+                  completedSteps={wizard.completedSteps}
+                  skippedSections={wizard.skippedSections}
+                  onGoToStep={wizard.goToStep}
+                />
+                <CostEstimate values={wizard.values} />
+              </>
             )}
           </div>
 
           <Card key={`desktop-${wizard.currentStep}`} className="hidden md:flex shadow-sm animate-step-enter">
             <CardContent className="py-6 px-8">
+              {showCategoryAssignment && (
+                <div className="mb-6">
+                  <CategoryAssignment
+                    categories={categoryOptions}
+                    assignedCategories={assignedCategories}
+                  />
+                </div>
+              )}
               <StepRenderer
                 step={stepForRenderer}
                 values={currentValues}
