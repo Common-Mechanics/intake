@@ -412,13 +412,16 @@ export function RepeatingGroup({
                   hasEntryErrors && "border-destructive/50"
                 )}
               >
-                <button
-                  type="button"
+                {/* Use div+role instead of nested buttons to avoid hydration error */}
+                <div
+                  role="button"
+                  tabIndex={0}
                   className="flex items-center gap-2 px-3 py-2 w-full text-left cursor-pointer hover:bg-accent/50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
                   onClick={() => toggleExpanded(index)}
+                  onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleExpanded(index) } }}
                   aria-expanded={isOpen}
                 >
-                  <ChevronDown className={cn(
+                  <ChevronDown aria-hidden="true" className={cn(
                     "size-3.5 text-muted-foreground shrink-0 transition-transform",
                     isOpen && "rotate-180"
                   )} />
@@ -443,7 +446,7 @@ export function RepeatingGroup({
                   >
                     <X className="size-3" />
                   </Button>
-                </button>
+                </div>
 
                 {isOpen && (
                   <div className="px-3 pb-3 pt-2 border-t">
