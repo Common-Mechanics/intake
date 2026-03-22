@@ -78,6 +78,12 @@
         "when_this_happens": "democracy fails",
         "default_sentiment": "negative",
         "because": "we all die"
+      },
+      {
+        "category_group": "",
+        "when_this_happens": "",
+        "default_sentiment": "",
+        "because": ""
       }
     ]
   },
@@ -86,5 +92,5 @@
     "editorial-team",
     "sentiment-tracker"
   ],
-  "lastSaved": "2026-03-22T02:02:06.904Z"
+  "lastSaved": "2026-03-22T02:02:23.696Z"
 }
