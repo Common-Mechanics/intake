@@ -11,6 +11,7 @@
         {
           "id": "publication_name",
           "type": "text",
+          "layout": "half",
           "label": "Publication Name",
           "help": "What's your publication called? This appears in the header, browser tab, and social cards. Examples: \"CLIMATE DOSSIER\", \"AI WHISTLEBLOWER\", \"CYBER PULSE\"",
           "placeholder": "MY PUBLICATION",
@@ -22,6 +23,7 @@
         {
           "id": "full_title",
           "type": "text",
+          "layout": "half",
           "label": "Full Title",
           "help": "Full title with tagline. Example: \"CLIMATE DOSSIER — Daily Climate Policy Briefing\"",
           "placeholder": "PUBLICATION — Your Tagline Here",
@@ -44,6 +46,7 @@
         {
           "id": "site_url",
           "type": "url",
+          "layout": "half",
           "label": "Site URL",
           "help": "Where will the site live? Example: \"https://climatedossier.org\"",
           "placeholder": "https://yourpublication.org",
@@ -54,6 +57,7 @@
         {
           "id": "publisher_name",
           "type": "text",
+          "layout": "half",
           "label": "Publisher Name",
           "help": "Your organization name. Example: \"Climate Action Network\"",
           "placeholder": "Your Organization",
@@ -65,6 +69,7 @@
         {
           "id": "publisher_url",
           "type": "url",
+          "layout": "half",
           "label": "Publisher URL",
           "help": "Your organization's website. Example: \"https://climatenetwork.org\"",
           "placeholder": "https://yourorg.com",
@@ -83,6 +88,7 @@
         {
           "id": "audience_description",
           "type": "text",
+          "layout": "half",
           "label": "Who Reads This?",
           "help": "List 2-4 reader types, comma-separated. Example: \"climate policy advisors, environmental journalists, ESG analysts, sustainability professionals\"",
           "placeholder": "policy advisors, journalists, analysts",
@@ -94,6 +100,7 @@
         {
           "id": "publication_type",
           "type": "text",
+          "layout": "half",
           "label": "Publication Type",
           "help": "How would you describe this publication in a sentence fragment? Example: \"climate policy intelligence briefing\", \"corporate accountability watchdog\"",
           "placeholder": "intelligence briefing on...",
@@ -105,6 +112,7 @@
         {
           "id": "topic_label",
           "type": "text",
+          "layout": "half",
           "label": "Topic Label",
           "help": "Your topic in 2-4 words. Used throughout the pipeline. Example: \"climate policy\", \"AI accountability\", \"cybersecurity\"",
           "placeholder": "climate policy",
@@ -127,6 +135,7 @@
         {
           "id": "community_label",
           "type": "text",
+          "layout": "half",
           "label": "Community Label",
           "help": "What do you call your community? Example: \"the climate policy community\", \"the cybersecurity community\"",
           "placeholder": "the ... community",
@@ -276,6 +285,7 @@
         {
           "id": "tracker_name",
           "type": "text",
+          "layout": "half",
           "label": "Tracker Name",
           "help": "Give your tracker a name — it appears in the navigation and on charts. Think of it as a metric that captures the direction of your domain. Example: \"Climate Risk Index\", \"Trust Score\", \"Momentum Tracker\"",
           "placeholder": "Risk Index",
@@ -298,6 +308,7 @@
         {
           "id": "positive_signal_label",
           "type": "text",
+          "layout": "half",
           "label": "Positive Signal Label",
           "help": "What do you call it when things improve? This label shows up next to positive stories. Example: \"progress points\", \"trust points\", \"green points\"",
           "placeholder": "progress points",
@@ -309,6 +320,7 @@
         {
           "id": "negative_signal_label",
           "type": "text",
+          "layout": "half",
           "label": "Negative Signal Label",
           "help": "What do you call it when things get worse? This label shows up next to negative stories. Example: \"risk points\", \"erosion points\", \"red points\"",
           "placeholder": "risk points",
@@ -320,6 +332,7 @@
         {
           "id": "tracker_nav_label",
           "type": "text",
+          "layout": "half",
           "label": "Tracker Nav Label",
           "help": "Short label for the navigation tab — what users click to see the tracker. Example: \"Tracker\", \"Risk Index\", \"Pulse\"",
           "placeholder": "Tracker",
@@ -331,6 +344,7 @@
         {
           "id": "what_positive_means",
           "type": "textarea",
+          "layout": "half",
           "label": "What Positive Means",
           "help": "In one sentence, what does a positive signal mean in your domain? Example: \"Decarbonization is accelerating — policy, finance, or technology moving in the right direction.\"",
           "placeholder": "Things are improving because...",
@@ -417,63 +431,13 @@
       },
       "fields": [
         {
-          "id": "sentiment_rules",
-          "type": "repeating",
+          "id": "sentiment_rules_by_category",
+          "type": "custom",
           "label": "Sentiment Rules",
-          "help": "Aim for 3-6 rules per category. You can always refine these after seeing your first few builds.",
+          "help": "For each category, define rules that tell the pipeline when something is positive, negative, or neutral. Focus on the non-obvious cases — the pipeline already gets the obvious ones right.",
           "validation": {
-            "required": true,
-            "minItems": 1
-          },
-          "fields": [
-            {
-              "id": "category_group",
-              "type": "text",
-              "label": "Category",
-              "help": "Which category does this rule apply to?",
-              "placeholder": "Policy",
-              "validation": {
-                "required": true,
-                "maxLength": 100
-              }
-            },
-            {
-              "id": "when_this_happens",
-              "type": "textarea",
-              "label": "When This Happens",
-              "help": "Describe the situation. Example: \"New regulation creates binding emissions targets\"",
-              "placeholder": "When...",
-              "validation": {
-                "required": true,
-                "maxLength": 500
-              }
-            },
-            {
-              "id": "default_sentiment",
-              "type": "select",
-              "label": "Default Sentiment",
-              "help": "Is this positive, negative, or neutral for your domain?",
-              "validation": {
-                "required": true
-              },
-              "options": [
-                { "label": "Positive", "value": "positive" },
-                { "label": "Negative", "value": "negative" },
-                { "label": "Neutral", "value": "neutral" }
-              ]
-            },
-            {
-              "id": "because",
-              "type": "textarea",
-              "label": "Because",
-              "help": "Why is this positive/negative/neutral? Example: \"governance strengthened\", \"undermines existing protections\"",
-              "placeholder": "Because...",
-              "validation": {
-                "required": false,
-                "maxLength": 500
-              }
-            }
-          ]
+            "required": false
+          }
         }
       ]
     },

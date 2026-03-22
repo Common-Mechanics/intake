@@ -132,6 +132,21 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
     wizard.setFieldValue("editorial-team", "editors", editors)
   }, [wizard.currentStepDef.id, categoryEntries, wizard.values, wizard.setFieldValue])
 
+  /* Auto-populate sentiment_rules_by_category with empty arrays per category */
+  useEffect(() => {
+    if (wizard.currentStepDef.id !== "sentiment-rules") return
+    const current = wizard.values["sentiment-rules"]?.["sentiment_rules_by_category"] as Record<string, unknown[]> | undefined
+    if (current && Object.keys(current).length > 0) return // already has data
+    if (categoryEntries.length === 0) return
+
+    const initial: Record<string, unknown[]> = {}
+    for (const cat of categoryEntries) {
+      const key = (cat.short_label as string).toLowerCase()
+      initial[key] = []
+    }
+    wizard.setFieldValue("sentiment-rules", "sentiment_rules_by_category", initial)
+  }, [wizard.currentStepDef.id, categoryEntries, wizard.values, wizard.setFieldValue])
+
   // Adapt step-renderer's expected shape from schema types.
   // For the editorial-team step, inject dynamic category options from step 3.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -164,23 +179,13 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
     })
   }
 
-  /* For any step with category references, inject dynamic dropdowns */
+  /* For sentiment-rules step, inject categories into the custom field */
   if (wizard.currentStepDef.id === "sentiment-rules" && categoryOptions.length > 0) {
     rendererFields = rendererFields.map((field: Record<string, unknown>) => {
-      if (field.type !== "repeating" || !Array.isArray(field.fields)) return field
-      return {
-        ...field,
-        fields: (field.fields as Record<string, unknown>[]).map((subField) => {
-          if (subField.id !== "category_group") return subField
-          return {
-            ...subField,
-            type: "select",
-            options: categoryOptions,
-            colorMap: Object.fromEntries(categoryOptions.map(c => [c.value, c.colorIndex])),
-            help: "Which category does this rule apply to?",
-          }
-        }),
+      if (field.id === "sentiment_rules_by_category") {
+        return { ...field, customProps: { categories: categoryOptions } }
       }
+      return field
     })
   }
 

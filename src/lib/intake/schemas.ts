@@ -10,6 +10,7 @@ export const fieldTypeSchema = z.enum([
   "select",
   "checkbox",
   "repeating",
+  "custom",
 ])
 
 export const validationSchema = z.object({

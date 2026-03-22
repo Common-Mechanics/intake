@@ -59,6 +59,11 @@ function buildFieldValidator(field: FieldDef, isRequired: boolean): z.ZodTypeAny
       return schema
     }
 
+    case "custom": {
+      // Custom fields handle their own validation internally
+      return z.unknown()
+    }
+
     case "repeating": {
       const subFields = field.fields ?? []
       const shape: Record<string, z.ZodTypeAny> = {}

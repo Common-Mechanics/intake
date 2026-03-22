@@ -6,6 +6,7 @@ import { NumberField } from "./fields/number-field"
 import { SelectField } from "./fields/select-field"
 import { CheckboxField } from "./fields/checkbox-field"
 import { RepeatingGroup } from "./fields/repeating-group"
+import { SentimentRulesEditor } from "./sentiment-rules-editor"
 
 interface FieldDefinition {
   id: string
@@ -180,6 +181,31 @@ export function FieldRenderer({
           showColorDots={field.showColorDots as boolean | undefined}
         />
       )
+
+    case "custom": {
+      // Route custom fields to their dedicated components by field ID
+      if (field.id === "sentiment_rules_by_category") {
+        const customProps = (field as Record<string, unknown>).customProps as {
+          categories?: { label: string; value: string; colorIndex: number }[]
+        } | undefined
+        return (
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium">{field.label}</label>
+            {field.help && (
+              <p className="text-sm text-muted-foreground">{field.help}</p>
+            )}
+            <SentimentRulesEditor
+              categories={customProps?.categories ?? []}
+              value={(value as Record<string, { when_this_happens: string; default_sentiment: string; because: string }[]>) ?? {}}
+              onChange={onChange as (v: Record<string, { when_this_happens: string; default_sentiment: string; because: string }[]>) => void}
+              disabled={disabled}
+            />
+          </div>
+        )
+      }
+      // Fallback for unknown custom fields
+      return <p className="text-sm text-muted-foreground">Unknown custom field: {field.id}</p>
+    }
 
     default:
       // Fallback: render as text input for unknown types
