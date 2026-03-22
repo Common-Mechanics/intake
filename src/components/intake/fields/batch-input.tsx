@@ -205,9 +205,11 @@ export function BatchInput({
               id={tab === "csv" ? csvTabId : jsonTabId}
               role="tab"
               aria-selected={mode === tab}
+              aria-controls={tab === "csv" ? csvPanelId : jsonPanelId}
               onClick={() => { setMode(tab); setPreview(null); setParseError(null) }}
               className={cn(
                 "px-2.5 py-1 text-xs rounded-md transition-colors",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                 mode === tab
                   ? "bg-muted text-foreground font-medium"
                   : "text-muted-foreground hover:text-foreground"
@@ -222,7 +224,8 @@ export function BatchInput({
           <div role="tabpanel" id={csvPanelId} aria-labelledby={csvTabId}>
             <Textarea
               id={`${id}-csv`}
-              placeholder={fields.map((f) => f.label).join(", ") + "\nvalue1, value2, ..."}
+              aria-label="CSV data"
+              placeholder={fields.map((f) => f.label).join(", ") + "\nvalue1, value2\u2026"}
               value={csvText}
               onChange={(e) => { setCsvText(e.target.value); setPreview(null); setParseError(null) }}
               rows={3}
@@ -251,6 +254,7 @@ export function BatchInput({
             </label>
             <Textarea
               id={`${id}-json`}
+              aria-label="JSON data"
               placeholder={exampleJSON}
               value={jsonText}
               onChange={(e) => { setJsonText(e.target.value); setPreview(null); setParseError(null) }}

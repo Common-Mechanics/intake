@@ -44,7 +44,10 @@ export function NumberField({
       </Label>
       <Input
         id={id}
+        name={id}
         type="number"
+        inputMode="numeric"
+        autoComplete="off"
         placeholder={placeholder}
         value={value ?? ""}
         onChange={(e) => {

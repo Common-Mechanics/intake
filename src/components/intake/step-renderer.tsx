@@ -47,6 +47,8 @@ interface StepRendererProps {
   onToggleSkip?: (stepId: string) => void
   onFieldBlur?: (fieldId: string) => void
   headingRef?: RefObject<HTMLHeadingElement | null>
+  /** Extra content rendered between the step header and the fields */
+  headerExtra?: React.ReactNode
 }
 
 export function StepRenderer({
@@ -59,6 +61,7 @@ export function StepRenderer({
   onToggleSkip,
   onFieldBlur,
   headingRef,
+  headerExtra,
 }: StepRendererProps) {
   const handleFieldChange = useCallback(
     (fieldId: string) => (value: unknown) => {
@@ -93,7 +96,7 @@ export function StepRenderer({
         <h2
           ref={headingRef}
           tabIndex={-1}
-          className="text-2xl md:text-[28px] font-semibold tracking-tight leading-tight outline-none"
+          className="text-2xl md:text-[28px] font-semibold tracking-tight leading-tight outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:rounded-sm"
         >
           {step.title}
         </h2>
@@ -104,7 +107,7 @@ export function StepRenderer({
         )}
         {step.hint && (
           <Alert variant="info">
-            <Info className="text-muted-foreground" />
+            <Info aria-hidden="true" className="text-muted-foreground" />
             <AlertDescription>{step.hint}</AlertDescription>
           </Alert>
         )}
@@ -123,9 +126,11 @@ export function StepRenderer({
         )}
       </div>
 
+      {headerExtra}
+
       {/* ── FIELD SECTIONS ── */}
       <div className={cn(
-        "flex flex-col gap-8 transition-opacity duration-200",
+        "flex flex-col gap-8 transition-opacity duration-200 motion-reduce:transition-none",
         isSkipped && "pointer-events-none opacity-40"
       )}>
         {sections.map((section, sectionIdx) => (
@@ -156,17 +161,16 @@ export function StepRenderer({
                     )}
                   >
                     {/* The field itself.
-                        For simple fields (not repeating/custom): pass help through so
-                        aria-describedby works. The HelpTooltip inside the field is
-                        md:sr-only so it stays accessible but the sidebar shows it visually.
-                        For wide types (repeating/custom): strip help to avoid duplicating
-                        what the field component already renders internally. */}
+                        For simple fields: pass help so aria-describedby works.
+                        The HelpTooltip is md:sr-only; the sidebar shows it on desktop.
+                        For wide types: pass help through — the component renders it
+                        in its own header area. */}
                     <div className={cn(
                       "min-w-0",
                       !isWideType ? "md:flex-[3]" : "w-full"
                     )}>
                       <FieldRenderer
-                        field={isWideType ? { ...field, help: undefined } : field}
+                        field={field}
                         value={values[field.id]}
                         onChange={handleFieldChange(field.id)}
                         error={errors[field.id]}
@@ -185,19 +189,15 @@ export function StepRenderer({
                         aria-hidden="true"
                         className={cn(
                           "text-[13px] leading-relaxed text-muted-foreground",
-                          "md:flex-[2] md:pt-7"
+                          /* Hidden on mobile — the field's own HelpTooltip shows there.
+                             Visible on desktop as a sidebar alongside the field. */
+                          "hidden md:block md:flex-[2] md:pt-7"
                         )}
                       >
                         {field.help}
                       </p>
                     )}
 
-                    {/* Wide types (repeating, custom): help below */}
-                    {hasHelp && isWideType && (
-                      <p className="text-[13px] leading-relaxed text-muted-foreground md:hidden">
-                        {field.help}
-                      </p>
-                    )}
                   </div>
                 )
               })}

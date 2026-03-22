@@ -54,9 +54,9 @@ export function ProgressBar({
     const isCompleted = completedSteps.has(step.id)
     const isSkipped = skippedSections.has(step.id)
 
-    if (hasErrors) return <AlertCircle className="size-4 text-destructive" />
-    if (isSkipped) return <Info className="size-4 text-muted-foreground" />
-    if (isCompleted) return <Check className="size-4 text-primary" />
+    if (hasErrors) return <AlertCircle aria-hidden="true" className="size-4 text-destructive" />
+    if (isSkipped) return <Info aria-hidden="true" className="size-4 text-muted-foreground" />
+    if (isCompleted) return <Check aria-hidden="true" className="size-4 text-primary" />
     if (index === currentStep) return <span className="size-2 rounded-full bg-primary" />
     return <span className="size-2 rounded-full bg-border" />
   }
@@ -83,7 +83,7 @@ export function ProgressBar({
           aria-expanded={dropdownOpen}
           aria-haspopup="listbox"
           aria-label={`Step ${currentStep + 1} of ${totalSteps}: ${currentStepDef.title}. Open step menu`}
-          className="flex items-center gap-2 w-full min-h-[36px] px-3 py-1.5 rounded-md hover:bg-accent transition-colors"
+          className="flex items-center gap-2 w-full min-h-[36px] px-3 py-1.5 rounded-md hover:bg-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <span className="text-sm font-medium tabular-nums text-muted-foreground shrink-0">
             {currentStep + 1}/{totalSteps}
@@ -100,14 +100,14 @@ export function ProgressBar({
         {/* Thin progress bar */}
         <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-muted rounded-full overflow-hidden">
           <div
-            className="h-full bg-primary transition-all duration-500 ease-out rounded-full"
+            className="h-full bg-primary transition-[width] duration-500 ease-out rounded-full"
             style={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }}
           />
         </div>
 
         {/* Dropdown */}
         {dropdownOpen && (
-          <div className="absolute top-full left-0 right-0 mt-1 bg-popover border rounded-lg shadow-lg z-50 py-1 max-h-[60vh] overflow-y-auto">
+          <div role="listbox" aria-label="Steps" className="absolute top-full left-0 right-0 mt-1 bg-popover border rounded-lg shadow-lg z-50 py-1 max-h-[60vh] overflow-y-auto">
             {steps.map((step, index) => {
               const isCurrent = index === currentStep
               const hasErrors = (stepErrors[step.id] ?? 0) > 0
@@ -116,13 +116,15 @@ export function ProgressBar({
                 <button
                   key={step.id}
                   type="button"
+                  role="option"
+                  aria-selected={isCurrent}
                   onClick={() => {
                     onStepClick(index)
                     setDropdownOpen(false)
                   }}
                   className={cn(
                     "flex items-center gap-3 w-full px-3 py-2.5 text-sm text-left transition-colors",
-                    "hover:bg-accent",
+                    "hover:bg-accent focus-visible:outline-none focus-visible:bg-accent",
                     isCurrent && "bg-accent/50"
                   )}
                 >

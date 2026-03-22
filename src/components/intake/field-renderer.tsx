@@ -202,7 +202,7 @@ export function FieldRenderer({
         } | undefined
         return (
           <div className="space-y-1.5">
-            <label className="text-sm font-medium">{field.label}</label>
+            <span className="text-sm font-medium">{field.label}</span>
             {field.help && (
               <p className="text-sm text-muted-foreground">{field.help}</p>
             )}

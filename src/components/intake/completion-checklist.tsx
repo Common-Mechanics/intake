@@ -72,20 +72,20 @@ export function CompletionChecklist({
               onClick={() => onGoToStep(index)}
               className={cn(
                 "flex items-start gap-3 w-full text-left px-3 py-2.5 rounded-md transition-colors",
-                "hover:bg-accent",
+                "hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                 !isOk && "bg-destructive/5"
               )}
             >
               {/* Status icon */}
               <span className="shrink-0 mt-0.5">
                 {isSkipped ? (
-                  <Minus className="size-4 text-muted-foreground" />
+                  <Minus aria-hidden="true" className="size-4 text-muted-foreground" />
                 ) : isCompleted && !hasMissing ? (
-                  <Check className="size-4 text-primary" />
+                  <Check aria-hidden="true" className="size-4 text-primary" />
                 ) : hasMissing ? (
-                  <AlertCircle className="size-4 text-destructive" />
+                  <AlertCircle aria-hidden="true" className="size-4 text-destructive" />
                 ) : (
-                  <X className="size-4 text-muted-foreground" />
+                  <X aria-hidden="true" className="size-4 text-muted-foreground" />
                 )}
               </span>
 

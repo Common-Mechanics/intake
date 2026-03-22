@@ -12,6 +12,7 @@ import { ConflictDialog } from "./conflict-dialog"
 import { CompletionChecklist } from "./completion-checklist"
 import { CategoryAssignment } from "./category-assignment"
 import { CostEstimate } from "./cost-estimate"
+import { SettingsPopover } from "./settings-popover"
 
 interface WizardShellProps {
   schema: FormSchema
@@ -264,6 +265,7 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
         <div className="mx-auto max-w-5xl">
           <div className="flex items-center justify-between px-4 pt-3 pb-0">
             <h1 className="text-base font-semibold tracking-tight">Onboarding Form</h1>
+            <SettingsPopover />
           </div>
           <ProgressBar
             steps={schema.steps}
@@ -276,7 +278,7 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
       </div>
 
       {/* Main content area */}
-      <div className="flex-1 flex flex-col">
+      <div id="main-content" className="flex-1 flex flex-col">
         <div
           className={cn(
             "mx-auto w-full flex-1 py-6 md:py-10",
@@ -287,16 +289,6 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
         >
           {/* Desktop: card wrapper. Mobile: no card chrome */}
           <div key={`mobile-${wizard.currentStep}`} className="md:hidden px-5 py-2 animate-step-enter">
-            {showCategoryAssignment && (
-              <div className="mb-6">
-                <CategoryAssignment
-                  categories={categoryOptions}
-                  assignedCategories={assignedCategories}
-                  duplicateCategories={duplicateCategories}
-                  hasError={!!wizard.errors["editors"]}
-                />
-              </div>
-            )}
             <StepRenderer
               step={stepForRenderer}
               values={currentValues}
@@ -306,6 +298,14 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
               onToggleSkip={wizard.toggleSkipSection}
               onFieldBlur={wizard.validateField}
               headingRef={stepHeadingRef}
+              headerExtra={showCategoryAssignment ? (
+                <CategoryAssignment
+                  categories={categoryOptions}
+                  assignedCategories={assignedCategories}
+                  duplicateCategories={duplicateCategories}
+                  hasError={!!wizard.errors["editors"]}
+                />
+              ) : undefined}
             />
             {wizard.isLastStep && (
               <>
@@ -323,16 +323,6 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
 
           <Card key={`desktop-${wizard.currentStep}`} className="hidden md:flex shadow-sm animate-step-enter">
             <CardContent className="py-6 px-8">
-              {showCategoryAssignment && (
-                <div className="mb-6">
-                  <CategoryAssignment
-                    categories={categoryOptions}
-                    assignedCategories={assignedCategories}
-                    duplicateCategories={duplicateCategories}
-                    hasError={!!wizard.errors["editors"]}
-                  />
-                </div>
-              )}
               <StepRenderer
                 step={stepForRenderer}
                 values={currentValues}
@@ -342,6 +332,14 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
                 onToggleSkip={wizard.toggleSkipSection}
                 onFieldBlur={wizard.validateField}
                 headingRef={stepHeadingRef}
+                headerExtra={showCategoryAssignment ? (
+                  <CategoryAssignment
+                    categories={categoryOptions}
+                    assignedCategories={assignedCategories}
+                    duplicateCategories={duplicateCategories}
+                    hasError={!!wizard.errors["editors"]}
+                  />
+                ) : undefined}
               />
               {wizard.isLastStep && (
                 <>

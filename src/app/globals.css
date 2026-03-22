@@ -165,6 +165,12 @@
   animation: step-enter 0.25s ease-out;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .animate-step-enter {
+    animation: none;
+  }
+}
+
 /*
  * Form typography hierarchy (documented for reference, implemented via Tailwind):
  *

@@ -20,7 +20,7 @@ const themes = [
   { value: "dark", label: "Dark", icon: Moon },
 ] as const
 
-export function SettingsPopover() {
+export function SettingsPopover({ className }: { className?: string }) {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
@@ -34,12 +34,12 @@ export function SettingsPopover() {
           <Button
             variant="ghost"
             size="icon"
-            className="fixed bottom-4 right-4 z-50 size-9 rounded-full bg-background/80 shadow-md border backdrop-blur-sm hover:bg-accent"
+            className={cn("size-8 rounded-full", className)}
             aria-label="Settings"
           />
         }
       >
-        <Settings className="size-4 text-muted-foreground" />
+        <Settings aria-hidden="true" className="size-4 text-muted-foreground" />
       </DialogTrigger>
       <DialogContent className="sm:max-w-[340px]">
         <DialogHeader>
@@ -52,16 +52,18 @@ export function SettingsPopover() {
               {themes.map(({ value, label, icon: Icon }) => (
                 <button
                   key={value}
+                  type="button"
                   onClick={() => setTheme(value)}
                   className={cn(
                     "flex flex-col items-center gap-1.5 rounded-lg border p-3 text-sm transition-colors",
                     "hover:bg-accent hover:text-accent-foreground",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                     mounted && theme === value
                       ? "border-primary bg-primary/5 text-foreground"
                       : "border-border text-muted-foreground"
                   )}
                 >
-                  <Icon className="size-4" />
+                  <Icon aria-hidden="true" className="size-4" />
                   {label}
                 </button>
               ))}

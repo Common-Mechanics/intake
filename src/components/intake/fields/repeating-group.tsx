@@ -233,20 +233,13 @@ export function RepeatingGroup({
       "flex flex-col gap-3",
       error && "ring-2 ring-destructive/20 rounded-lg border-destructive p-4 -mx-1"
     )}>
-      {/* Header */}
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex flex-col gap-0.5">
-          <div className="flex items-center gap-2">
-            <Label className="text-sm font-medium">{label}</Label>
-            <span className="text-xs text-muted-foreground tabular-nums">
-              {entries.length}{maxItems ? `/${maxItems}` : ""}
-            </span>
-          </div>
-          {help && (
-            <p className="text-[13px] leading-relaxed text-muted-foreground">{help}</p>
-          )}
-        </div>
+      {/* Header — label, count, and import on one line; help below */}
+      <div className="flex flex-col gap-1">
         <div className="flex items-center gap-2">
+          <Label className="text-sm font-medium">{label}</Label>
+          <span className="text-xs text-muted-foreground tabular-nums">
+            {entries.length}{maxItems ? `/${maxItems}` : ""}
+          </span>
           {showWarning && (
             <Badge variant="outline" className="shrink-0 border-amber-300 bg-amber-50 text-amber-800 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-300 text-xs">
               {validation.warnMessage}
@@ -259,12 +252,12 @@ export function RepeatingGroup({
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-7 text-xs text-muted-foreground shrink-0"
+                    className="h-6 text-xs text-muted-foreground shrink-0 ml-auto"
                     disabled={disabled}
                   />
                 }
               >
-                <Upload className="size-3" />
+                <Upload aria-hidden="true" className="size-3" />
                 Import
               </DialogTrigger>
               <DialogContent className="sm:max-w-lg">
@@ -282,6 +275,9 @@ export function RepeatingGroup({
             </Dialog>
           )}
         </div>
+        {help && (
+          <p className="text-[13px] leading-relaxed text-muted-foreground">{help}</p>
+        )}
       </div>
 
       {error && (
@@ -307,7 +303,8 @@ export function RepeatingGroup({
                   <Input
                     value={(entry[field.id] as string) ?? ""}
                     onChange={(e) => handleEntryChange(index, field.id, e.target.value)}
-                    placeholder={field.placeholder ?? `${singularLabel}...`}
+                    placeholder={field.placeholder ?? `${singularLabel}\u2026`}
+                    aria-label={`${singularLabel} ${index + 1}`}
                     disabled={disabled}
                     aria-invalid={!!errorMsg || undefined}
                     className={cn("h-8 text-sm", errorMsg && "border-destructive")}
@@ -361,7 +358,6 @@ export function RepeatingGroup({
                 )}
               >
                 {showColorDots && <CategoryDot index={index} className="mt-2.5" />}
-                <span className="text-xs text-muted-foreground tabular-nums mt-2 shrink-0 w-4">{index + 1}</span>
                 <div className="flex-1 grid grid-cols-1 md:grid-cols-[1fr,1fr] gap-x-3 gap-y-2">
                   {fields.map((field) => (
                     <div key={field.id} className={cn(
@@ -416,7 +412,7 @@ export function RepeatingGroup({
               >
                 <button
                   type="button"
-                  className="flex items-center gap-2 px-3 py-2 w-full text-left cursor-pointer hover:bg-accent/50 transition-colors"
+                  className="flex items-center gap-2 px-3 py-2 w-full text-left cursor-pointer hover:bg-accent/50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
                   onClick={() => toggleExpanded(index)}
                   aria-expanded={isOpen}
                 >
@@ -425,7 +421,6 @@ export function RepeatingGroup({
                     isOpen && "rotate-180"
                   )} />
                   {showColorDots && <CategoryDot index={index} />}
-                  <span className="text-xs text-muted-foreground tabular-nums shrink-0">{index + 1}</span>
                   <span className={cn(
                     "text-sm font-medium truncate flex-1",
                     hasEntryErrors && "text-destructive"

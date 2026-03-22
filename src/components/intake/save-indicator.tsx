@@ -29,41 +29,45 @@ export function SaveIndicator({ status, lastSaved }: SaveIndicatorProps) {
     return () => clearInterval(interval)
   }, [])
 
-  if (status === "saving") {
-    return (
-      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-        <Loader2 className="size-3 animate-spin" />
-        <span>Saving...</span>
-      </div>
-    )
-  }
+  const content = (() => {
+    if (status === "saving") {
+      return (
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          <Loader2 aria-hidden="true" className="size-3 animate-spin" />
+          <span>Saving\u2026</span>
+        </div>
+      )
+    }
 
-  if (status === "error") {
-    return (
-      <div className="flex items-center gap-1.5 text-xs text-destructive">
-        <AlertTriangle className="size-3" />
-        <span>Save failed — retrying</span>
-      </div>
-    )
-  }
+    if (status === "error") {
+      return (
+        <div className="flex items-center gap-1.5 text-xs text-destructive">
+          <AlertTriangle aria-hidden="true" className="size-3" />
+          <span>Save failed \u2014 retrying</span>
+        </div>
+      )
+    }
 
-  if (status === "conflict") {
-    return (
-      <div className="flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-400">
-        <AlertTriangle className="size-3" />
-        <span>Conflict detected</span>
-      </div>
-    )
-  }
+    if (status === "conflict") {
+      return (
+        <div className="flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-400">
+          <AlertTriangle aria-hidden="true" className="size-3" />
+          <span>Conflict detected</span>
+        </div>
+      )
+    }
 
-  if (lastSaved) {
-    return (
-      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-        <Cloud className="size-3" />
-        <span>Saved {relativeTime(lastSaved)}</span>
-      </div>
-    )
-  }
+    if (lastSaved) {
+      return (
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          <Cloud aria-hidden="true" className="size-3" />
+          <span>Saved {relativeTime(lastSaved)}</span>
+        </div>
+      )
+    }
 
-  return null
+    return null
+  })()
+
+  return <div aria-live="polite" aria-atomic="true">{content}</div>
 }

@@ -43,7 +43,7 @@ export function SkipSection({
 
       {checked && (
         <Alert variant="info">
-          <Info className="text-muted-foreground" />
+          <Info aria-hidden="true" className="text-muted-foreground" />
           <AlertTitle>Good to know</AlertTitle>
           <AlertDescription>{consequences}</AlertDescription>
         </Alert>

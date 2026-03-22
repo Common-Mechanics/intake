@@ -37,6 +37,7 @@ export function TextField({
 }: TextFieldProps) {
   const inputProps = {
     id,
+    name: id,
     type,
     placeholder,
     value: value ?? "",
@@ -44,6 +45,8 @@ export function TextField({
     onBlur,
     readOnly,
     disabled,
+    autoComplete: "off" as const,
+    ...(type === "url" ? { inputMode: "url" as const } : {}),
     "aria-invalid": !!error || undefined,
     "aria-describedby": error ? `${id}-error` : help ? `${id}-help` : undefined,
   }
@@ -61,7 +64,7 @@ export function TextField({
       </Label>
       {type === "url" ? (
         <div className="relative">
-          <Globe className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
+          <Globe aria-hidden="true" className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
           <Input
             {...inputProps}
             className={cn(inputClassName, "pl-9")}

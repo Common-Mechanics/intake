@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/intake/theme-provider";
-import { SettingsPopover } from "@/components/intake/settings-popover";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -23,8 +22,14 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <ThemeProvider>
+          {/* Skip link for keyboard/screen-reader users */}
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:rounded-md focus:bg-background focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:shadow-md focus:ring-2 focus:ring-ring"
+          >
+            Skip to main content
+          </a>
           {children}
-          <SettingsPopover />
           <Toaster position="top-right" />
         </ThemeProvider>
       </body>

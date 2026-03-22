@@ -46,8 +46,9 @@ export function StepNav({
             onClick={onPrev}
             disabled={!canGoPrev}
             className="min-h-11 min-w-[48px] gap-1.5"
+            aria-label="Back"
           >
-            <ChevronLeft className="size-4" data-icon="inline-start" />
+            <ChevronLeft aria-hidden="true" className="size-4" data-icon="inline-start" />
             <span className="hidden sm:inline">Back</span>
           </Button>
         ) : (
@@ -65,16 +66,17 @@ export function StepNav({
             onClick={onSave}
             className="min-h-11 gap-1.5 font-semibold"
           >
-            <Save className="size-4" data-icon="inline-start" />
+            <Save aria-hidden="true" className="size-4" data-icon="inline-start" />
             <span>Save & Complete</span>
           </Button>
         ) : (
           <Button
             onClick={onNext}
             className="min-h-11 min-w-[48px] gap-1.5"
+            aria-label="Next"
           >
             <span className="hidden sm:inline">Next</span>
-            <ChevronRight className="size-4" data-icon="inline-end" />
+            <ChevronRight aria-hidden="true" className="size-4" data-icon="inline-end" />
           </Button>
         )}
       </div>

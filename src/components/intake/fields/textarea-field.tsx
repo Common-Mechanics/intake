@@ -46,6 +46,7 @@ export function TextareaField({
       </Label>
       <Textarea
         id={id}
+        name={id}
         placeholder={placeholder}
         value={value ?? ""}
         onChange={(e) => onChange(e.target.value)}

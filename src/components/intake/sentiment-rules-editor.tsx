@@ -123,11 +123,13 @@ export function SentimentRulesEditor({
                   >
                     {/* Left: "When" textarea */}
                     <div>
-                      <label className="text-xs text-muted-foreground mb-1 block">When</label>
+                      <label htmlFor={`when-${category.value}-${ruleIdx}`} className="text-xs text-muted-foreground mb-1 block">When</label>
                       <Textarea
+                        id={`when-${category.value}-${ruleIdx}`}
+                        name={`when-${category.value}-${ruleIdx}`}
                         value={rule.when_this_happens}
                         onChange={(e) => updateRule(category.value, ruleIdx, "when_this_happens", e.target.value)}
-                        placeholder="Describe the situation..."
+                        placeholder="Describe the situation\u2026"
                         rows={2}
                         disabled={disabled}
                         className="min-h-0 text-sm resize-none"
@@ -139,7 +141,7 @@ export function SentimentRulesEditor({
                       {/* Sentiment segmented control */}
                       <div>
                         <label className="text-xs text-muted-foreground mb-1 block">Sentiment</label>
-                        <div className="inline-flex rounded-lg border border-input bg-muted p-0.5 gap-0.5">
+                        <div className="inline-flex rounded-lg border border-input bg-muted p-0.5 gap-0.5" role="group" aria-label="Sentiment">
                           {SENTIMENT_OPTIONS.map((opt) => (
                             <button
                               key={opt.value}
@@ -149,6 +151,7 @@ export function SentimentRulesEditor({
                               aria-pressed={rule.default_sentiment === opt.value}
                               className={cn(
                                 "px-3 py-1.5 text-xs font-medium rounded-md transition-colors",
+                                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                                 rule.default_sentiment === opt.value
                                   ? opt.selectedClass
                                   : "text-muted-foreground hover:text-foreground"
@@ -162,12 +165,14 @@ export function SentimentRulesEditor({
 
                       {/* Because input + remove button */}
                       <div>
-                        <label className="text-xs text-muted-foreground mb-1 block">Because (optional)</label>
+                        <label htmlFor={`because-${category.value}-${ruleIdx}`} className="text-xs text-muted-foreground mb-1 block">Because (optional)</label>
                         <div className="flex gap-2 items-center">
                           <Input
+                            id={`because-${category.value}-${ruleIdx}`}
+                            name={`because-${category.value}-${ruleIdx}`}
                             value={rule.because}
                             onChange={(e) => updateRule(category.value, ruleIdx, "because", e.target.value)}
-                            placeholder="governance strengthened..."
+                            placeholder="governance strengthened\u2026"
                             disabled={disabled}
                             className="text-sm min-h-10 flex-1"
                           />

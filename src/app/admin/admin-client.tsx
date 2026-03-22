@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
+import Link from "next/link"
 import { toast } from "sonner"
 import {
   Plus,
@@ -92,10 +92,10 @@ function StatusBadge({ status }: { status: OrgStatus }) {
 }
 
 function OrgCard({ org }: { org: OrgEntry }) {
-  const router = useRouter()
   const [copied, setCopied] = useState(false)
 
-  const intakeUrl = `${window.location.origin}/${org.id}`
+  /* Build URL client-side only to avoid SSR hydration mismatch */
+  const intakeUrl = typeof window !== "undefined" ? `${window.location.origin}/${org.id}` : `/${org.id}`
 
   async function copyLink() {
     try {
@@ -152,24 +152,22 @@ function OrgCard({ org }: { org: OrgEntry }) {
       <CardFooter className="gap-2">
         <Button variant="outline" size="sm" onClick={copyLink}>
           {copied ? (
-            <ClipboardCheck className="size-3.5" />
+            <ClipboardCheck aria-hidden="true" className="size-3.5" />
           ) : (
-            <Copy className="size-3.5" />
+            <Copy aria-hidden="true" className="size-3.5" />
           )}
           {copied ? "Copied" : "Copy Link"}
         </Button>
         <Button variant="outline" size="sm" onClick={downloadData}>
-          <Download className="size-3.5" />
+          <Download aria-hidden="true" className="size-3.5" />
           Download
         </Button>
-        <Button
-          size="sm"
-          className="ml-auto"
-          onClick={() => router.push(`/${org.id}`)}
-        >
-          <ExternalLink className="size-3.5" />
-          Open
-        </Button>
+        <Link href={`/${org.id}`} className="ml-auto">
+          <Button size="sm">
+            <ExternalLink aria-hidden="true" className="size-3.5" />
+            Open
+          </Button>
+        </Link>
       </CardFooter>
     </Card>
   )
@@ -292,18 +290,19 @@ function CreateOrgDialog({
                 <div className="flex items-center gap-2">
                   <Input
                     readOnly
-                    value={`${window.location.origin}/${createdOrg.id}`}
+                    defaultValue={`/${createdOrg.id}`}
                     className="font-mono text-xs"
                   />
                   <Button
                     variant="outline"
                     size="icon"
                     onClick={copyNewLink}
+                    aria-label="Copy intake link"
                   >
                     {copiedNewLink ? (
-                      <ClipboardCheck className="size-4" />
+                      <ClipboardCheck aria-hidden="true" className="size-4" />
                     ) : (
-                      <Copy className="size-4" />
+                      <Copy aria-hidden="true" className="size-4" />
                     )}
                   </Button>
                 </div>
@@ -332,9 +331,10 @@ function CreateOrgDialog({
                 <Label htmlFor="org-name">Organization Name</Label>
                 <Input
                   id="org-name"
-                  placeholder="e.g. AI Whistleblower"
+                  placeholder="e.g. AI Whistleblower\u2026"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
+                  autoComplete="off"
                   required
                 />
               </div>
@@ -342,7 +342,7 @@ function CreateOrgDialog({
                 <Label htmlFor="org-prefix">URL Prefix</Label>
                 <Input
                   id="org-prefix"
-                  placeholder="e.g. aiwi"
+                  placeholder="e.g. aiwi\u2026"
                   value={prefix}
                   onChange={(e) => setPrefix(e.target.value.toLowerCase().replace(/[^a-z0-9]/g, ""))}
                   required
@@ -376,8 +376,8 @@ function CreateOrgDialog({
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={submitting || !name.trim() || !prefix.trim()}>
-                {submitting ? "Creating..." : "Create"}
+              <Button type="submit" disabled={submitting}>
+                {submitting ? "Creating\u2026" : "Create"}
               </Button>
             </DialogFooter>
           </form>
