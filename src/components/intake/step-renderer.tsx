@@ -67,38 +67,47 @@ export function StepRenderer({
     [onChange]
   )
 
-  /* Collect help texts from fields for the right sidebar on desktop */
-  const fieldHelpTexts = step.fields
-    .filter((f) => f.type !== "section" && f.help)
-    .map((f) => ({ id: f.id, label: f.label, help: f.help! }))
+  /* Group fields into sections based on "section" type separators.
+     Each section becomes a visual card with its own header. */
+  const sections: { label?: string; fields: FieldDefinition[] }[] = []
+  let currentSection: { label?: string; fields: FieldDefinition[] } = { fields: [] }
+
+  for (const field of step.fields) {
+    if (field.type === "section") {
+      if (currentSection.fields.length > 0 || sections.length === 0) {
+        sections.push(currentSection)
+      }
+      currentSection = { label: field.label, fields: [] }
+    } else {
+      currentSection.fields.push(field)
+    }
+  }
+  if (currentSection.fields.length > 0) {
+    sections.push(currentSection)
+  }
 
   return (
     <div className="flex flex-col gap-8">
-      {/* ── TOP SECTION: full width — title, description, hint, skip ── */}
+      {/* ── STEP HEADER ── */}
       <div className="flex flex-col gap-4">
-        <div className="pb-2 border-b border-border/50">
-          <h2
-            ref={headingRef}
-            tabIndex={-1}
-            className="font-heading text-[28px] md:text-[32px] font-semibold tracking-tight leading-tight outline-none"
-          >
-            {step.title}
-          </h2>
-        </div>
-
+        <h2
+          ref={headingRef}
+          tabIndex={-1}
+          className="text-2xl md:text-[28px] font-semibold tracking-tight leading-tight outline-none"
+        >
+          {step.title}
+        </h2>
         {step.description && (
-          <p className="text-[15px] md:text-base text-foreground/70 leading-relaxed">
+          <p className="text-[15px] text-foreground/60 leading-relaxed max-w-2xl">
             {step.description}
           </p>
         )}
-
         {step.hint && (
           <Alert variant="info">
             <Info className="text-muted-foreground" />
             <AlertDescription>{step.hint}</AlertDescription>
           </Alert>
         )}
-
         {step.optional && onToggleSkip && (
           <SkipSection
             label={step.skipLabel ?? "I don't need this section"}
@@ -114,51 +123,77 @@ export function StepRenderer({
         )}
       </div>
 
-      {/* ── CONTENT: each field row = input left + help right on desktop ── */}
+      {/* ── FIELD SECTIONS ── */}
       <div className={cn(
-        "flex flex-col gap-5 transition-opacity duration-200",
+        "flex flex-col gap-10 transition-opacity duration-200",
         isSkipped && "pointer-events-none opacity-40"
       )}>
-        {step.fields.map((field) => {
-          const hasHelp = !!field.help && field.type !== "section"
-
-          return (
-            <div key={field.id} className="flex flex-col md:flex-row md:gap-8">
-              {/* Left: the input field (no help text — stripped on desktop) */}
-              <div className="flex-1 min-w-0">
-                <FieldRenderer
-                  field={{
-                    ...field,
-                    /* Desktop: help goes to the right column */
-                    help: undefined,
-                  }}
-                  value={values[field.id]}
-                  onChange={handleFieldChange(field.id)}
-                  error={errors[field.id]}
-                  allErrors={errors}
-                  disabled={disabled || isSkipped}
-                  allValues={values}
-                  onBlur={onFieldBlur}
-                />
-                {/* Mobile: show help below the field */}
-                {hasHelp && (
-                  <p className="md:hidden mt-1.5 text-[13px] leading-relaxed text-muted-foreground/60">
-                    {field.help}
-                  </p>
-                )}
+        {sections.map((section, sectionIdx) => (
+          <div key={sectionIdx}>
+            {/* Section header */}
+            {section.label && (
+              <div className="flex items-center gap-4 mb-6">
+                <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground/50 shrink-0">
+                  {section.label}
+                </span>
+                <div className="flex-1 h-px bg-border/50" />
               </div>
+            )}
 
-              {/* Right: help text aligned to this field (desktop only) */}
-              {hasHelp && (
-                <div className="hidden md:flex md:w-[220px] lg:w-[260px] shrink-0 pt-7">
-                  <p className="text-[12px] leading-relaxed text-muted-foreground/60">
-                    {field.help}
-                  </p>
-                </div>
-              )}
+            {/* Fields — each field is a row with help text on the right */}
+            <div className="flex flex-col gap-6">
+              {section.fields.map((field) => {
+                const hasHelp = !!field.help
+                const isWideType = field.type === "repeating" || field.type === "custom"
+
+                return (
+                  <div
+                    key={field.id}
+                    className={cn(
+                      "flex flex-col gap-1.5",
+                      /* Desktop: field + help side by side, but only for simple fields */
+                      !isWideType && "md:flex-row md:gap-8"
+                    )}
+                  >
+                    {/* The field itself */}
+                    <div className={cn(
+                      "min-w-0",
+                      !isWideType ? "md:flex-[3]" : "w-full"
+                    )}>
+                      <FieldRenderer
+                        field={{ ...field, help: undefined }}
+                        value={values[field.id]}
+                        onChange={handleFieldChange(field.id)}
+                        error={errors[field.id]}
+                        allErrors={errors}
+                        disabled={disabled || isSkipped}
+                        allValues={values}
+                        onBlur={onFieldBlur}
+                      />
+                    </div>
+
+                    {/* Help text — right side on desktop, below on mobile */}
+                    {hasHelp && !isWideType && (
+                      <p className={cn(
+                        "text-[13px] leading-relaxed text-muted-foreground/50",
+                        "md:flex-[2] md:pt-7"
+                      )}>
+                        {field.help}
+                      </p>
+                    )}
+
+                    {/* Wide types (repeating, custom): help below */}
+                    {hasHelp && isWideType && (
+                      <p className="text-[13px] leading-relaxed text-muted-foreground/50 md:hidden">
+                        {field.help}
+                      </p>
+                    )}
+                  </div>
+                )
+              })}
             </div>
-          )
-        })}
+          </div>
+        ))}
       </div>
     </div>
   )
