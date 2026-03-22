@@ -58,6 +58,12 @@
         "category": "spotlight",
         "is_spotlight": true,
         "expertise": "You are the Spotlight Editor. Your job is to find the most interesting, surprising, or entertaining content related to the publication's topic — podcasts worth listening to, videos worth watching, demos worth trying, and stories that make people smile or think differently.\n\nYou look for:\n- Notable podcast episodes and interviews\n- Compelling video content and documentaries\n- Interactive demos, tools, and visualizations\n- Unusual angles, human interest stories, and cultural moments\n\nYou notice when something is genuinely interesting to a curious professional, not just technically relevant."
+      },
+      {
+        "editor_name": "",
+        "category": "",
+        "is_spotlight": false,
+        "expertise": ""
       }
     ],
     "tracker_name": "1",
@@ -160,5 +166,5 @@
     "organizations-and-topics",
     "sources"
   ],
-  "lastSaved": "2026-03-22T03:19:48.151Z"
+  "lastSaved": "2026-03-22T03:19:56.775Z"
 }
