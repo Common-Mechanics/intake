@@ -287,22 +287,41 @@ export function RepeatingGroup({
           {canAdd && (
             <div className="flex items-center gap-2">
               {showColorDots && <span className="size-2.5 shrink-0" />}
-              <Input
-                placeholder={`Add ${singularLabel.toLowerCase()}...`}
-                disabled={disabled}
-                className="h-9 text-sm border-dashed"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault()
-                    const val = (e.target as HTMLInputElement).value.trim()
-                    if (!val) return
+              <div className="relative flex-1">
+                <Input
+                  placeholder={`Add ${singularLabel.toLowerCase()}...`}
+                  disabled={disabled}
+                  className="h-9 text-sm border-dashed pr-9"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault()
+                      const val = (e.target as HTMLInputElement).value.trim()
+                      if (!val) return
+                      const newEntry: Record<string, unknown> = { [fields[0].id]: val }
+                      onChange([...entries, newEntry])
+                      ;(e.target as HTMLInputElement).value = ""
+                    }
+                  }}
+                />
+                <button
+                  type="button"
+                  disabled={disabled}
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2 size-6 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                  onClick={(e) => {
+                    const input = (e.currentTarget.parentElement?.querySelector("input") as HTMLInputElement)
+                    const val = input?.value.trim()
+                    if (!val) { input?.focus(); return }
                     const newEntry: Record<string, unknown> = { [fields[0].id]: val }
                     onChange([...entries, newEntry])
-                    ;(e.target as HTMLInputElement).value = ""
-                  }
-                }}
-              />
-              <span className="size-7 shrink-0" /> {/* spacer to align with X buttons */}
+                    input.value = ""
+                    input.focus()
+                  }}
+                  aria-label={`Add ${singularLabel.toLowerCase()}`}
+                >
+                  <Plus className="size-3.5" />
+                </button>
+              </div>
+              <span className="size-7 shrink-0" />
             </div>
           )}
         </div>
