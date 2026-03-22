@@ -77,8 +77,7 @@ export async function POST(request: NextRequest) {
       lastModified: now,
       status: "not_started",
       completedSteps: 0,
-      // totalSteps will be set once the schema is loaded; default to 0
-      totalSteps: 0,
+      totalSteps: 5,
     }
     index.push(newEntry)
     await writeOrgIndex(index)
