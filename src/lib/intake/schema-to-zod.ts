@@ -21,10 +21,15 @@ function buildFieldValidator(field: FieldDef): z.ZodTypeAny {
     }
 
     case "url": {
-      let schema = z.string().url()
+      /* Accept "www.abc.xyz" and "abc.xyz" as well as "https://abc.xyz" */
+      const urlPattern = /^(https?:\/\/)?[\w.-]+\.[a-z]{2,}(\/\S*)?$/i
+      let schema = z.string()
       if (v?.minLength) schema = schema.min(v.minLength)
       if (v?.maxLength) schema = schema.max(v.maxLength)
-      return schema
+      return schema.refine(
+        (val) => !val || urlPattern.test(val.trim()),
+        { message: "Please enter a valid URL (e.g. www.example.com)" }
+      )
     }
 
     case "number": {
