@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useCallback, useRef, useEffect } from "react"
-import { Mic, Phone, PhoneOff, Pause, Play, X, GripHorizontal } from "lucide-react"
+import { Mic, Phone, PhoneOff, Pause, Play, X, GripHorizontal, Info } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
@@ -442,6 +442,9 @@ export function VoiceAssistant({
       <div className="flex items-center justify-between px-4 py-2 border-b shrink-0">
         <div className="flex items-center gap-2">
           <span className="text-sm font-semibold">Voice Assistant</span>
+          <span title="Conversations are recorded to help us improve this experience." className="cursor-help text-muted-foreground hover:text-foreground transition-colors">
+            <Info aria-hidden="true" className="size-3.5" />
+          </span>
           {voice.isConnected && (
             <Badge variant={voice.isMuted ? "outline" : voice.isSpeaking ? "default" : "secondary"} className="text-xs">
               {voice.isMuted ? "Paused" : voice.isSpeaking ? "Speaking" : "Listening"}
