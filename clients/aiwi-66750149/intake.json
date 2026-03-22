@@ -2,8 +2,10 @@
   "schemaId": "ai-dossier-intake",
   "schemaVersion": 2,
   "orgId": "aiwi-66750149",
-  "orgName": "aiwi-66750149",
+  "orgName": "This is an Emergency",
   "data": {
+    "publication_name": "This is an Emergency",
+    "site_url": "https://thisisanemergency.org",
     "categories": [
       {
         "short_label": "",
@@ -38,5 +40,5 @@
     "social-profiles",
     "key-organizations"
   ],
-  "lastSaved": "2026-03-22T17:08:17.581Z"
+  "lastSaved": "2026-03-22T17:09:01.167Z"
 }
