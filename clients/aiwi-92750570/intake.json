@@ -80,7 +80,7 @@
         "because": "we all die"
       },
       {
-        "category_group": "",
+        "category_group": "policy",
         "when_this_happens": "",
         "default_sentiment": "",
         "because": ""
@@ -92,5 +92,5 @@
     "editorial-team",
     "sentiment-tracker"
   ],
-  "lastSaved": "2026-03-22T02:02:23.696Z"
+  "lastSaved": "2026-03-22T02:02:25.764Z"
 }
