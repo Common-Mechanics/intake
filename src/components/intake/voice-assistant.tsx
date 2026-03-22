@@ -42,6 +42,7 @@ interface VoiceAssistantProps {
   onPanelToggle?: (isOpen: boolean) => void
   onConnectionChange?: (isConnected: boolean) => void
   onPausedChange?: (isPaused: boolean) => void
+  orgId: string
   isOpen?: boolean
 }
 
@@ -171,6 +172,7 @@ export function VoiceAssistant({
   onPanelToggle,
   onConnectionChange,
   onPausedChange,
+  orgId,
   isOpen,
 }: VoiceAssistantProps) {
   const agentId = process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID
@@ -215,6 +217,8 @@ export function VoiceAssistant({
     if (!agentId || isStartingRef.current || conversationRef.current) return
     isStartingRef.current = true
     setIsStarting(true)
+    sessionIdRef.current = generateSessionId()
+    conversationStartRef.current = new Date().toISOString()
     setVoice(prev => ({ ...prev, error: null }))
     try {
       const { Conversation } = await import("@11labs/client")
@@ -300,11 +304,45 @@ export function VoiceAssistant({
     }
   }, [agentId, setFieldValue, goToStep, addToTranscript])
 
+  /* Save conversation transcript to GitHub for debugging.
+     ID format: YYYY-MM-DD_HHmmss_random — sortable by date, unique per session. */
+  const sessionIdRef = useRef<string>("")
+  const conversationStartRef = useRef<string>(new Date().toISOString())
+
+  function generateSessionId(): string {
+    const now = new Date()
+    const date = now.toISOString().slice(0, 10) // YYYY-MM-DD
+    const time = now.toISOString().slice(11, 19).replace(/:/g, "") // HHmmss
+    const rand = Math.random().toString(36).slice(2, 6) // 4-char random
+    return `${date}_${time}_${rand}`
+  }
+
+  const saveTranscript = useCallback(async () => {
+    const transcript = voice.transcript
+    if (transcript.length === 0) return
+    try {
+      await fetch(`/api/intake/${orgId}/conversations`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: sessionIdRef.current || generateSessionId(),
+          startedAt: conversationStartRef.current,
+          endedAt: new Date().toISOString(),
+          messageCount: transcript.length,
+          messages: transcript,
+        }),
+      })
+    } catch {
+      console.error("[Intake] Failed to save conversation log")
+    }
+  }, [voice.transcript, orgId])
+
   const endConversation = useCallback(async () => {
+    await saveTranscript()
     try { await conversationRef.current?.endSession() } catch { /* ignore */ }
     conversationRef.current = null
     setVoice(prev => ({ ...prev, isConnected: false, isSpeaking: false, isMuted: false }))
-  }, [])
+  }, [saveTranscript])
 
   /* Pause: fully end the session (only way to stop ElevenLabs turn timeouts).
      Resume: start a new session with transcript context so it picks up where it left off. */

@@ -402,6 +402,7 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
         onPanelToggle={setVoicePanelOpen}
         onConnectionChange={setVoiceConnected}
         onPausedChange={setVoicePaused}
+        orgId={orgId}
         isOpen={voicePanelOpen}
       />
     <div className="flex-1 flex flex-col min-w-0">

@@ -157,6 +157,41 @@ Located at `config/assistant-prompt.md`. Editable from the admin panel. Defines:
 
 Uploaded to ElevenLabs KB with RAG for retrieval during conversations.
 
+### Conversation Logging
+
+All voice assistant conversations are automatically saved to GitHub at `clients/{orgId}/conversations.json`. Each entry includes:
+
+```json
+{
+  "id": "2026-03-22_170523_a1b2",
+  "startedAt": "2026-03-22T17:05:23.000Z",
+  "endedAt": "2026-03-22T17:12:45.000Z",
+  "messageCount": 24,
+  "messages": [
+    { "role": "assistant", "text": "Hi! I'm here to help...", "timestamp": 1711126523000 },
+    { "role": "user", "text": "The Crazy Writers.", "timestamp": 1711126530000 }
+  ]
+}
+```
+
+- **ID format**: `YYYY-MM-DD_HHmmss_rand` — sortable by date, unique per session
+- **Saved on**: conversation end or pause
+- **Concurrent-safe**: retry-on-conflict for rapid back-to-back sessions
+- **API**: `GET/POST /api/intake/{orgId}/conversations`
+
+---
+
+## Admin Panel
+
+Protected by login (set `ADMIN_USERNAME` + `ADMIN_PASSWORD` in env). Features:
+- Organization management (create, delete with confirmation)
+- Voice assistant prompt editor with ElevenLabs sync
+- Conversation logs accessible via API
+
+### Org Deletion
+
+Delete button on each org card opens a confirmation dialog requiring the user to type the exact organization name. Deletes the intake data file from GitHub and removes from the index.
+
 ---
 
 ## Project Structure
@@ -165,10 +200,14 @@ Uploaded to ElevenLabs KB with RAG for retrieval during conversations.
 src/
   app/
     [orgId]/page.tsx              # Intake form page
-    admin/admin-client.tsx        # Admin UI — orgs + voice prompt editor
+    admin/
+      admin-client.tsx            # Admin UI — orgs + prompt editor
+      login/page.tsx              # Login page
     api/intake/
-      orgs/route.ts               # GET/POST organizations
+      orgs/route.ts               # GET/POST/DELETE organizations
       [orgId]/route.ts            # GET/PUT intake data
+      [orgId]/conversations/route.ts  # GET/POST conversation logs
+      admin/login/route.ts        # POST: authenticate
       assistant/route.ts          # POST: create/update ElevenLabs agent
       assistant/prompt/route.ts   # GET/PUT system prompt via GitHub
 
