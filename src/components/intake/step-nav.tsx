@@ -17,7 +17,6 @@ interface StepNavProps {
   onSave: () => void
   saveStatus: SaveStatus
   lastSaved: Date | null
-  hasDraft?: boolean
 }
 
 export function StepNav({
@@ -29,7 +28,6 @@ export function StepNav({
   onSave,
   saveStatus,
   lastSaved,
-  hasDraft,
 }: StepNavProps) {
   return (
     <div
@@ -59,7 +57,7 @@ export function StepNav({
 
         {/* Center: save indicator */}
         <div className="flex-1 flex justify-center">
-          <SaveIndicator status={saveStatus} lastSaved={lastSaved} hasDraft={hasDraft} />
+          <SaveIndicator status={saveStatus} lastSaved={lastSaved} />
         </div>
 
         {/* Next / Save & Complete button */}

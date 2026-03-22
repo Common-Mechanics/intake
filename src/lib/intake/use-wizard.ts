@@ -8,7 +8,8 @@ import { logger } from "./logger"
 
 type SaveStatus = "idle" | "saving" | "saved" | "error" | "conflict"
 
-const DEBOUNCE_MS = 500
+const LOCAL_DEBOUNCE_MS = 500
+const SERVER_DEBOUNCE_MS = 2000 // debounce GitHub saves to avoid API rate limits
 
 function safeLocalStorage() {
   try {
@@ -144,8 +145,9 @@ export function useWizard(
   // Whether localStorage has a draft (gives users confidence their typing isn't lost)
   const [hasDraft, setHasDraft] = useState<boolean>(() => loadDraft(orgId) !== null)
 
-  // Debounce timer ref for localStorage auto-save
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  // Debounce timer refs
+  const localDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const serverDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // --- Derived ---
 
@@ -160,18 +162,36 @@ export function useWizard(
     return Math.round((completedSteps.size / totalSteps) * 100)
   }, [completedSteps.size, totalSteps])
 
-  // --- Auto-save to localStorage ---
+  // --- Auto-save: localStorage (fast) + GitHub (debounced) ---
 
+  /* localStorage — crash recovery, 500ms debounce */
   useEffect(() => {
-    if (debounceRef.current) clearTimeout(debounceRef.current)
-    debounceRef.current = setTimeout(() => {
+    if (localDebounceRef.current) clearTimeout(localDebounceRef.current)
+    localDebounceRef.current = setTimeout(() => {
       saveDraft(orgId, values)
       setHasDraft(true)
-    }, DEBOUNCE_MS)
+    }, LOCAL_DEBOUNCE_MS)
     return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current)
+      if (localDebounceRef.current) clearTimeout(localDebounceRef.current)
     }
   }, [values, orgId])
+
+  /* We need a ref to the latest saveToServer to avoid stale closures in the
+     debounced effect. The actual saveToServer function is defined below. */
+  const saveToServerRef = useRef<() => Promise<void>>(undefined)
+
+  /* GitHub — primary persistence, 2s debounce */
+  useEffect(() => {
+    if (serverDebounceRef.current) clearTimeout(serverDebounceRef.current)
+    serverDebounceRef.current = setTimeout(() => {
+      saveToServerRef.current?.()
+    }, SERVER_DEBOUNCE_MS)
+    return () => {
+      if (serverDebounceRef.current) clearTimeout(serverDebounceRef.current)
+    }
+    // Only re-trigger when values, skippedSections, or completedSteps change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [values, skippedSections, completedSteps])
 
   // --- Validation ---
 
@@ -324,7 +344,16 @@ export function useWizard(
 
   // --- Save to server ---
 
-  const saveToServer = useCallback(async () => {
+  /**
+   * Save to GitHub. `quiet` mode suppresses toasts (used by auto-save).
+   * Explicit saves (Save & Complete) use loud mode.
+   */
+  const saveToServer = useCallback(async (options?: { quiet?: boolean }) => {
+    const quiet = options?.quiet ?? false
+
+    /* Don't stack saves — skip if already saving */
+    if (saveStatus === "saving") return
+
     setSaveStatus("saving")
 
     const payload: SavedData = {
@@ -359,18 +388,20 @@ export function useWizard(
       }
 
       const result = await response.json()
-      // Update SHA from server response for next save
       if (result.sha) setSha(result.sha)
 
       setSaveStatus("saved")
       setLastSaved(new Date())
-      toast.success("Progress saved.")
+      if (!quiet) toast.success("Progress saved.")
     } catch (err) {
       logger.error("useWizard.saveToServer", err, { orgId })
       setSaveStatus("error")
-      toast.error("Failed to save. Please try again.")
+      if (!quiet) toast.error("Failed to save. Please try again.")
     }
-  }, [schema, orgId, values, skippedSections, completedSteps, sha])
+  }, [schema, orgId, values, skippedSections, completedSteps, sha, saveStatus])
+
+  /* Keep the ref in sync so the debounced auto-save uses the latest closure */
+  saveToServerRef.current = () => saveToServer({ quiet: true })
 
   // --- Conflict resolution ---
 
@@ -433,6 +464,5 @@ export function useWizard(
     progressPercent,
 
     // Draft
-    hasDraft,
   }
 }

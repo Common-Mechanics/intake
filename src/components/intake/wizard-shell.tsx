@@ -330,7 +330,6 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
         onSave={wizard.saveToServer}
         saveStatus={wizard.saveStatus}
         lastSaved={wizard.lastSaved}
-        hasDraft={wizard.hasDraft}
       />
 
       {/* Conflict resolution dialog */}
