@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useCallback, useRef } from "react"
-import { Mic, Phone, PhoneOff } from "lucide-react"
+import { Mic, MicOff, Phone, PhoneOff, Pause, Play } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Sheet,
@@ -96,6 +96,7 @@ function VoiceAssistantInner({
   const [isOpen, setIsOpen] = useState(false)
   const [isConnected, setIsConnected] = useState(false)
   const [isSpeaking, setIsSpeaking] = useState(false)
+  const [isMuted, setIsMuted] = useState(false)
   const [transcript, setTranscript] = useState<TranscriptEntry[]>([])
   const [error, setError] = useState<string | null>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -108,6 +109,8 @@ function VoiceAssistantInner({
 
   const conversationRef = useRef<{
     endSession: () => Promise<void>
+    setMicMuted: (muted: boolean) => void
+    setVolume: (opts: { volume: number }) => void
   } | null>(null)
 
   const addToTranscript = useCallback((role: "user" | "assistant", text: string) => {
@@ -191,7 +194,17 @@ function VoiceAssistantInner({
     conversationRef.current = null
     setIsConnected(false)
     setIsSpeaking(false)
+    setIsMuted(false)
   }, [])
+
+  const toggleMute = useCallback(() => {
+    if (!conversationRef.current) return
+    const next = !isMuted
+    conversationRef.current.setMicMuted(next)
+    /* Also mute agent audio output so it doesn't keep talking */
+    conversationRef.current.setVolume({ volume: next ? 0 : 1 })
+    setIsMuted(next)
+  }, [isMuted])
 
   return (
     <>
@@ -220,8 +233,8 @@ function VoiceAssistantInner({
             <div className="flex items-center gap-2">
               <SheetTitle className="text-base">Voice Assistant</SheetTitle>
               {isConnected && (
-                <Badge variant={isSpeaking ? "default" : "secondary"} className="text-xs">
-                  {isSpeaking ? "Speaking" : "Listening"}
+                <Badge variant={isMuted ? "outline" : isSpeaking ? "default" : "secondary"} className="text-xs">
+                  {isMuted ? "Paused" : isSpeaking ? "Speaking" : "Listening"}
                 </Badge>
               )}
             </div>
@@ -249,7 +262,7 @@ function VoiceAssistantInner({
                   {entry.text}
                 </div>
               ))}
-              {isConnected && !isSpeaking && transcript.length > 0 && (
+              {isConnected && !isSpeaking && !isMuted && transcript.length > 0 && (
                 <div className="self-start flex items-center gap-1.5 text-xs text-muted-foreground px-1">
                   <span className="size-2 rounded-full bg-primary animate-pulse" />
                   Listening...
@@ -277,15 +290,35 @@ function VoiceAssistantInner({
                 Start Conversation
               </Button>
             ) : (
-              <Button
-                onClick={endConversation}
-                variant="destructive"
-                className="gap-2"
-                size="lg"
-              >
-                <PhoneOff aria-hidden="true" className="size-4" />
-                End Conversation
-              </Button>
+              <>
+                <Button
+                  onClick={toggleMute}
+                  variant="outline"
+                  className="gap-2"
+                  size="lg"
+                >
+                  {isMuted ? (
+                    <>
+                      <Play aria-hidden="true" className="size-4" />
+                      Resume
+                    </>
+                  ) : (
+                    <>
+                      <Pause aria-hidden="true" className="size-4" />
+                      Pause
+                    </>
+                  )}
+                </Button>
+                <Button
+                  onClick={endConversation}
+                  variant="destructive"
+                  className="gap-2"
+                  size="lg"
+                >
+                  <PhoneOff aria-hidden="true" className="size-4" />
+                  End
+                </Button>
+              </>
             )}
           </div>
         </SheetContent>
