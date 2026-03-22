@@ -427,14 +427,11 @@ export function RepeatingGroup({
         </div>
       )}
 
-      {/* Empty state */}
-      {entries.length === 0 && (
-        <div className="flex flex-col items-center gap-2 py-6 text-center text-sm text-muted-foreground border border-dashed rounded-lg">
-          <p>No {label.toLowerCase()} added yet</p>
-          {validation?.minItems && validation.minItems > 0 && (
-            <p className="text-xs">You&apos;ll need at least {validation.minItems} to continue</p>
-          )}
-        </div>
+      {/* Empty state — minimal, just a hint next to the add button */}
+      {entries.length === 0 && validation?.minItems && validation.minItems > 0 && (
+        <p className="text-xs text-muted-foreground/60">
+          You&apos;ll need at least {validation.minItems} to continue
+        </p>
       )}
 
       {/* Batch import */}
