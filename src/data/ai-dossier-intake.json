@@ -158,7 +158,7 @@
           "id": "categories",
           "type": "repeating",
           "label": "Categories",
-          "help": "Define your categories. Example: Label \"Policy\", Full Name \"Climate Policy & Governance\", Slug \"policy\", Tags \"governance, regulation, legislation\"",
+          "help": "Define your categories. Each one becomes a filter button on your site. Example: Short Label \"Policy\", Full Name \"Climate Policy & Governance\".",
           "validation": {
             "required": true,
             "minItems": 3
@@ -190,7 +190,7 @@
               "id": "auto_tags",
               "type": "text",
               "label": "Auto-Tags",
-              "help": "Comma-separated tags that auto-map stories to this category. Example: \"governance, regulation, legislation, treaty\"",
+              "help": "Keywords that help the pipeline sort stories into this category. If a story mentions any of these words, it's a strong signal it belongs here. Comma-separated. Example: \"governance, regulation, legislation, treaty\"",
               "placeholder": "governance, regulation, legislation",
               "validation": {
                 "required": false,
@@ -242,7 +242,7 @@
               "id": "category",
               "type": "text",
               "label": "Category",
-              "help": "Which category does this editor cover? Use the slug from your categories. Pre-filled as \"spotlight\" for the Spotlight Editor.",
+              "help": "Which of your categories does this editor cover? Use the short label (e.g. \"Policy\", \"Science\"). For the Spotlight Editor, use \"spotlight\".",
               "placeholder": "policy",
               "validation": {
                 "required": true,
@@ -253,7 +253,7 @@
               "id": "is_spotlight",
               "type": "checkbox",
               "label": "Is Spotlight Editor",
-              "help": "Check this for the Spotlight editor who covers media content (podcasts, videos, demos).",
+              "help": "Check this for the Spotlight editor — the one that finds podcasts, videos, demos, and other interesting non-news content.",
               "validation": {
                 "required": false
               }
@@ -282,7 +282,7 @@
           "id": "tracker_name",
           "type": "text",
           "label": "Tracker Name",
-          "help": "What's your tracker called? Appears in the nav and charts. Example: \"Climate Risk Index\", \"Trust Score\", \"Momentum Tracker\"",
+          "help": "Give your tracker a name — it appears in the navigation and on charts. Think of it as a metric that captures the direction of your domain. Example: \"Climate Risk Index\", \"Trust Score\", \"Momentum Tracker\"",
           "placeholder": "Risk Index",
           "validation": {
             "required": true,
@@ -293,7 +293,7 @@
           "id": "tracker_subtitle",
           "type": "text",
           "label": "Tracker Subtitle",
-          "help": "Subtitle for metadata. Example: \"Climate Policy Sentiment Index\"",
+          "help": "A longer name used in page titles and metadata. Example: \"Climate Policy Sentiment Index\", \"AI Accountability Trust Score\"",
           "placeholder": "Sentiment Index",
           "validation": {
             "required": true,
@@ -304,7 +304,7 @@
           "id": "positive_signal_label",
           "type": "text",
           "label": "Positive Signal Label",
-          "help": "What are positive signals called? Example: \"progress points\", \"trust points\", \"green points\"",
+          "help": "What do you call it when things improve? This label shows up next to positive stories. Example: \"progress points\", \"trust points\", \"green points\"",
           "placeholder": "progress points",
           "validation": {
             "required": true,
@@ -315,7 +315,7 @@
           "id": "negative_signal_label",
           "type": "text",
           "label": "Negative Signal Label",
-          "help": "What are negative signals called? Example: \"risk points\", \"erosion points\", \"red points\"",
+          "help": "What do you call it when things get worse? This label shows up next to negative stories. Example: \"risk points\", \"erosion points\", \"red points\"",
           "placeholder": "risk points",
           "validation": {
             "required": true,
@@ -326,7 +326,7 @@
           "id": "tracker_nav_label",
           "type": "text",
           "label": "Tracker Nav Label",
-          "help": "Tab label in the navigation bar. Example: \"Tracker\", \"Risk Index\"",
+          "help": "Short label for the navigation tab — what users click to see the tracker. Example: \"Tracker\", \"Risk Index\", \"Pulse\"",
           "placeholder": "Tracker",
           "validation": {
             "required": true,
@@ -359,7 +359,7 @@
           "id": "fallback_sentiment_question",
           "type": "textarea",
           "label": "Fallback Sentiment Question",
-          "help": "When sentiment isn't obvious, the pipeline asks this question to decide. Example: \"Is the world's trajectory toward net-zero getting better or worse?\"",
+          "help": "When a story's sentiment isn't obvious, the pipeline uses this question as a tiebreaker. Frame it as a yes/no question about direction. Example: \"Is the world's trajectory toward net-zero getting better or worse?\"",
           "placeholder": "Is the situation getting better or worse?",
           "validation": {
             "required": true,
@@ -446,7 +446,7 @@
               "id": "category_group_key",
               "type": "text",
               "label": "Category Key",
-              "help": "Category ID — lowercase, matches your category slug. Example: \"policy\"",
+              "help": "The short label of the category this rule applies to, in lowercase. Example: \"policy\", \"science\", \"finance\"",
               "placeholder": "policy",
               "validation": {
                 "required": true,
