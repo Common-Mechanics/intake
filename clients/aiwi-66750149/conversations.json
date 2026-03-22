@@ -281,5 +281,58 @@
         "timestamp": 1774199270991
       }
     ]
+  },
+  {
+    "id": "2026-03-22_170749_5s4k",
+    "startedAt": "2026-03-22T17:07:49.071Z",
+    "endedAt": "2026-03-22T17:07:54.260Z",
+    "messageCount": 9,
+    "messages": [
+      {
+        "role": "assistant",
+        "text": "Hi! I'm here to help you set up your publication. I'll ask you some questions and fill in the form as we go. Let's start — what's your publication called?",
+        "timestamp": 1774199173230
+      },
+      {
+        "role": "user",
+        "text": "Can you actually help me explain what the triage topics are?",
+        "timestamp": 1774199189174
+      },
+      {
+        "role": "assistant",
+        "text": "Triage topics are an optional broad pre-filter for your content. They help to broadly categorize incoming stories before they go through the more detailed editorial review process. Most of the time, the categories you define are sufficient for this purpose.\n\nDo you want to set up any triage topics, or would you prefer to skip this for now?",
+        "timestamp": 1774199190367
+      },
+      {
+        "role": "user",
+        "text": "What would happen if I don't set them up?",
+        "timestamp": 1774199214959
+      },
+      {
+        "role": "assistant",
+        "text": "If you don't set up triage topics, the system will rely on the categories you've already defined to filter and organize stories. This is usually sufficient, as your categories often cover the same ground as triage topics would.",
+        "timestamp": 1774199215628
+      },
+      {
+        "role": "user",
+        "text": "Okay, how much better do triage topics make the editorial process?",
+        "timestamp": 1774199239261
+      },
+      {
+        "role": "assistant",
+        "text": "Triage topics act as a broad pre-filter, helping to initially sort stories. While they can add an extra layer of organization, your defined categories usually handle this filtering effectively. So, if your categories are well-structured, the improvement to the editorial process from adding triage topics might be minimal.",
+        "timestamp": 1774199240235
+      },
+      {
+        "role": "assistant",
+        "text": "Hi! I'm here to help you set up your publication. I'll ask you some questions and fill in the form as we go. Let's start — what's your publication called?",
+        "timestamp": 1774199263385
+      },
+      {
+        "role": "assistant",
+        "text": "Hi! I'm here to help you set up your publication. I'll ask you some questions and fill in the form as we go. Let's start — what's your publication called?",
+        "timestamp": 1774199270991
+      }
+    ]
   }
 ]
