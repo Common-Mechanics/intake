@@ -132,16 +132,21 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
     wizard.setFieldValue("editorial-team", "editors", editors)
   }, [wizard.currentStepDef.id, categoryEntries, wizard.values, wizard.setFieldValue])
 
-  /* Auto-populate sentiment tracker defaults from topic_label when arriving at the step.
-     Suggests a tracker name based on topic, plus sensible default labels. */
+  /* Auto-populate sentiment tracker defaults ONCE when first arriving at the step.
+     Uses a ref so it doesn't fight the user when they clear a field. */
+  const didPrefillTracker = useRef(false)
   useEffect(() => {
-    if (wizard.currentStepDef.id !== "sentiment-tracker") return
+    if (wizard.currentStepDef.id !== "sentiment-tracker") {
+      didPrefillTracker.current = false
+      return
+    }
+    if (didPrefillTracker.current) return
+    didPrefillTracker.current = true
+
     const trackerValues = wizard.values["sentiment-tracker"] ?? {}
     const topicLabel = (wizard.values["audience"]?.["topic_label"] as string)?.trim()
 
-    // Only suggest if the field is currently empty
     if (!trackerValues["tracker_name"] && topicLabel) {
-      // Capitalize first letter of each word for a clean name
       const capitalized = topicLabel.replace(/\b\w/g, (c) => c.toUpperCase())
       wizard.setFieldValue("sentiment-tracker", "tracker_name", `${capitalized} Index`)
     }
