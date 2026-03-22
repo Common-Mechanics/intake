@@ -28,6 +28,54 @@ interface TranscriptEntry {
   timestamp: number
 }
 
+/** Play a short synthesized tone via Web Audio API — no audio files needed */
+function playTone(type: "connect" | "disconnect") {
+  try {
+    const ctx = new AudioContext()
+    const gain = ctx.createGain()
+    gain.connect(ctx.destination)
+    gain.gain.value = 0.15
+
+    if (type === "connect") {
+      /* Friendly rising ping: two quick ascending notes */
+      const o1 = ctx.createOscillator()
+      o1.type = "sine"
+      o1.frequency.value = 660
+      o1.connect(gain)
+      o1.start(ctx.currentTime)
+      o1.stop(ctx.currentTime + 0.1)
+
+      const o2 = ctx.createOscillator()
+      o2.type = "sine"
+      o2.frequency.value = 880
+      o2.connect(gain)
+      o2.start(ctx.currentTime + 0.12)
+      o2.stop(ctx.currentTime + 0.22)
+
+      setTimeout(() => ctx.close(), 300)
+    } else {
+      /* Deeper descending ba-dum: two notes going down */
+      const o1 = ctx.createOscillator()
+      o1.type = "sine"
+      o1.frequency.value = 440
+      o1.connect(gain)
+      o1.start(ctx.currentTime)
+      o1.stop(ctx.currentTime + 0.12)
+
+      const o2 = ctx.createOscillator()
+      o2.type = "sine"
+      o2.frequency.value = 294
+      o2.connect(gain)
+      o2.start(ctx.currentTime + 0.15)
+      o2.stop(ctx.currentTime + 0.3)
+
+      setTimeout(() => ctx.close(), 400)
+    }
+  } catch {
+    /* AudioContext not available — silently skip */
+  }
+}
+
 /** Briefly highlight a form field when the assistant fills it */
 function highlightField(fieldId: string) {
   const el = document.getElementById(fieldId)
@@ -111,6 +159,7 @@ function VoiceAssistantInner({
     endSession: () => Promise<void>
     setMicMuted: (muted: boolean) => void
     setVolume: (opts: { volume: number }) => void
+    sendContextualUpdate: (text: string) => void
   } | null>(null)
 
   const addToTranscript = useCallback((role: "user" | "assistant", text: string) => {
@@ -159,11 +208,13 @@ function VoiceAssistantInner({
         onConnect: () => {
           setIsConnected(true)
           setError(null)
+          playTone("connect")
         },
         onDisconnect: () => {
           setIsConnected(false)
           setIsSpeaking(false)
           conversationRef.current = null
+          playTone("disconnect")
         },
         onError: (err: unknown) => {
           const msg = err instanceof Error ? err.message : String(err)
@@ -201,8 +252,13 @@ function VoiceAssistantInner({
     if (!conversationRef.current) return
     const next = !isMuted
     conversationRef.current.setMicMuted(next)
-    /* Also mute agent audio output so it doesn't keep talking */
     conversationRef.current.setVolume({ volume: next ? 0 : 1 })
+    /* Tell the agent to stop/resume — prevents timeout re-prompts */
+    conversationRef.current.sendContextualUpdate(
+      next
+        ? "[SYSTEM] The user has paused the conversation to work on the form manually. Do NOT speak, do NOT ask questions, do NOT respond until the user resumes. Stay completely silent."
+        : "[SYSTEM] The user has resumed the conversation. Continue where you left off — ask the next question."
+    )
     setIsMuted(next)
   }, [isMuted])
 
