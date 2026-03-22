@@ -2,9 +2,9 @@
   "schemaId": "ai-dossier-intake",
   "schemaVersion": 2,
   "orgId": "aiwi-92750570",
-  "orgName": "test",
+  "orgName": "The Crazy Writers",
   "data": {
-    "publication_name": "test",
+    "publication_name": "The Crazy Writers",
     "tagline": "test",
     "full_title": "test",
     "topic_label": "test",
@@ -157,5 +157,5 @@
   "completedSteps": [
     "your-publication"
   ],
-  "lastSaved": "2026-03-22T14:20:46.851Z"
+  "lastSaved": "2026-03-22T14:21:13.377Z"
 }
