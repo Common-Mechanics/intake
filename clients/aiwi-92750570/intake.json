@@ -14,8 +14,8 @@
     "audience_description": "test",
     "key_question": "test",
     "reader_profile": "test",
-    "publication_type": "hot takes",
-    "community_label": "the whistleblowing ",
+    "publication_type": "test intelligence briefing",
+    "community_label": "the test community",
     "categories": [
       {
         "short_label": "Policy",
@@ -150,5 +150,5 @@
   },
   "skippedSections": [],
   "completedSteps": [],
-  "lastSaved": "2026-03-22T13:49:41.040Z"
+  "lastSaved": "2026-03-22T13:49:47.325Z"
 }
