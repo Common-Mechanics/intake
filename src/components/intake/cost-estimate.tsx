@@ -1,23 +1,45 @@
 "use client"
 
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
+import { ChevronDown } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
+import { cn } from "@/lib/utils"
 
 interface CostEstimateProps {
   values: Record<string, Record<string, unknown>>
 }
 
 /**
- * Estimates daily/monthly pipeline costs based on the configuration.
+ * Pipeline cost model based on actual ai-dossier architecture.
  *
- * Cost drivers:
- * - Editors: each editor reviews every story (~$0.30-0.50/editor/day)
- * - Sources: more sources = more stories to process (~$0.02/source/day)
- * - Sentiment rules: minimal cost impact
- * - Base pipeline overhead: ~$1.50/day
+ * Each pipeline run processes ~30-80 stories through 7 phases:
+ * 1. Triage (Haiku) — flag relevant items from RSS batches
+ * 2. Novelty Classification (Sonnet) — classify each flagged item
+ * 3. Event Matching (Sonnet + embeddings) — match to persistent timeline
+ * 4. Editor Review (Sonnet × N editors) — parallel domain reviews
+ * 5. Chief Editor (Opus) — final selection of leads/ticker/spotlight
+ * 6. Research + Produce (Sonnet) — write the final dossier
+ * 7. Dedup QA (Haiku + embeddings) — remove semantic duplicates
+ *
+ * Pricing per million tokens (March 2026):
+ * - Haiku 4.5:  $0.80 input / $4.00 output
+ * - Sonnet 4.6: $3.00 input / $15.00 output (cache read: $0.30)
+ * - Opus 4.6:   $15.00 input / $75.00 output
  */
+
+interface PipelineStep {
+  phase: string
+  task: string
+  model: string
+  /** Estimated daily cost in USD — varies by editor/source count */
+  cost: number
+  note?: string
+}
+
 export function CostEstimate({ values }: CostEstimateProps) {
+  const [showDetails, setShowDetails] = useState(false)
+
   const estimate = useMemo(() => {
     const editors = values["categories-and-editors"]?.["editors"] as Record<string, unknown>[] | undefined
     const sources = values["sources-and-discovery"]?.["sources"] as Record<string, unknown>[] | undefined
@@ -25,29 +47,78 @@ export function CostEstimate({ values }: CostEstimateProps) {
 
     const editorCount = editors?.length ?? 0
     const sourceCount = sources?.length ?? 0
-    const hasRules = sentimentRules ? Object.values(sentimentRules).some((rules) => Array.isArray(rules) && rules.length > 0) : false
+    const ruleCount = sentimentRules
+      ? Object.values(sentimentRules).reduce((sum: number, rules) => sum + (Array.isArray(rules) ? rules.length : 0), 0)
+      : 0
 
-    /* Cost model (approximate, based on Claude API pricing) */
-    const baseCost = 1.50 // daily base pipeline overhead
-    const perEditorCost = 0.40 // each editor reviews all stories
-    const perSourceCost = 0.02 // fetching + initial triage per source
-    const rulesCost = hasRules ? 0.20 : 0 // sentiment rule processing
+    /* Per-step cost estimates based on actual pipeline token usage.
+       Assumes ~40 stories flagged from triage, 15 make final dossier. */
+    const steps: PipelineStep[] = [
+      {
+        phase: "1",
+        task: "Triage",
+        model: "Haiku 4.5",
+        cost: 0.05 + sourceCount * 0.015,
+        note: `Batch-flag relevant items from ${sourceCount} source${sourceCount !== 1 ? "s" : ""}`,
+      },
+      {
+        phase: "1b",
+        task: "Novelty classification",
+        model: "Sonnet 4.6",
+        cost: 0.35,
+        note: "Classify each flagged story into 1 of 9 novelty classes",
+      },
+      {
+        phase: "1c",
+        task: "Event matching",
+        model: "Sonnet 4.6 + embeddings",
+        cost: 0.15,
+        note: "Match stories to persistent event timeline",
+      },
+      {
+        phase: "2",
+        task: `Editor review (×${editorCount})`,
+        model: "Sonnet 4.6",
+        cost: editorCount * 0.30,
+        note: `${editorCount} editor${editorCount !== 1 ? "s" : ""} review all stories in parallel (cached)`,
+      },
+      {
+        phase: "3",
+        task: "Chief editor",
+        model: "Opus 4.6",
+        cost: 0.80,
+        note: "Final selection of 3 leads, 8\u201312 ticker, 1\u20132 spotlight",
+      },
+      {
+        phase: "4\u20135",
+        task: "Research + produce",
+        model: "Sonnet 4.6",
+        cost: 0.60,
+        note: "Deep research on leads, write final dossier copy",
+      },
+      {
+        phase: "6",
+        task: "Dedup QA",
+        model: "Haiku 4.5 + embeddings",
+        cost: 0.05,
+        note: "Semantic duplicate detection and removal",
+      },
+    ]
 
-    const dailyCost = baseCost + (editorCount * perEditorCost) + (sourceCount * perSourceCost) + rulesCost
+    if (ruleCount > 0) {
+      steps.push({
+        phase: "\u2014",
+        task: `Sentiment rules (${ruleCount})`,
+        model: "Sonnet 4.6",
+        cost: 0.15,
+        note: `${ruleCount} custom rule${ruleCount !== 1 ? "s" : ""} for domain-specific scoring`,
+      })
+    }
+
+    const dailyCost = steps.reduce((sum, s) => sum + s.cost, 0)
     const monthlyCost = dailyCost * 30
 
-    return {
-      editorCount,
-      sourceCount,
-      dailyCost,
-      monthlyCost,
-      breakdown: [
-        { label: "Base pipeline", daily: baseCost },
-        { label: `${editorCount} editor${editorCount !== 1 ? "s" : ""} reviewing stories`, daily: editorCount * perEditorCost },
-        { label: `${sourceCount} source${sourceCount !== 1 ? "s" : ""} monitored`, daily: sourceCount * perSourceCost },
-        ...(hasRules ? [{ label: "Custom sentiment rules", daily: rulesCost }] : []),
-      ],
-    }
+    return { steps, dailyCost, monthlyCost, editorCount, sourceCount }
   }, [values])
 
   const fmt = (n: number) => `$${n.toFixed(2)}`
@@ -60,20 +131,10 @@ export function CostEstimate({ values }: CostEstimateProps) {
       <CardContent>
         <div className="flex flex-col gap-3">
           <p className="text-sm text-muted-foreground">
-            Based on your current setup. Actual costs depend on story volume and content length.
+            Based on your current setup. Actual costs depend on daily story volume.
           </p>
 
-          <div className="flex flex-col gap-1.5">
-            {estimate.breakdown.map((item) => (
-              <div key={item.label} className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">{item.label}</span>
-                <span className="tabular-nums">{fmt(item.daily)}/day</span>
-              </div>
-            ))}
-          </div>
-
-          <Separator />
-
+          {/* Summary totals */}
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium">Estimated daily</span>
             <span className="text-base font-semibold tabular-nums">{fmt(estimate.dailyCost)}</span>
@@ -83,9 +144,45 @@ export function CostEstimate({ values }: CostEstimateProps) {
             <span className="text-base font-semibold tabular-nums">~{fmt(estimate.monthlyCost)}</span>
           </div>
 
+          <Separator />
+
+          {/* Expandable per-step breakdown */}
+          <button
+            type="button"
+            onClick={() => setShowDetails(!showDetails)}
+            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors self-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:rounded-sm"
+          >
+            <ChevronDown aria-hidden="true" className={cn("size-3.5 transition-transform", !showDetails && "-rotate-90")} />
+            Pipeline breakdown
+          </button>
+
+          {showDetails && (
+            <div className="flex flex-col gap-0.5">
+              {estimate.steps.map((step) => (
+                <div key={step.phase + step.task} className="flex items-start justify-between gap-4 py-1.5 text-sm">
+                  <div className="flex flex-col gap-0.5 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-muted-foreground tabular-nums shrink-0 w-6">{step.phase}</span>
+                      <span className="font-medium">{step.task}</span>
+                    </div>
+                    <div className="flex items-center gap-2 pl-8">
+                      <span className="text-xs text-muted-foreground">{step.model}</span>
+                      {step.note && (
+                        <>
+                          <span className="text-xs text-muted-foreground">&middot;</span>
+                          <span className="text-xs text-muted-foreground">{step.note}</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  <span className="tabular-nums text-muted-foreground shrink-0">{fmt(step.cost)}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
           <p className="text-xs text-muted-foreground mt-1">
-            Costs are approximate and based on current Claude API pricing.
-            Actual costs may vary based on daily story volume, content length, and API rate changes.
+            Based on Claude API pricing (March 2026). Editor reviews use prompt caching for ~90% input savings.
           </p>
         </div>
       </CardContent>

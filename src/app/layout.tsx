@@ -30,7 +30,8 @@ export default function RootLayout({
             Skip to main content
           </a>
           {children}
-          <Toaster position="top-right" />
+          {/* Desktop: bottom-right. Mobile: top-center via CSS override */}
+          <Toaster position="bottom-right" />
         </ThemeProvider>
       </body>
     </html>
