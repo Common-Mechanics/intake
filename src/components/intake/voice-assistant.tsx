@@ -332,8 +332,7 @@ export function VoiceAssistant({
         "sm:static sm:inset-auto sm:z-auto sm:w-[380px] sm:shrink-0 sm:border-r sm:border-t-0 sm:rounded-none sm:shadow-none sm:sticky sm:top-0"
       )}
       style={{ height: `${sheetHeight}dvh` }}
-      /* On desktop, CSS class overrides the inline height */
-      data-voice-panel
+      data-voice-panel=""
     >
       {/* Drag handle — mobile only */}
       <div
