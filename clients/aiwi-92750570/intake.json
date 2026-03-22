@@ -10,7 +10,7 @@
     "topic_label": "writing literature AI",
     "site_url": "crazywriters.com",
     "publisher_name": "Club of Crazy Writers, Germany",
-    "publisher_url": "test.de",
+    "publisher_url": "crazywriters.de",
     "audience_description": "test",
     "key_question": "test",
     "reader_profile": "test",
@@ -157,5 +157,5 @@
   "completedSteps": [
     "your-publication"
   ],
-  "lastSaved": "2026-03-22T14:24:19.781Z"
+  "lastSaved": "2026-03-22T14:24:39.180Z"
 }
