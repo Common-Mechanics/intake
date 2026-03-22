@@ -1,10 +1,10 @@
 # Intake
 
-JSON-driven onboarding wizard with GitHub backend. Built for Common Mechanics client onboarding.
+JSON-driven onboarding wizard with voice assistant and GitHub backend. Built for Common Mechanics client onboarding.
 
 ## What this is
 
-A standalone Next.js app that renders multi-step intake forms from a JSON schema definition. Clients get a unique link, fill in their publication details step by step, and the data saves to GitHub as JSON files.
+A Next.js app that renders a 5-step intake form from a JSON schema. Clients get a unique link, fill in their publication details (manually or via voice assistant), and the data saves to GitHub. An admin panel at `/admin` manages organizations and the voice assistant prompt.
 
 ## Commands
 
@@ -16,22 +16,22 @@ npm run lint         # ESLint
 
 ## Architecture
 
-See `.claude/plan.md` for the full architecture plan.
-
 ### Key concepts
 
-- **Form schema** (`src/data/onboarding/*.json`) — JSON files that define wizard steps, fields, validation, and repeating groups
-- **Wizard renderer** — generic React components that read a schema and produce the form UI
-- **GitHub backend** — org data stored as `clients/{orgSlug}/intake.json` in the repo
-- **Admin view** — `/admin` lists all organizations and their completion status
+- **Form schema** (`src/data/ai-dossier-intake.json`) — 5-step schema with sections for progressive disclosure
+- **Sections** — collapsible field groups within steps; optional sections can be skipped
+- **Wizard renderer** — generic React components that read the schema and produce the form UI
+- **Voice assistant** — ElevenLabs Conversational AI agent that guides users through the form via voice; opt-in via env var
+- **GitHub backend** — org data stored as `clients/{orgId}/intake.json` in the repo
+- **Admin view** — `/admin` lists organizations, manages voice assistant prompt
 
 ### Tech stack
 
-- Next.js (App Router)
-- shadcn/ui + Tailwind
-- Zod for validation
-- GitHub Contents API for persistence
-- No database — GitHub is the backend
+- Next.js 16 (App Router), React 19
+- shadcn/ui + Tailwind CSS 4
+- Zod 4 for validation (JSON schema → Zod at runtime)
+- GitHub Contents API for persistence (no database)
+- ElevenLabs Conversational AI + @11labs/client (voice assistant)
 
 ## Constraints
 

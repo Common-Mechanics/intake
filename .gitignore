@@ -2,6 +2,9 @@
 
 # dependencies
 /node_modules
+
+# test artifacts
+/screenshots
 /.pnp
 .pnp.*
 .yarn/*

@@ -60,10 +60,10 @@ export function StepNav({
           <SaveIndicator status={saveStatus} lastSaved={lastSaved} />
         </div>
 
-        {/* Next / Save & Complete button */}
+        {/* Next / Finish button — both go through onNext which handles validation */}
         {isLastStep ? (
           <Button
-            onClick={onSave}
+            onClick={onNext}
             className="min-h-11 gap-1.5 font-semibold"
           >
             <Save aria-hidden="true" className="size-4" data-icon="inline-start" />
