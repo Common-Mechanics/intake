@@ -6,7 +6,7 @@
   "data": {
     "publication_name": "The Crazy Writers",
     "tagline": "we write about crazy stuff that happens in the writing community",
-    "full_title": "test",
+    "full_title": "The Crazy Writers — we write about crazy stuff that happens in the writing community",
     "topic_label": "test",
     "site_url": "test.de",
     "publisher_name": "test",
@@ -157,5 +157,5 @@
   "completedSteps": [
     "your-publication"
   ],
-  "lastSaved": "2026-03-22T14:21:42.540Z"
+  "lastSaved": "2026-03-22T14:22:01.716Z"
 }
