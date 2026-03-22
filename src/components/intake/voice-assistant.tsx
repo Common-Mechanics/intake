@@ -36,6 +36,9 @@ interface VoiceAssistantProps {
   values: Record<string, Record<string, unknown>>
   currentStep: number
   steps: StepDef[]
+  errors: Record<string, string>
+  onValidateAllSteps?: () => Record<string, Record<string, string>>
+  onSaveAndComplete?: () => void
   onPanelToggle?: (isOpen: boolean) => void
   onConnectionChange?: (isConnected: boolean) => void
   isOpen?: boolean
@@ -69,7 +72,11 @@ function highlightField(fieldId: string) {
   setTimeout(() => el.classList.remove("ring-2", "ring-primary", "transition-shadow"), 2000)
 }
 
-function buildProgressSummary(values: Record<string, Record<string, unknown>>, steps: StepDef[]): string {
+function buildProgressSummary(
+  values: Record<string, Record<string, unknown>>,
+  steps: StepDef[],
+  errors?: Record<string, string>
+): string {
   const summary: string[] = []
   for (const step of steps) {
     const sv = values[step.id] ?? {}
@@ -80,8 +87,20 @@ function buildProgressSummary(values: Record<string, Record<string, unknown>>, s
       const has = v !== undefined && v !== null && v !== "" && !(Array.isArray(v) && v.length === 0)
       if (has) filled.push(f.id); else empty.push(f.id)
     }
-    summary.push(`${step.title}: ${filled.length}/${filled.length + empty.length} filled` + (empty.length > 0 ? ` (missing: ${empty.join(", ")})` : " (complete)"))
+    let line = `${step.title}: ${filled.length}/${filled.length + empty.length} filled`
+    if (empty.length > 0) line += ` (missing: ${empty.join(", ")})`
+    else line += " (complete)"
+    summary.push(line)
   }
+
+  /* Append any active validation errors */
+  if (errors && Object.keys(errors).length > 0) {
+    summary.push("\nValidation errors:")
+    for (const [fieldId, msg] of Object.entries(errors)) {
+      summary.push(`  - ${fieldId}: ${msg}`)
+    }
+  }
+
   return summary.join("\n")
 }
 
@@ -131,6 +150,9 @@ export function VoiceAssistant({
   values,
   currentStep,
   steps,
+  errors,
+  onValidateAllSteps,
+  onSaveAndComplete,
   onPanelToggle,
   onConnectionChange,
   isOpen,
@@ -146,6 +168,9 @@ export function VoiceAssistant({
   const conversationRef = useRef<ConversationHandle | null>(null)
   const valuesRef = useRef(values); valuesRef.current = values
   const stepsRef = useRef(steps); stepsRef.current = steps
+  const errorsRef = useRef(errors); errorsRef.current = errors
+  const validateAllRef = useRef(onValidateAllSteps); validateAllRef.current = onValidateAllSteps
+  const saveRef = useRef(onSaveAndComplete); saveRef.current = onSaveAndComplete
   const scrollRef = useRef<HTMLDivElement>(null)
 
   /* Notify parent of connection state changes */
@@ -184,10 +209,26 @@ export function VoiceAssistant({
             setFieldValue(params.step_id as string, params.field_id as string, params.entries as unknown[])
             return "Updated"
           },
-          get_current_progress: async () => buildProgressSummary(valuesRef.current, stepsRef.current),
+          get_current_progress: async () => buildProgressSummary(valuesRef.current, stepsRef.current, errorsRef.current),
           navigate_to_step: async (params: Record<string, unknown>) => {
             goToStep(params.step_index as number)
             return "Navigated"
+          },
+          validate_all_steps: async () => {
+            const allErrors = validateAllRef.current?.()
+            if (!allErrors || Object.keys(allErrors).length === 0) return "All steps valid — ready to finish!"
+            const summary: string[] = []
+            for (const [stepId, stepErrors] of Object.entries(allErrors)) {
+              summary.push(`${stepId}:`)
+              for (const [field, msg] of Object.entries(stepErrors)) {
+                summary.push(`  - ${field}: ${msg}`)
+              }
+            }
+            return `Validation errors found:\n${summary.join("\n")}`
+          },
+          complete_form: async () => {
+            saveRef.current?.()
+            return "Form saved and completed!"
           },
         },
         onConnect: () => {
@@ -212,8 +253,8 @@ export function VoiceAssistant({
       conversationRef.current = conversation
       isStartingRef.current = false
       setIsStarting(false)
-      const progress = buildProgressSummary(valuesRef.current, stepsRef.current)
-      conversation.sendContextualUpdate(`[SYSTEM] Current form state — skip filled fields:\n\n${progress}`)
+      const progress = buildProgressSummary(valuesRef.current, stepsRef.current, errorsRef.current)
+      conversation.sendContextualUpdate(`[SYSTEM] Current form state — skip filled fields. Fix any errors:\n\n${progress}`)
     } catch (err) {
       isStartingRef.current = false
       setIsStarting(false)
@@ -245,7 +286,7 @@ export function VoiceAssistant({
     if (syncTimer.current) clearTimeout(syncTimer.current)
     syncTimer.current = setTimeout(() => {
       conversationRef.current?.sendContextualUpdate(
-        `[SYSTEM] Updated form state:\n\n${buildProgressSummary(valuesRef.current, stepsRef.current)}`
+        `[SYSTEM] Updated form state:\n\n${buildProgressSummary(valuesRef.current, stepsRef.current, errorsRef.current)}`
       )
     }, 3000)
     return () => { if (syncTimer.current) clearTimeout(syncTimer.current) }

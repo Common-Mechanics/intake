@@ -37,7 +37,7 @@
           "type": "text",
           "label": "Publication Name",
           "help": "Appears in header, browser tab, and social cards.",
-          "placeholder": "CLIMATE DOSSIER",
+          "placeholder": "MY PUBLICATION",
           "validation": {
             "required": true,
             "maxLength": 100
@@ -48,7 +48,7 @@
           "type": "text",
           "label": "Tagline",
           "help": "One line for search results and social shares.",
-          "placeholder": "Daily intelligence on climate policy and governance",
+          "placeholder": "Daily intelligence on your topic, alignment, and governance",
           "validation": {
             "required": true,
             "maxLength": 150
@@ -59,7 +59,7 @@
           "type": "text",
           "label": "Full Title",
           "help": "Auto-filled from name + tagline. Edit if you want something different.",
-          "placeholder": "CLIMATE DOSSIER — Daily Climate Policy Briefing",
+          "placeholder": "MY PUBLICATION — Daily intelligence on your topic",
           "validation": {
             "required": true,
             "maxLength": 200
@@ -70,7 +70,7 @@
           "type": "text",
           "label": "Topic Label",
           "help": "2\u20134 words. Used throughout the pipeline.",
-          "placeholder": "climate policy",
+          "placeholder": "your topic",
           "validation": {
             "required": true,
             "maxLength": 50
@@ -81,7 +81,7 @@
           "type": "url",
           "label": "Site URL",
           "help": "Where your site will live.",
-          "placeholder": "https://climatedossier.org",
+          "placeholder": "https://my-publication.com",
           "validation": {
             "required": true
           }
@@ -91,7 +91,7 @@
           "type": "text",
           "label": "Publisher Name",
           "help": "Your organization or company name.",
-          "placeholder": "Climate Action Network",
+          "placeholder": "My Organization",
           "validation": {
             "required": true,
             "maxLength": 100
@@ -102,7 +102,7 @@
           "type": "url",
           "label": "Publisher URL",
           "help": "Your organization's website.",
-          "placeholder": "https://climatenetwork.org",
+          "placeholder": "https://my-org.com",
           "validation": {
             "required": true
           }
@@ -112,7 +112,7 @@
           "type": "text",
           "label": "Who Reads This?",
           "help": "2\u20134 reader types, comma-separated.",
-          "placeholder": "policy advisors, journalists, analysts",
+          "placeholder": "AI researchers, policy advisors, tech journalists",
           "validation": {
             "required": true,
             "maxLength": 300
@@ -124,7 +124,7 @@
           "rows": 5,
           "label": "Key Question",
           "help": "The single question every story is evaluated against. Shapes how importance is scored.",
-          "placeholder": "How does this affect the trajectory of global decarbonization?",
+          "placeholder": "How does this affect\u2026?",
           "validation": {
             "required": true,
             "maxLength": 500
@@ -136,7 +136,7 @@
           "rows": 6,
           "label": "Reader Profile",
           "help": "3\u20135 sentences: who are they, what\u2019s their expertise, what should they take away? Write as \u201cYou are writing for\u2026\u201d",
-          "placeholder": "You are writing for smart professionals who follow climate policy but are not scientists\u2026",
+          "placeholder": "You are writing for smart professionals who follow your topic but are not scientists\u2026",
           "validation": {
             "required": true,
             "maxLength": 1000
@@ -147,7 +147,7 @@
           "type": "text",
           "label": "Publication Type",
           "help": "Auto-filled from your topic. A sentence fragment describing the publication.",
-          "placeholder": "climate policy intelligence briefing",
+          "placeholder": "your topic intelligence briefing",
           "validation": {
             "required": false,
             "maxLength": 150
@@ -158,7 +158,7 @@
           "type": "text",
           "label": "Community Label",
           "help": "Auto-filled. What you call your reader community.",
-          "placeholder": "the climate policy community",
+          "placeholder": "the your topic community",
           "validation": {
             "required": false,
             "maxLength": 100
@@ -209,8 +209,8 @@
               "id": "full_name",
               "type": "text",
               "label": "Full Name",
-              "help": "E.g. \u201cClimate Policy & Governance\u201d",
-              "placeholder": "Climate Policy & Governance",
+              "help": "E.g. \u201cFull Category Name\u201d",
+              "placeholder": "Full Category Name",
               "validation": {
                 "required": true,
                 "maxLength": 100
@@ -336,7 +336,7 @@
           "type": "text",
           "label": "Tracker Name",
           "help": "Appears in navigation and charts. Auto-filled from your topic.",
-          "placeholder": "Climate Risk Index",
+          "placeholder": "Topic Index",
           "validation": {
             "required": true,
             "maxLength": 50
@@ -347,7 +347,7 @@
           "type": "text",
           "label": "Tracker Subtitle",
           "help": "Longer name for page titles and metadata.",
-          "placeholder": "Climate Policy Sentiment Index",
+          "placeholder": "Sentiment Index",
           "validation": {
             "required": true,
             "maxLength": 100
@@ -536,14 +536,14 @@
           "batchInput": {
             "enabled": true,
             "csvColumns": ["name", "url", "tags", "notes"],
-            "jsonExample": "{\"name\": \"Carbon Brief\", \"url\": \"https://www.carbonbrief.org/feed\", \"tags\": \"policy, science\", \"notes\": \"UK-based climate science and policy analysis\"}"
+            "jsonExample": "{\"name\": \"Example Source\", \"url\": \"https://example.com/feed\", \"tags\": \"policy, science\", \"notes\": \"Trusted source for analysis in your field\"}"
           },
           "fields": [
             {
               "id": "name",
               "type": "text",
               "label": "Source Name",
-              "placeholder": "Carbon Brief",
+              "placeholder": "Example Source",
               "validation": {
                 "required": true,
                 "maxLength": 100
@@ -603,7 +603,7 @@
               "id": "handle",
               "type": "text",
               "label": "Bluesky Handle",
-              "help": "E.g. \u201cclimatescientist.bsky.social\u201d",
+              "help": "E.g. \u201cexpert.bsky.social\u201d",
               "placeholder": "username.bsky.social",
               "validation": {
                 "required": false,
@@ -631,7 +631,7 @@
               "id": "handle",
               "type": "text",
               "label": "X Handle",
-              "help": "1\u201315 characters. E.g. \u201c@climatejournalist\u201d",
+              "help": "1\u201315 characters. E.g. \u201c@expertname\u201d",
               "placeholder": "@username",
               "validation": {
                 "required": false,
@@ -712,7 +712,7 @@
               "id": "topic",
               "type": "text",
               "label": "Topic",
-              "help": "Short phrase. E.g. \u201cClimate litigation and legal precedents\u201d",
+              "help": "Short phrase. E.g. \u201cYour topic area — phrased broadly\u201d",
               "placeholder": "Topic area\u2026",
               "validation": {
                 "required": false,

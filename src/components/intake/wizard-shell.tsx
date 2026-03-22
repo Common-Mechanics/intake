@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useCallback, useRef, useMemo, useState } from "react"
+import { validateStep, getSkippedFieldIds } from "@/lib/intake/schema-to-zod"
 import { cn } from "@/lib/utils"
 import { useWizard } from "@/lib/intake/use-wizard"
 import type { FormSchema, SavedData } from "@/lib/intake/schemas"
@@ -14,6 +15,64 @@ import { CostEstimate } from "./cost-estimate"
 import { SettingsPopover } from "./settings-popover"
 import { VoiceAssistant, VoiceAssistantTrigger } from "./voice-assistant"
 
+/* ── Thank you page shown after successful completion ── */
+function ThankYouPage({ orgName }: { orgName: string }) {
+  useEffect(() => {
+    /* Simple confetti using CSS animations — no library needed */
+    const container = document.createElement("div")
+    container.style.cssText = "position:fixed;inset:0;pointer-events:none;z-index:100;overflow:hidden"
+    document.body.appendChild(container)
+
+    const colors = ["#f59e0b", "#10b981", "#3b82f6", "#ef4444", "#8b5cf6", "#ec4899"]
+    for (let i = 0; i < 80; i++) {
+      const piece = document.createElement("div")
+      const color = colors[Math.floor(Math.random() * colors.length)]
+      const left = Math.random() * 100
+      const delay = Math.random() * 2
+      const duration = 2 + Math.random() * 2
+      const size = 6 + Math.random() * 6
+      const rotation = Math.random() * 360
+      piece.style.cssText = `
+        position:absolute;top:-20px;left:${left}%;width:${size}px;height:${size}px;
+        background:${color};border-radius:${Math.random() > 0.5 ? "50%" : "2px"};
+        animation:confetti-fall ${duration}s ease-out ${delay}s forwards;
+        transform:rotate(${rotation}deg);
+      `
+      container.appendChild(piece)
+    }
+
+    /* Add keyframes if not present */
+    if (!document.getElementById("confetti-keyframes")) {
+      const style = document.createElement("style")
+      style.id = "confetti-keyframes"
+      style.textContent = `
+        @keyframes confetti-fall {
+          0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+          100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+      `
+      document.head.appendChild(style)
+    }
+
+    return () => { container.remove() }
+  }, [])
+
+  return (
+    <div className="flex min-h-dvh flex-col items-center justify-center px-6 text-center">
+      <div className="flex flex-col items-center gap-6 max-w-md">
+        <div className="text-6xl">🎉</div>
+        <h1 className="text-3xl font-bold tracking-tight">You're all set!</h1>
+        <p className="text-lg text-muted-foreground leading-relaxed">
+          <strong>{orgName}</strong> has been configured. We'll start building your publication pipeline.
+        </p>
+        <p className="text-sm text-muted-foreground">
+          You can close this page. We'll be in touch when your first dossier is ready.
+        </p>
+      </div>
+    </div>
+  )
+}
+
 interface WizardShellProps {
   schema: FormSchema
   initialData: SavedData | null
@@ -25,6 +84,29 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
   const stepHeadingRef = useRef<HTMLHeadingElement>(null)
   const [voicePanelOpen, setVoicePanelOpen] = useState(false)
   const [voiceConnected, setVoiceConnected] = useState(false)
+  const [isComplete, setIsComplete] = useState(false)
+
+  /* Validate all steps at once — returns errors grouped by step ID */
+  const validateAllSteps = useCallback((): Record<string, Record<string, string>> => {
+    const allErrors: Record<string, Record<string, string>> = {}
+    const allData = Object.assign({}, ...Object.values(wizard.values))
+    for (const step of schema.steps) {
+      const stepData = wizard.values[step.id] ?? {}
+      const sections = (step as Record<string, unknown>).sections as import("@/lib/intake/schemas").SectionDef[] | undefined
+      const skippedFieldIds = getSkippedFieldIds(sections, wizard.skippedSections)
+      const result = validateStep(step.fields, stepData, allData, skippedFieldIds)
+      if (result) allErrors[step.id] = result
+    }
+    return allErrors
+  }, [schema.steps, wizard.values, wizard.skippedSections])
+
+  /* Save and mark complete — triggered by assistant or user */
+  const handleSaveAndComplete = useCallback(() => {
+    const errors = validateAllSteps()
+    if (Object.keys(errors).length > 0) return
+    wizard.saveToServer()
+    setIsComplete(true)
+  }, [validateAllSteps, wizard])
 
   const scrollToFirstError = useCallback(() => {
     setTimeout(() => {
@@ -41,7 +123,7 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
     if (wizard.isLastStep) {
       const valid = wizard.validateCurrentStep()
       if (valid) {
-        wizard.saveToServer()
+        handleSaveAndComplete()
       } else {
         scrollToFirstError()
       }
@@ -49,7 +131,7 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
       const moved = wizard.nextStep()
       if (!moved) scrollToFirstError()
     }
-  }, [wizard, scrollToFirstError])
+  }, [wizard, scrollToFirstError, handleSaveAndComplete])
 
   // Focus heading and scroll to top on step transitions
   useEffect(() => {
@@ -299,6 +381,11 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
 
   const currentValues = wizard.values[wizard.currentStepDef.id] ?? {}
 
+  /* Thank you page after completion */
+  if (isComplete) {
+    return <ThankYouPage orgName={(wizard.values["your-publication"]?.publication_name as string) ?? "your publication"} />
+  }
+
   return (
     <div className="flex min-h-dvh">
       {/* Voice assistant panel — side panel on desktop, bottom sheet on mobile */}
@@ -308,6 +395,9 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
         values={wizard.values}
         currentStep={wizard.currentStep}
         steps={schema.steps}
+        errors={wizard.errors}
+        onValidateAllSteps={validateAllSteps}
+        onSaveAndComplete={handleSaveAndComplete}
         onPanelToggle={setVoicePanelOpen}
         onConnectionChange={setVoiceConnected}
         isOpen={voicePanelOpen}
