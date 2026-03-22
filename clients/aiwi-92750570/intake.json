@@ -14,8 +14,8 @@
     "audience_description": "test",
     "key_question": "test",
     "reader_profile": "test",
-    "publication_type": "test intelligence briefing",
-    "community_label": "the test community",
+    "publication_type": "writing literature AI intelligence briefing",
+    "community_label": "the writing literature AI community",
     "categories": [
       {
         "short_label": "",
@@ -157,5 +157,5 @@
   "completedSteps": [
     "your-publication"
   ],
-  "lastSaved": "2026-03-22T14:22:51.043Z"
+  "lastSaved": "2026-03-22T14:23:35.261Z"
 }
