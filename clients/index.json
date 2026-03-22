@@ -4,9 +4,9 @@
     "name": "aiwi",
     "schemaId": "ai-dossier-intake",
     "createdAt": "2026-03-22T00:57:02.325Z",
-    "lastModified": "2026-03-22T02:01:34.343Z",
+    "lastModified": "2026-03-22T02:01:43.034Z",
     "status": "completed",
-    "completedSteps": 1,
+    "completedSteps": 2,
     "totalSteps": 0
   }
 ]
