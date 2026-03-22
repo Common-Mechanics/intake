@@ -114,66 +114,51 @@ export function StepRenderer({
         )}
       </div>
 
-      {/* ── CONTENT: fields left, help text right on desktop ── */}
+      {/* ── CONTENT: each field row = input left + help right on desktop ── */}
       <div className={cn(
-        "flex flex-col md:flex-row gap-6 md:gap-10 transition-opacity duration-200",
+        "flex flex-col gap-5 transition-opacity duration-200",
         isSkipped && "pointer-events-none opacity-40"
       )}>
-        {/* Left column: pure inputs */}
-        <div className="flex-1 min-w-0">
-          <div className="flex flex-col gap-5">
-            {step.fields.map((field) => (
-              <FieldRenderer
-                key={field.id}
-                field={{
-                  ...field,
-                  /* On desktop, strip help from fields — it goes to the sidebar.
-                     On mobile, keep help inline (handled by CSS hiding the sidebar). */
-                  help: undefined,
-                }}
-                value={values[field.id]}
-                onChange={handleFieldChange(field.id)}
-                error={errors[field.id]}
-                allErrors={errors}
-                disabled={disabled || isSkipped}
-                allValues={values}
-                onBlur={onFieldBlur}
-              />
-            ))}
-          </div>
+        {step.fields.map((field) => {
+          const hasHelp = !!field.help && field.type !== "section"
 
-          {/* Mobile-only: show help texts below fields since sidebar is hidden */}
-          {fieldHelpTexts.length > 0 && (
-            <div className="md:hidden mt-6 flex flex-col gap-3">
-              {step.fields.map((field) =>
-                field.help && field.type !== "section" ? (
-                  <div key={`help-${field.id}`} className="flex flex-col gap-0.5">
-                    <span className="text-xs font-medium text-muted-foreground">{field.label}</span>
-                    <p className="text-[13px] leading-relaxed text-muted-foreground/60">{field.help}</p>
-                  </div>
-                ) : null
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Right column: help text sidebar (desktop only) */}
-        {fieldHelpTexts.length > 0 && (
-          <div className="hidden md:block md:w-[220px] lg:w-[260px] shrink-0">
-            <div className="sticky top-32 flex flex-col gap-5">
-              {step.fields.map((field) =>
-                field.help && field.type !== "section" ? (
-                  <p
-                    key={`sidebar-${field.id}`}
-                    className="text-[12px] leading-relaxed text-muted-foreground/60"
-                  >
+          return (
+            <div key={field.id} className="flex flex-col md:flex-row md:gap-8">
+              {/* Left: the input field (no help text — stripped on desktop) */}
+              <div className="flex-1 min-w-0">
+                <FieldRenderer
+                  field={{
+                    ...field,
+                    /* Desktop: help goes to the right column */
+                    help: undefined,
+                  }}
+                  value={values[field.id]}
+                  onChange={handleFieldChange(field.id)}
+                  error={errors[field.id]}
+                  allErrors={errors}
+                  disabled={disabled || isSkipped}
+                  allValues={values}
+                  onBlur={onFieldBlur}
+                />
+                {/* Mobile: show help below the field */}
+                {hasHelp && (
+                  <p className="md:hidden mt-1.5 text-[13px] leading-relaxed text-muted-foreground/60">
                     {field.help}
                   </p>
-                ) : null
+                )}
+              </div>
+
+              {/* Right: help text aligned to this field (desktop only) */}
+              {hasHelp && (
+                <div className="hidden md:flex md:w-[220px] lg:w-[260px] shrink-0 pt-7">
+                  <p className="text-[12px] leading-relaxed text-muted-foreground/60">
+                    {field.help}
+                  </p>
+                </div>
               )}
             </div>
-          </div>
-        )}
+          )
+        })}
       </div>
     </div>
   )
