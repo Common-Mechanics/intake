@@ -1,33 +1,46 @@
 {
   "id": "ai-dossier-intake",
-  "version": 1,
+  "version": 2,
   "title": "Publication Setup",
   "steps": [
     {
-      "id": "publication-identity",
-      "title": "Publication Identity",
-      "description": "Let's start with the basics — what is your publication called and where will it live?",
+      "id": "your-publication",
+      "title": "Your Publication",
+      "description": "The basics: what is your publication, who reads it, and what lens do you apply to every story?",
+      "sections": [
+        {
+          "id": "identity",
+          "label": "Identity",
+          "fields": ["publication_name", "tagline", "full_title", "topic_label"]
+        },
+        {
+          "id": "where-it-lives",
+          "label": "Where It Lives",
+          "fields": ["site_url", "publisher_name", "publisher_url"]
+        },
+        {
+          "id": "audience",
+          "label": "Your Audience",
+          "fields": ["audience_description", "key_question", "reader_profile"]
+        },
+        {
+          "id": "derived-labels",
+          "label": "Derived Labels",
+          "collapsible": true,
+          "defaultOpen": false,
+          "fields": ["publication_type", "community_label"]
+        }
+      ],
       "fields": [
         {
           "id": "publication_name",
           "type": "text",
           "label": "Publication Name",
           "help": "Appears in header, browser tab, and social cards.",
-          "placeholder": "MY PUBLICATION",
+          "placeholder": "CLIMATE DOSSIER",
           "validation": {
             "required": true,
             "maxLength": 100
-          }
-        },
-        {
-          "id": "full_title",
-          "type": "text",
-          "label": "Full Title",
-          "help": "Include a tagline. E.g. \"CLIMATE DOSSIER — Daily Climate Policy Briefing\"",
-          "placeholder": "PUBLICATION — Your Tagline Here",
-          "validation": {
-            "required": true,
-            "maxLength": 200
           }
         },
         {
@@ -35,76 +48,21 @@
           "type": "text",
           "label": "Tagline",
           "help": "One line for search results and social shares.",
-          "placeholder": "Daily intelligence on...",
+          "placeholder": "Daily intelligence on climate policy and governance",
           "validation": {
             "required": true,
             "maxLength": 150
           }
         },
         {
-          "id": "_section_urls",
-          "type": "section",
-          "label": "Where It Lives"
-        },
-        {
-          "id": "site_url",
-          "type": "url",
-          "label": "Site URL",
-          "help": "Where your site will live.",
-          "placeholder": "https://yourpublication.org",
-          "validation": {
-            "required": true
-          }
-        },
-        {
-          "id": "publisher_name",
+          "id": "full_title",
           "type": "text",
-          "label": "Publisher Name",
-          "help": "Your organization or company name.",
-          "placeholder": "Your Organization",
+          "label": "Full Title",
+          "help": "Auto-filled from name + tagline. Edit if you want something different.",
+          "placeholder": "CLIMATE DOSSIER — Daily Climate Policy Briefing",
           "validation": {
             "required": true,
-            "maxLength": 100
-          }
-        },
-        {
-          "id": "publisher_url",
-          "type": "url",
-          "label": "Publisher URL",
-          "help": "Your organization's website.",
-          "placeholder": "https://yourorg.com",
-          "validation": {
-            "required": true
-          }
-        }
-      ]
-    },
-    {
-      "id": "audience",
-      "title": "Your Audience",
-      "description": "This is the most important section. It shapes how every story is evaluated and written. Think about who you want reading this every morning.",
-      "hint": "We initially described our audience too technically and the pipeline produced jargon-heavy copy. Describing the reader as \"a curious professional reading over morning coffee\" dramatically improved readability. Write for who you want to reach, not who you already have.",
-      "fields": [
-        {
-          "id": "audience_description",
-          "type": "text",
-          "label": "Who Reads This?",
-          "help": "2\u20134 reader types, comma-separated.",
-          "placeholder": "policy advisors, journalists, analysts",
-          "validation": {
-            "required": true,
-            "maxLength": 300
-          }
-        },
-        {
-          "id": "publication_type",
-          "type": "text",
-          "label": "Publication Type",
-          "help": "A sentence fragment. E.g. \"climate policy intelligence briefing\"",
-          "placeholder": "intelligence briefing on...",
-          "validation": {
-            "required": true,
-            "maxLength": 150
+            "maxLength": 200
           }
         },
         {
@@ -119,9 +77,46 @@
           }
         },
         {
-          "id": "_section_editorial",
-          "type": "section",
-          "label": "Editorial Lens"
+          "id": "site_url",
+          "type": "url",
+          "label": "Site URL",
+          "help": "Where your site will live.",
+          "placeholder": "https://climatedossier.org",
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "id": "publisher_name",
+          "type": "text",
+          "label": "Publisher Name",
+          "help": "Your organization or company name.",
+          "placeholder": "Climate Action Network",
+          "validation": {
+            "required": true,
+            "maxLength": 100
+          }
+        },
+        {
+          "id": "publisher_url",
+          "type": "url",
+          "label": "Publisher URL",
+          "help": "Your organization's website.",
+          "placeholder": "https://climatenetwork.org",
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "id": "audience_description",
+          "type": "text",
+          "label": "Who Reads This?",
+          "help": "2\u20134 reader types, comma-separated.",
+          "placeholder": "policy advisors, journalists, analysts",
+          "validation": {
+            "required": true,
+            "maxLength": 300
+          }
         },
         {
           "id": "key_question",
@@ -129,21 +124,10 @@
           "rows": 5,
           "label": "Key Question",
           "help": "The single question every story is evaluated against. Shapes how importance is scored.",
-          "placeholder": "How does this affect...?",
+          "placeholder": "How does this affect the trajectory of global decarbonization?",
           "validation": {
             "required": true,
             "maxLength": 500
-          }
-        },
-        {
-          "id": "community_label",
-          "type": "text",
-          "label": "Community Label",
-          "help": "E.g. \"the climate policy community\"",
-          "placeholder": "the ... community",
-          "validation": {
-            "required": false,
-            "maxLength": 100
           }
         },
         {
@@ -151,20 +135,53 @@
           "type": "textarea",
           "rows": 6,
           "label": "Reader Profile",
-          "help": "3\u20135 sentences: who are they, what's their expertise, what should they take away? Write as \"You are writing for\u2026\"",
-          "placeholder": "You are writing for...",
+          "help": "3\u20135 sentences: who are they, what\u2019s their expertise, what should they take away? Write as \u201cYou are writing for\u2026\u201d",
+          "placeholder": "You are writing for smart professionals who follow climate policy but are not scientists\u2026",
           "validation": {
             "required": true,
             "maxLength": 1000
+          }
+        },
+        {
+          "id": "publication_type",
+          "type": "text",
+          "label": "Publication Type",
+          "help": "Auto-filled from your topic. A sentence fragment describing the publication.",
+          "placeholder": "climate policy intelligence briefing",
+          "validation": {
+            "required": false,
+            "maxLength": 150
+          }
+        },
+        {
+          "id": "community_label",
+          "type": "text",
+          "label": "Community Label",
+          "help": "Auto-filled. What you call your reader community.",
+          "placeholder": "the climate policy community",
+          "validation": {
+            "required": false,
+            "maxLength": 100
           }
         }
       ]
     },
     {
-      "id": "categories",
-      "title": "Categories",
-      "description": "Every story gets classified into one of your categories. These appear as filter buttons on your site and organize the editorial workflow. Pick categories that cover your topic's major dimensions without overlapping.",
-      "hint": "Each category should have enough daily volume to regularly appear (at least 1-2 stories per day). If two categories always contain the same stories, merge them.",
+      "id": "categories-and-editors",
+      "title": "Categories & Editors",
+      "description": "Define your categories, then customize the AI editors that review every story through their domain lens. Editors are auto-generated from your categories.",
+      "sections": [
+        {
+          "id": "categories-section",
+          "label": "Categories",
+          "fields": ["categories"]
+        },
+        {
+          "id": "editors-section",
+          "label": "Editorial Team",
+          "fields": ["editors"]
+        }
+      ],
       "fields": [
         {
           "id": "categories",
@@ -181,7 +198,7 @@
               "id": "short_label",
               "type": "text",
               "label": "Short Label",
-              "help": "For the filter button. E.g. \"Policy\", \"Finance\"",
+              "help": "For the filter button. E.g. \u201cPolicy\u201d, \u201cFinance\u201d",
               "placeholder": "Policy",
               "validation": {
                 "required": true,
@@ -192,7 +209,7 @@
               "id": "full_name",
               "type": "text",
               "label": "Full Name",
-              "help": "E.g. \"Climate Policy & Governance\"",
+              "help": "E.g. \u201cClimate Policy & Governance\u201d",
               "placeholder": "Climate Policy & Governance",
               "validation": {
                 "required": true,
@@ -213,15 +230,7 @@
               }
             }
           ]
-        }
-      ]
-    },
-    {
-      "id": "editorial-team",
-      "title": "Editorial Team",
-      "description": "Your publication has AI editors who each review every story through their domain expertise. Each editor matches one of your categories, plus a Spotlight editor who finds interesting media content like podcasts, videos, and demos. The more specific you describe each editor's expertise, the sharper their reviews will be.",
-      "hint": "Vague expertise (\"you are an expert in policy\") produces generic reviews. Listing specific organizations, sub-areas, and judgment criteria produces sharp, domain-aware assessments. The more specific, the better.",
-      "fields": [
+        },
         {
           "id": "editors",
           "type": "repeating",
@@ -237,7 +246,7 @@
               "id": "editor_name",
               "type": "text",
               "label": "Editor Name",
-              "help": "E.g. \"Policy Editor\", \"Spotlight Editor\"",
+              "help": "E.g. \u201cPolicy Editor\u201d, \u201cSpotlight Editor\u201d",
               "placeholder": "Policy Editor",
               "validation": {
                 "required": true,
@@ -270,7 +279,7 @@
               "type": "textarea",
               "label": "Expertise",
               "help": "1\u20132 paragraphs: who they are, what sub-areas they cover, and what they notice that generalists miss. The more specific, the sharper the reviews.",
-              "placeholder": "You are the ... Editor — an expert in...",
+              "placeholder": "You are the Policy Editor \u2014 an expert in\u2026",
               "validation": {
                 "required": true,
                 "maxLength": 2000
@@ -281,21 +290,53 @@
       ]
     },
     {
-      "id": "sentiment-tracker",
-      "title": "Sentiment Tracker",
-      "description": "Your publication includes a sentiment tracker that measures whether things in your domain are getting better or worse over time. Every story gets scored as positive, negative, or neutral. Name your tracker and define what those directions mean.",
-      "fields": [
+      "id": "sentiment-and-scoring",
+      "title": "Sentiment & Scoring",
+      "description": "Configure your sentiment tracker \u2014 a metric that measures whether things in your domain are getting better or worse over time.",
+      "sections": [
         {
-          "id": "_section_config",
-          "type": "section",
-          "label": "Tracker Configuration"
+          "id": "tracker-config",
+          "label": "Tracker Configuration",
+          "fields": ["tracker_name", "tracker_subtitle", "tracker_nav_label", "positive_signal_label", "negative_signal_label"]
         },
+        {
+          "id": "signal-meanings",
+          "label": "What Your Signals Mean",
+          "fields": ["what_positive_means", "what_negative_means", "fallback_sentiment_question"]
+        },
+        {
+          "id": "scoring-calibration",
+          "label": "Scoring Calibration",
+          "collapsible": true,
+          "defaultOpen": false,
+          "fields": ["scoring_positive", "scoring_negative", "scoring_neutral"]
+        },
+        {
+          "id": "per-category-rules",
+          "label": "Per-Category Rules",
+          "collapsible": true,
+          "defaultOpen": false,
+          "optional": {
+            "label": "I don\u2019t need custom sentiment rules",
+            "consequences": "Without custom rules, the pipeline uses general-purpose sentiment analysis. It works well for obvious cases but may misjudge domain-specific signals."
+          },
+          "fields": ["sentiment_rules_by_category"]
+        },
+        {
+          "id": "tracker-advanced",
+          "label": "Advanced",
+          "collapsible": true,
+          "defaultOpen": false,
+          "fields": ["tracker_concept_url"]
+        }
+      ],
+      "fields": [
         {
           "id": "tracker_name",
           "type": "text",
           "label": "Tracker Name",
-          "help": "Appears in navigation and charts. E.g. \"Climate Risk Index\", \"Trust Score\"",
-          "placeholder": "Risk Index",
+          "help": "Appears in navigation and charts. Auto-filled from your topic.",
+          "placeholder": "Climate Risk Index",
           "validation": {
             "required": true,
             "maxLength": 50
@@ -306,17 +347,28 @@
           "type": "text",
           "label": "Tracker Subtitle",
           "help": "Longer name for page titles and metadata.",
-          "placeholder": "Sentiment Index",
+          "placeholder": "Climate Policy Sentiment Index",
           "validation": {
             "required": true,
             "maxLength": 100
           }
         },
         {
+          "id": "tracker_nav_label",
+          "type": "text",
+          "label": "Navigation Label",
+          "help": "Navigation tab label. E.g. \u201cTracker\u201d, \u201cPulse\u201d",
+          "placeholder": "Tracker",
+          "validation": {
+            "required": true,
+            "maxLength": 30
+          }
+        },
+        {
           "id": "positive_signal_label",
           "type": "text",
           "label": "Positive Signal Label",
-          "help": "Shows next to positive stories. E.g. \"progress points\"",
+          "help": "Shows next to positive stories. E.g. \u201cprogress points\u201d",
           "placeholder": "progress points",
           "validation": {
             "required": true,
@@ -327,7 +379,7 @@
           "id": "negative_signal_label",
           "type": "text",
           "label": "Negative Signal Label",
-          "help": "Shows next to negative stories. E.g. \"risk points\"",
+          "help": "Shows next to negative stories. E.g. \u201crisk points\u201d",
           "placeholder": "risk points",
           "validation": {
             "required": true,
@@ -335,28 +387,12 @@
           }
         },
         {
-          "id": "tracker_nav_label",
-          "type": "text",
-          "label": "Tracker Nav Label",
-          "help": "Navigation tab label. E.g. \"Tracker\", \"Pulse\"",
-          "placeholder": "Tracker",
-          "validation": {
-            "required": true,
-            "maxLength": 30
-          }
-        },
-        {
-          "id": "_section_meaning",
-          "type": "section",
-          "label": "What Your Signals Mean"
-        },
-        {
           "id": "what_positive_means",
           "type": "textarea",
           "rows": 3,
           "label": "What Positive Means",
           "help": "One sentence: what does a positive signal mean in your domain?",
-          "placeholder": "Things are improving because...",
+          "placeholder": "Things are improving because\u2026",
           "validation": {
             "required": true,
             "maxLength": 500
@@ -368,7 +404,7 @@
           "rows": 3,
           "label": "What Negative Means",
           "help": "One sentence: what does a negative signal mean?",
-          "placeholder": "Things are getting worse because...",
+          "placeholder": "Things are getting worse because\u2026",
           "validation": {
             "required": true,
             "maxLength": 500
@@ -378,8 +414,8 @@
           "id": "fallback_sentiment_question",
           "type": "textarea",
           "rows": 3,
-          "label": "Fallback Sentiment Question",
-          "help": "Tiebreaker when sentiment isn't obvious. Frame as a yes/no question about direction.",
+          "label": "Fallback Question",
+          "help": "Tiebreaker when sentiment isn\u2019t obvious. Frame as a yes/no question about direction.",
           "placeholder": "Is the situation getting better or worse?",
           "validation": {
             "required": true,
@@ -387,27 +423,12 @@
           }
         },
         {
-          "id": "tracker_concept_url",
-          "type": "url",
-          "label": "Tracker Concept URL",
-          "help": "Optional link explaining your metric concept.",
-          "placeholder": "https://en.wikipedia.org/wiki/...",
-          "validation": {
-            "required": false
-          }
-        },
-        {
-          "id": "_section_scoring",
-          "type": "section",
-          "label": "Scoring Calibration"
-        },
-        {
           "id": "scoring_positive",
           "type": "textarea",
           "rows": 4,
-          "label": "Positive Scoring — What Does It Look Like?",
+          "label": "Positive Scoring",
           "help": "2\u20133 concrete examples of stories your audience would instantly recognize as good news.",
-          "placeholder": "A story is positive when...",
+          "placeholder": "A story is positive when\u2026",
           "validation": {
             "required": true,
             "maxLength": 1000
@@ -417,9 +438,9 @@
           "id": "scoring_negative",
           "type": "textarea",
           "rows": 4,
-          "label": "Negative Scoring — What Does It Look Like?",
+          "label": "Negative Scoring",
           "help": "2\u20133 concrete examples of stories your audience would recognize as bad news.",
-          "placeholder": "A story is negative when...",
+          "placeholder": "A story is negative when\u2026",
           "validation": {
             "required": true,
             "maxLength": 1000
@@ -429,26 +450,14 @@
           "id": "scoring_neutral",
           "type": "textarea",
           "rows": 4,
-          "label": "Neutral Scoring — What Counts as Neutral?",
+          "label": "Neutral Scoring",
           "help": "2\u20133 examples of stories that are neither clearly positive nor negative.",
-          "placeholder": "A story is neutral when...",
+          "placeholder": "A story is neutral when\u2026",
           "validation": {
             "required": true,
             "maxLength": 1000
           }
-        }
-      ]
-    },
-    {
-      "id": "sentiment-rules",
-      "title": "Sentiment Rules",
-      "description": "For each of your categories, define rules that tell the pipeline when something is positive, negative, or neutral. Focus on the non-obvious cases — the pipeline already gets the obvious ones right. Think: \"When X happens in this category, is that good or bad for my domain?\"",
-      "hint": "We discovered a strong negativity bias in early builds. The model treated all serious stories as negative, even defensive improvements. Adding explicit \"this is positive because...\" rules fixed this. If you don't define what's positive, the pipeline assumes serious = negative.",
-      "optional": {
-        "label": "I don't need custom sentiment rules",
-        "consequences": "Without custom sentiment rules, the pipeline will use general-purpose sentiment analysis. It works well for obvious cases but may misjudge domain-specific signals — for example, treating new regulation as negative when it's actually progress in your field."
-      },
-      "fields": [
+        },
         {
           "id": "sentiment_rules_by_category",
           "type": "custom",
@@ -457,182 +466,63 @@
           "validation": {
             "required": false
           }
+        },
+        {
+          "id": "tracker_concept_url",
+          "type": "url",
+          "label": "Tracker Concept URL",
+          "help": "Optional link explaining your metric concept.",
+          "placeholder": "https://en.wikipedia.org/wiki/\u2026",
+          "validation": {
+            "required": false
+          }
         }
       ]
     },
     {
-      "id": "social-profiles",
-      "title": "Social Profiles",
-      "description": "If your field has active social media discussion, the pipeline can monitor key voices across platforms. This feeds into social signals shown to editors and the daily community pulse.",
-      "optional": {
-        "label": "I don't need social monitoring",
-        "consequences": "Without social profiles, the pipeline won't track community discussion or include social signals in story scoring. You can always add these later."
-      },
-      "fields": [
+      "id": "sources-and-discovery",
+      "title": "Sources & Discovery",
+      "description": "RSS feeds your publication monitors daily, plus optional social profiles and key organizations for scoring.",
+      "sections": [
         {
-          "id": "bluesky_handles",
-          "type": "repeating",
-          "label": "Bluesky Handles",
-          "help": "Key researchers, journalists, and advocates on Bluesky.",
-          "validation": {
-            "required": false,
-            "minItems": 0
-          },
-          "batchInput": {
-            "enabled": true,
-            "csvColumns": [
-              "handle"
-            ]
-          },
-          "fields": [
-            {
-              "id": "handle",
-              "type": "text",
-              "label": "Bluesky Handle",
-              "help": "E.g. \"climatescientist.bsky.social\"",
-              "placeholder": "username.bsky.social",
-              "validation": {
-                "required": false,
-                "maxLength": 100,
-                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9.-]*\\.[a-zA-Z]{2,}$"
-              }
-            }
-          ]
+          "id": "rss-sources",
+          "label": "RSS Sources",
+          "fields": ["sources"]
         },
         {
-          "id": "x_handles",
-          "type": "repeating",
-          "label": "X.com Handles",
-          "help": "Key voices on X (formerly Twitter).",
-          "validation": {
-            "required": false,
-            "minItems": 0
+          "id": "social-profiles",
+          "label": "Social Profiles",
+          "collapsible": true,
+          "defaultOpen": false,
+          "optional": {
+            "label": "I don\u2019t need social monitoring",
+            "consequences": "Without social profiles, the pipeline won\u2019t track community discussion or include social signals in story scoring."
           },
-          "batchInput": {
-            "enabled": true,
-            "csvColumns": [
-              "handle"
-            ]
-          },
-          "fields": [
-            {
-              "id": "handle",
-              "type": "text",
-              "label": "X Handle",
-              "help": "1\u201315 characters. E.g. \"@climatejournalist\"",
-              "placeholder": "@username",
-              "validation": {
-                "required": false,
-                "maxLength": 16,
-                "pattern": "^@?[a-zA-Z0-9_]{1,15}$"
-              }
-            }
-          ]
+          "fields": ["bluesky_handles", "x_handles", "linkedin_urls"]
         },
         {
-          "id": "linkedin_urls",
-          "type": "repeating",
-          "label": "LinkedIn Profiles",
-          "help": "Key voices in your field on LinkedIn.",
-          "validation": {
-            "required": false,
-            "minItems": 0
-          },
-          "batchInput": {
-            "enabled": true,
-            "csvColumns": [
-              "url"
-            ]
-          },
-          "fields": [
-            {
-              "id": "url",
-              "type": "url",
-              "label": "LinkedIn URL",
-              "help": "Full profile URL.",
-              "placeholder": "https://linkedin.com/in/...",
-              "validation": {
-                "required": false
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "organizations-and-topics",
-      "title": "Key Organizations & Triage Topics",
-      "description": "Two quick lists: the organizations that matter most in your field, and the topic areas your publication should monitor.",
-      "optional": {
-        "label": "I'll add these later",
-        "consequences": "Without key organizations, stories won't get score bonuses for mentioning important players. Without triage topics, the pipeline will use your categories and key question for filtering, which works but is less precise."
-      },
-      "fields": [
-        {
-          "id": "key_organizations",
-          "type": "repeating",
+          "id": "key-organizations",
           "label": "Key Organizations",
-          "help": "Stories mentioning these get a score bonus. List 10\u201315. If everything gets a bonus, nothing does.",
-          "validation": {
-            "required": false,
-            "minItems": 0
+          "collapsible": true,
+          "defaultOpen": false,
+          "optional": {
+            "label": "I\u2019ll add organizations later",
+            "consequences": "Without key organizations, stories won\u2019t get score bonuses for mentioning important players."
           },
-          "batchInput": {
-            "enabled": true,
-            "csvColumns": [
-              "name"
-            ]
-          },
-          "fields": [
-            {
-              "id": "name",
-              "type": "text",
-              "label": "Organization Name",
-              "help": "Full name. E.g. \"International Energy Agency\"",
-              "placeholder": "Organization name",
-              "validation": {
-                "required": false,
-                "maxLength": 200
-              }
-            }
-          ]
+          "fields": ["key_organizations"]
         },
         {
-          "id": "triage_topics",
-          "type": "repeating",
+          "id": "triage-topics",
           "label": "Triage Topics",
-          "help": "First filter \u2014 anything not matching gets discarded. Be generous. Aim for 4\u20136.",
-          "validation": {
-            "required": false,
-            "minItems": 0
+          "collapsible": true,
+          "defaultOpen": false,
+          "optional": {
+            "label": "I\u2019ll add triage topics later",
+            "consequences": "Without triage topics, the pipeline uses your categories and key question for filtering, which works but is less precise."
           },
-          "batchInput": {
-            "enabled": true,
-            "csvColumns": [
-              "topic"
-            ]
-          },
-          "fields": [
-            {
-              "id": "topic",
-              "type": "text",
-              "label": "Topic",
-              "help": "Short phrase. E.g. \"Climate litigation and legal precedents\"",
-              "placeholder": "Topic area...",
-              "validation": {
-                "required": false,
-                "maxLength": 200
-              }
-            }
-          ]
+          "fields": ["triage_topics"]
         }
-      ]
-    },
-    {
-      "id": "sources",
-      "title": "Sources",
-      "description": "List the RSS feeds your publication should monitor daily. Start with 20-30 high-quality sources — you can always add more later.",
-      "hint": "A good mix: 5-10 primary sources (orgs that make news), 5-10 analysis (newsletters, blogs), 5-10 media (journalists covering your beat), 5-10 wire services. Start with 20-30 high-quality sources. A smaller set of trusted sources produces better output than 100 mediocre feeds full of noise.",
+      ],
       "fields": [
         {
           "id": "sources",
@@ -645,12 +535,7 @@
           },
           "batchInput": {
             "enabled": true,
-            "csvColumns": [
-              "name",
-              "url",
-              "tags",
-              "notes"
-            ],
+            "csvColumns": ["name", "url", "tags", "notes"],
             "jsonExample": "{\"name\": \"Carbon Brief\", \"url\": \"https://www.carbonbrief.org/feed\", \"tags\": \"policy, science\", \"notes\": \"UK-based climate science and policy analysis\"}"
           },
           "fields": [
@@ -692,10 +577,146 @@
               "label": "Notes",
               "rows": 2,
               "help": "For your reference only.",
-              "placeholder": "Optional notes...",
+              "placeholder": "Optional notes\u2026",
               "validation": {
                 "required": false,
                 "maxLength": 500
+              }
+            }
+          ]
+        },
+        {
+          "id": "bluesky_handles",
+          "type": "repeating",
+          "label": "Bluesky Handles",
+          "help": "Key researchers, journalists, and advocates on Bluesky.",
+          "validation": {
+            "required": false,
+            "minItems": 0
+          },
+          "batchInput": {
+            "enabled": true,
+            "csvColumns": ["handle"]
+          },
+          "fields": [
+            {
+              "id": "handle",
+              "type": "text",
+              "label": "Bluesky Handle",
+              "help": "E.g. \u201cclimatescientist.bsky.social\u201d",
+              "placeholder": "username.bsky.social",
+              "validation": {
+                "required": false,
+                "maxLength": 100,
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9.-]*\\.[a-zA-Z]{2,}$"
+              }
+            }
+          ]
+        },
+        {
+          "id": "x_handles",
+          "type": "repeating",
+          "label": "X.com Handles",
+          "help": "Key voices on X (formerly Twitter).",
+          "validation": {
+            "required": false,
+            "minItems": 0
+          },
+          "batchInput": {
+            "enabled": true,
+            "csvColumns": ["handle"]
+          },
+          "fields": [
+            {
+              "id": "handle",
+              "type": "text",
+              "label": "X Handle",
+              "help": "1\u201315 characters. E.g. \u201c@climatejournalist\u201d",
+              "placeholder": "@username",
+              "validation": {
+                "required": false,
+                "maxLength": 16,
+                "pattern": "^@?[a-zA-Z0-9_]{1,15}$"
+              }
+            }
+          ]
+        },
+        {
+          "id": "linkedin_urls",
+          "type": "repeating",
+          "label": "LinkedIn Profiles",
+          "help": "Key voices in your field on LinkedIn.",
+          "validation": {
+            "required": false,
+            "minItems": 0
+          },
+          "batchInput": {
+            "enabled": true,
+            "csvColumns": ["url"]
+          },
+          "fields": [
+            {
+              "id": "url",
+              "type": "url",
+              "label": "LinkedIn URL",
+              "help": "Full profile URL.",
+              "placeholder": "https://linkedin.com/in/\u2026",
+              "validation": {
+                "required": false
+              }
+            }
+          ]
+        },
+        {
+          "id": "key_organizations",
+          "type": "repeating",
+          "label": "Key Organizations",
+          "help": "Stories mentioning these get a score bonus. List 10\u201315. If everything gets a bonus, nothing does.",
+          "validation": {
+            "required": false,
+            "minItems": 0
+          },
+          "batchInput": {
+            "enabled": true,
+            "csvColumns": ["name"]
+          },
+          "fields": [
+            {
+              "id": "name",
+              "type": "text",
+              "label": "Organization Name",
+              "help": "Full name. E.g. \u201cInternational Energy Agency\u201d",
+              "placeholder": "Organization name",
+              "validation": {
+                "required": false,
+                "maxLength": 200
+              }
+            }
+          ]
+        },
+        {
+          "id": "triage_topics",
+          "type": "repeating",
+          "label": "Triage Topics",
+          "help": "First filter \u2014 anything not matching gets discarded. Be generous. Aim for 4\u20136.",
+          "validation": {
+            "required": false,
+            "minItems": 0
+          },
+          "batchInput": {
+            "enabled": true,
+            "csvColumns": ["topic"]
+          },
+          "fields": [
+            {
+              "id": "topic",
+              "type": "text",
+              "label": "Topic",
+              "help": "Short phrase. E.g. \u201cClimate litigation and legal precedents\u201d",
+              "placeholder": "Topic area\u2026",
+              "validation": {
+                "required": false,
+                "maxLength": 200
               }
             }
           ]
@@ -703,26 +724,37 @@
       ]
     },
     {
-      "id": "about-and-final",
-      "title": "About Page & Final Details",
-      "description": "Almost done! Write a few sentences for your About page and provide any final details.",
-      "optional": {
-        "label": "I'll write the about page later",
-        "consequences": "Without about page content, we'll generate placeholder text based on your other answers. You can always edit this later on your site."
-      },
-      "fields": [
+      "id": "review-and-launch",
+      "title": "Review & Launch",
+      "description": "Write your About page content, review your setup, and launch.",
+      "sections": [
         {
-          "id": "_section_about",
-          "type": "section",
-          "label": "About Page Content"
+          "id": "about-page",
+          "label": "About Page",
+          "collapsible": true,
+          "defaultOpen": true,
+          "optional": {
+            "label": "I\u2019ll write the about page later",
+            "consequences": "Without about page content, we\u2019ll generate placeholder text based on your other answers."
+          },
+          "fields": ["about_what_is_this", "about_tracker", "about_built_by"]
         },
+        {
+          "id": "technical-details",
+          "label": "Technical Details",
+          "collapsible": true,
+          "defaultOpen": false,
+          "fields": ["llms_description"]
+        }
+      ],
+      "fields": [
         {
           "id": "about_what_is_this",
           "type": "textarea",
           "rows": 5,
           "label": "What Is This?",
           "help": "2\u20133 sentences for a first-time visitor.",
-          "placeholder": "This publication is...",
+          "placeholder": "This publication is\u2026",
           "validation": {
             "required": true,
             "maxLength": 1000
@@ -734,7 +766,7 @@
           "rows": 4,
           "label": "About the Tracker",
           "help": "What your tracker measures and why it matters. 2\u20133 sentences.",
-          "placeholder": "The tracker measures...",
+          "placeholder": "The tracker measures\u2026",
           "validation": {
             "required": true,
             "maxLength": 1000
@@ -746,24 +778,19 @@
           "rows": 3,
           "label": "Built By",
           "help": "1\u20132 sentences. Who are you and why did you build this?",
-          "placeholder": "Built by...",
+          "placeholder": "Built by\u2026",
           "validation": {
             "required": true,
             "maxLength": 500
           }
         },
         {
-          "id": "_section_deployment",
-          "type": "section",
-          "label": "Technical Details"
-        },
-        {
           "id": "llms_description",
           "type": "textarea",
           "rows": 2,
           "label": "LLMs Description",
-          "help": "One sentence for AI crawlers (llms.txt).",
-          "placeholder": "Daily intelligence briefing on...",
+          "help": "One sentence for AI crawlers (llms.txt). Auto-filled from your tagline.",
+          "placeholder": "Daily intelligence briefing on\u2026",
           "validation": {
             "required": false,
             "maxLength": 300

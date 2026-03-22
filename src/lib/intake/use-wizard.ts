@@ -2,8 +2,8 @@
 
 import { useState, useCallback, useRef, useEffect } from "react"
 import { toast } from "sonner"
-import type { FormSchema, SavedData, StepDef } from "./schemas"
-import { validateStep } from "./schema-to-zod"
+import type { FormSchema, SavedData, StepDef, SectionDef } from "./schemas"
+import { validateStep, getSkippedFieldIds } from "./schema-to-zod"
 import { logger } from "./logger"
 
 type SaveStatus = "idle" | "saving" | "saved" | "error" | "conflict"
@@ -199,7 +199,12 @@ export function useWizard(
 
     const stepData = values[stepDef.id] ?? {}
     const allData = getAllData()
-    const result = validateStep(stepDef.fields, stepData, allData)
+    /* Collect field IDs from skipped sections within this step */
+    const skippedFieldIds = getSkippedFieldIds(
+      (stepDef as StepDef & { sections?: SectionDef[] }).sections,
+      skippedSections
+    )
+    const result = validateStep(stepDef.fields, stepData, allData, skippedFieldIds)
 
     if (result) {
       setErrors(result)
@@ -351,7 +356,7 @@ export function useWizard(
       schemaId: schema.id,
       schemaVersion: schema.version,
       orgId,
-      orgName: (values["publication-identity"]?.publication_name as string) ?? orgId,
+      orgName: (values["your-publication"]?.publication_name as string) ?? orgId,
       data: flattenValues(values),
       skippedSections: Array.from(skippedSections),
       completedSteps: Array.from(completedSteps),

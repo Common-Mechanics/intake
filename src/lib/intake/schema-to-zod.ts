@@ -1,5 +1,5 @@
 import { z } from "zod"
-import type { FieldDef } from "./schemas"
+import type { FieldDef, SectionDef } from "./schemas"
 
 /**
  * Converts JSON field definitions into a Zod schema for runtime validation.
@@ -101,27 +101,50 @@ function isConditionMet(
 }
 
 /**
+ * Collects field IDs that belong to skipped sections.
+ * Used to make those fields optional during validation.
+ */
+export function getSkippedFieldIds(
+  sections: SectionDef[] | undefined,
+  skippedSections: Set<string>
+): Set<string> {
+  const skippedFields = new Set<string>()
+  if (!sections) return skippedFields
+  for (const section of sections) {
+    if (skippedSections.has(section.id)) {
+      for (const fieldId of section.fields) {
+        skippedFields.add(fieldId)
+      }
+    }
+  }
+  return skippedFields
+}
+
+/**
  * Builds a Zod object schema from an array of field definitions.
  * Used to validate one step's worth of form data at a time.
+ *
+ * skippedFieldIds: field IDs belonging to skipped sections — treated as optional.
  */
 export function buildStepValidator(
   fields: FieldDef[],
   allData?: Record<string, unknown>,
-  skippedSections?: Set<string>
+  skippedFieldIds?: Set<string>
 ): z.ZodObject<Record<string, z.ZodTypeAny>> {
   const shape: Record<string, z.ZodTypeAny> = {}
 
   for (const field of fields) {
-    // Skip fields in skipped sections (step-level skip)
-    if (skippedSections?.has(field.id)) continue
+    // Skip section-type separators (visual only, no validation)
+    if (field.type === "section") continue
 
+    const isSkipped = skippedFieldIds?.has(field.id) ?? false
     const isRequired = field.validation?.required === true
     const conditionMet = isConditionMet(field, allData ?? {})
-    const effectiveRequired = isRequired && conditionMet
+    /* Field is effectively required only if: required in schema, condition met, and not in a skipped section */
+    const effectiveRequired = isRequired && conditionMet && !isSkipped
 
     let validator = buildFieldValidator(field, effectiveRequired)
 
-    // If not effectively required, make it optional so undefined is accepted
     if (!effectiveRequired) {
       validator = validator.optional()
     }
@@ -147,10 +170,11 @@ export function buildStepValidator(
 export function validateStep(
   fields: FieldDef[],
   data: Record<string, unknown>,
-  allData?: Record<string, unknown>
+  allData?: Record<string, unknown>,
+  skippedFieldIds?: Set<string>
 ): Record<string, string> | null {
   const merged = { ...(allData ?? {}), ...data }
-  const schema = buildStepValidator(fields, merged)
+  const schema = buildStepValidator(fields, merged, skippedFieldIds)
   const result = schema.safeParse(data)
 
   if (result.success) return null

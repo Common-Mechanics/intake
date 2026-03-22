@@ -11,6 +11,7 @@ export const fieldTypeSchema = z.enum([
   "checkbox",
   "repeating",
   "custom",
+  "section",
 ])
 
 export const validationSchema = z.object({
@@ -61,12 +62,29 @@ export const fieldDefSchema: z.ZodType<FieldDef> = z.lazy(() =>
   })
 )
 
+// --- Section definition for progressive disclosure within steps ---
+
+export const sectionDefSchema = z.object({
+  id: z.string(),
+  label: z.string(),
+  collapsible: z.boolean().optional(),
+  defaultOpen: z.boolean().optional(),
+  optional: z
+    .object({
+      label: z.string(),
+      consequences: z.string(),
+    })
+    .optional(),
+  fields: z.array(z.string()),
+})
+
 export const stepDefSchema = z.object({
   id: z.string(),
   title: z.string(),
   description: z.string().optional(),
   hint: z.string().optional(),
   fields: z.array(fieldDefSchema),
+  sections: z.array(sectionDefSchema).optional(),
   optional: z
     .object({
       label: z.string(),
@@ -125,6 +143,7 @@ export type ValidationDef = z.infer<typeof validationSchema>
 export type ConditionDef = z.infer<typeof conditionSchema>
 export type SelectOption = z.infer<typeof selectOptionSchema>
 export type BatchInputDef = z.infer<typeof batchInputSchema>
+export type SectionDef = z.infer<typeof sectionDefSchema>
 
 // Manual type for recursive FieldDef since z.infer doesn't work with z.lazy
 export interface FieldDef {
