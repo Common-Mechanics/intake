@@ -290,6 +290,15 @@ export function useWizard(
           [fieldId]: value,
         },
       }))
+      /* Clear errors for this field and any sub-field errors (e.g. categories.0.name) */
+      setErrors((prev) => {
+        const next = { ...prev }
+        delete next[fieldId]
+        for (const key of Object.keys(next)) {
+          if (key.startsWith(`${fieldId}.`)) delete next[key]
+        }
+        return next
+      })
     },
     []
   )
