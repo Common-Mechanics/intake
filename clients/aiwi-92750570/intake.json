@@ -20,17 +20,17 @@
       {
         "short_label": "test",
         "full_name": "test",
-        "auto_tags": "test,test2"
+        "auto_tags": "test, test2"
       },
       {
         "short_label": "test2",
         "full_name": "test2",
-        "auto_tags": "test, test2"
+        "auto_tags": "test, test"
       },
       {
         "short_label": "test3",
         "full_name": "test3",
-        "auto_tags": "test,test2"
+        "auto_tags": "test, test3"
       }
     ],
     "editors": [
@@ -151,5 +151,5 @@
   "completedSteps": [
     "your-publication"
   ],
-  "lastSaved": "2026-03-22T15:06:25.645Z"
+  "lastSaved": "2026-03-22T15:06:34.624Z"
 }
