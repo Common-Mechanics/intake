@@ -67,7 +67,7 @@ export function StepNav({
             className="min-h-11 gap-1.5 font-semibold"
           >
             <Save aria-hidden="true" className="size-4" data-icon="inline-start" />
-            <span>Save & Complete</span>
+            <span>Finish</span>
           </Button>
         ) : (
           <Button
