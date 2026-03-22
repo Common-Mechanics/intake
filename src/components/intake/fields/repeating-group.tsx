@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 import { FieldRenderer } from "../field-renderer"
 import { BatchInput } from "./batch-input"
+import { CategoryDot } from "@/lib/intake/category-colors"
 
 interface FieldDefinition {
   id: string
@@ -51,6 +52,8 @@ interface RepeatingGroupProps {
   batchInput?: BatchInputConfig
   /** Pre-filled entries to show when the group is empty (templates) */
   defaultEntries?: Record<string, unknown>[]
+  /** Show a colored category dot before each entry title, using the entry index */
+  showColorDots?: boolean
 }
 
 export function RepeatingGroup({
@@ -66,6 +69,7 @@ export function RepeatingGroup({
   validation,
   batchInput,
   defaultEntries,
+  showColorDots,
 }: RepeatingGroupProps) {
   const entries = Array.isArray(value) ? value : []
 
@@ -282,6 +286,7 @@ export function RepeatingGroup({
                   isOpen && "rotate-180"
                 )} />
                 <Badge variant="secondary" className="font-mono text-xs shrink-0">{index + 1}</Badge>
+                {showColorDots && <CategoryDot index={index} />}
                 <span className={cn(
                   "text-sm font-medium truncate flex-1",
                   hasEntryErrors && "text-destructive"

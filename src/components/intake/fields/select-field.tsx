@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
+import { CategoryDot } from "@/lib/intake/category-colors"
 
 interface SelectOption {
   value: string
@@ -28,6 +29,8 @@ interface SelectFieldProps {
   options: SelectOption[]
   onBlur?: () => void
   required?: boolean
+  /** Maps option values to category color indices for showing colored dots */
+  colorMap?: Record<string, number>
 }
 
 export function SelectField({
@@ -42,6 +45,7 @@ export function SelectField({
   options,
   onBlur,
   required,
+  colorMap,
 }: SelectFieldProps) {
   return (
     <div className="flex flex-col gap-2">
@@ -64,12 +68,25 @@ export function SelectField({
             error && "border-destructive ring-3 ring-destructive/20"
           )}
         >
-          <SelectValue placeholder={placeholder} />
+          {/* Show color dot next to selected value when colorMap is provided */}
+          {colorMap && value && colorMap[value] !== undefined ? (
+            <span className="flex items-center gap-1.5">
+              <CategoryDot index={colorMap[value]} />
+              <SelectValue placeholder={placeholder} />
+            </span>
+          ) : (
+            <SelectValue placeholder={placeholder} />
+          )}
         </SelectTrigger>
         <SelectContent>
           {options.map((option) => (
             <SelectItem key={option.value} value={option.value}>
-              {option.label}
+              <span className="flex items-center gap-1.5">
+                {colorMap && colorMap[option.value] !== undefined && (
+                  <CategoryDot index={colorMap[option.value]} />
+                )}
+                {option.label}
+              </span>
             </SelectItem>
           ))}
         </SelectContent>

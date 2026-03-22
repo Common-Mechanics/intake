@@ -102,9 +102,10 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
   }, [wizard.values])
 
   const categoryOptions = useMemo(() => {
-    return categoryEntries.map((c) => ({
+    return categoryEntries.map((c, index) => ({
       label: c.short_label as string,
       value: (c.short_label as string).toLowerCase(),
+      colorIndex: index,
     }))
   }, [categoryEntries])
 
@@ -154,6 +155,7 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
             ...subField,
             type: "select",
             options: allOptions,
+            colorMap: Object.fromEntries(categoryOptions.map(c => [c.value, c.colorIndex])),
             help: "Which category does this editor cover? Each category can only be assigned to one editor.",
           }
         }),
@@ -173,6 +175,7 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
             ...subField,
             type: "select",
             options: categoryOptions,
+            colorMap: Object.fromEntries(categoryOptions.map(c => [c.value, c.colorIndex])),
             help: "Which category does this rule apply to?",
           }
         }),

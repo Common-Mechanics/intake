@@ -159,6 +159,7 @@
           "type": "repeating",
           "label": "Categories",
           "help": "Define your categories. Each one becomes a filter button on your site. Example: Short Label \"Policy\", Full Name \"Climate Policy & Governance\".",
+          "showColorDots": true,
           "validation": {
             "required": true,
             "minItems": 3

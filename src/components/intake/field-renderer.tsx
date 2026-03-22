@@ -137,6 +137,7 @@ export function FieldRenderer({
           onChange={onChange as (v: string) => void}
           options={field.options ?? []}
           onBlur={handleBlur}
+          colorMap={field.colorMap as Record<string, number> | undefined}
         />
       )
 
@@ -176,6 +177,7 @@ export function FieldRenderer({
             jsonExample?: string
           } | undefined}
           defaultEntries={field.defaultEntries as Record<string, unknown>[] | undefined}
+          showColorDots={field.showColorDots as boolean | undefined}
         />
       )
 

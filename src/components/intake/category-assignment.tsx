@@ -3,9 +3,10 @@
 import { Badge } from "@/components/ui/badge"
 import { Check, AlertCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { CategoryDot } from "@/lib/intake/category-colors"
 
 interface CategoryAssignmentProps {
-  categories: { label: string; value: string }[]
+  categories: { label: string; value: string; colorIndex: number }[]
   assignedCategories: Map<string, string>
   /** Categories assigned to more than one editor — value → editor names[] */
   duplicateCategories?: Map<string, string[]>
@@ -87,6 +88,7 @@ export function CategoryAssignment({
             >
               {isAssigned && !isDuplicate && <Check className="size-3 mr-1" />}
               {isDuplicate && <AlertCircle className="size-3 mr-1" />}
+              <CategoryDot index={cat.colorIndex} />
               {cat.label}
               {isDuplicate && dupeEditors && (
                 <span className="ml-1 font-normal">
