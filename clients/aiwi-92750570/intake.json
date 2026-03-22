@@ -128,9 +128,6 @@
     "x_handles": [
       {
         "handle": "@2"
-      },
-      {
-        "handle": ""
       }
     ],
     "linkedin_urls": [
@@ -138,7 +135,23 @@
         "url": "linkedin.com"
       }
     ],
-    "key_organizations": [],
+    "key_organizations": [
+      {
+        "name": ""
+      },
+      {
+        "name": ""
+      },
+      {
+        "name": ""
+      },
+      {
+        "name": ""
+      },
+      {
+        "name": ""
+      }
+    ],
     "triage_topics": [],
     "sources": [
       {
@@ -161,5 +174,5 @@
     "organizations-and-topics",
     "sources"
   ],
-  "lastSaved": "2026-03-22T03:59:42.046Z"
+  "lastSaved": "2026-03-22T03:59:51.223Z"
 }
