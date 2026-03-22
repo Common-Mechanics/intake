@@ -190,10 +190,11 @@
               "id": "auto_tags",
               "type": "text",
               "label": "Auto-Tags",
-              "help": "Keywords that help the pipeline sort stories into this category. If a story mentions any of these words, it's a strong signal it belongs here. Comma-separated, letters and hyphens only. Example: \"governance, regulation, legislation, treaty\"",
+              "help": "Keywords that help the pipeline sort stories into this category. If a story mentions any of these words, it's a strong signal it belongs here. At least 2 tags, comma-separated, letters and hyphens only. Example: \"governance, regulation, legislation, treaty\"",
               "placeholder": "governance, regulation, legislation",
               "validation": {
-                "required": false,
+                "required": true,
+                "minLength": 3,
                 "maxLength": 300,
                 "pattern": "^[a-zA-Z0-9\\-\\s,]*$"
               }

@@ -175,13 +175,20 @@ export function RepeatingGroup({
       }
     }
 
-    /* Check for duplicate tags within comma-separated fields */
+    /* Check comma-separated fields: duplicates + minimum count */
     for (let i = 0; i < entries.length; i++) {
       for (const field of fields) {
         const val = entries[i][field.id] as string
         if (!val || field.type !== "text") continue
-        if (!val.includes(",")) continue // only check comma-separated fields
+        if (!val.includes(",") && field.id !== "auto_tags") continue
         const tags = val.split(",").map((t) => t.trim().toLowerCase()).filter(Boolean)
+
+        /* Minimum tag count for tag fields */
+        if (field.id === "auto_tags" && tags.length < 2) {
+          errors[`${id}.${i}.${field.id}`] = "Add at least 2 tags, separated by commas"
+          continue
+        }
+
         const uniqueTags = new Set(tags)
         if (uniqueTags.size < tags.length) {
           const dupes = tags.filter((t, idx) => tags.indexOf(t) !== idx)
