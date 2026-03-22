@@ -67,24 +67,38 @@ export function StepRenderer({
     [onChange]
   )
 
-  const hasDescription = !!step.description
-  const hasHint = !!step.hint
+  /* Collect help texts from fields for the right sidebar on desktop */
+  const fieldHelpTexts = step.fields
+    .filter((f) => f.type !== "section" && f.help)
+    .map((f) => ({ id: f.id, label: f.label, help: f.help! }))
 
   return (
     <div className="flex flex-col gap-8">
-      {/* Step header — section label + rule (Figma pattern) */}
-      <div className="flex flex-col gap-3 pb-2 border-b border-border/50">
-        <div className="flex items-center justify-between gap-4">
+      {/* ── TOP SECTION: full width — title, description, hint, skip ── */}
+      <div className="flex flex-col gap-4">
+        <div className="pb-2 border-b border-border/50">
           <h2
             ref={headingRef}
             tabIndex={-1}
-            className="font-heading text-[22px] md:text-[26px] font-semibold tracking-tight leading-tight outline-none"
+            className="font-heading text-[28px] md:text-[32px] font-semibold tracking-tight leading-tight outline-none"
           >
             {step.title}
           </h2>
         </div>
 
-        {/* Skip toggle in header area for optional steps */}
+        {step.description && (
+          <p className="text-[15px] md:text-base text-foreground/70 leading-relaxed">
+            {step.description}
+          </p>
+        )}
+
+        {step.hint && (
+          <Alert variant="info">
+            <Info className="text-muted-foreground" />
+            <AlertDescription>{step.hint}</AlertDescription>
+          </Alert>
+        )}
+
         {step.optional && onToggleSkip && (
           <SkipSection
             label={step.skipLabel ?? "I don't need this section"}
@@ -100,71 +114,62 @@ export function StepRenderer({
         )}
       </div>
 
-      {/* Main content — Figma layout: fields left, description right on desktop */}
+      {/* ── CONTENT: fields left, help text right on desktop ── */}
       <div className={cn(
-        "flex flex-col md:flex-row gap-8 md:gap-12 transition-opacity duration-200",
+        "flex flex-col md:flex-row gap-6 md:gap-10 transition-opacity duration-200",
         isSkipped && "pointer-events-none opacity-40"
       )}>
-        {/* Left column: form fields (~62% on desktop) */}
+        {/* Left column: pure inputs */}
         <div className="flex-1 min-w-0">
-          {/* Mobile-only: show description above fields */}
-          {hasDescription && (
-            <div className="md:hidden mb-6">
-              <p className="text-[15px] text-foreground/70 leading-relaxed">
-                {step.description}
-              </p>
-            </div>
-          )}
-
-          {/* Mobile-only: show hint above fields */}
-          {hasHint && (
-            <div className="md:hidden mb-6">
-              <Alert variant="info">
-                <Info className="text-muted-foreground" />
-                <AlertDescription>{step.hint}</AlertDescription>
-              </Alert>
-            </div>
-          )}
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-5">
-            {step.fields.map((field) => {
-              const layout = (field as Record<string, unknown>).layout as string | undefined
-              const isFullWidthType = field.type === "repeating" || field.type === "custom" || field.type === "section" || field.type === "textarea"
-              const spanFull = isFullWidthType || !layout || layout === "full"
-
-              return (
-                <div key={field.id} className={cn(spanFull && "md:col-span-2")}>
-                  <FieldRenderer
-                    field={field}
-                    value={values[field.id]}
-                    onChange={handleFieldChange(field.id)}
-                    error={errors[field.id]}
-                    allErrors={errors}
-                    disabled={disabled || isSkipped}
-                    allValues={values}
-                    onBlur={onFieldBlur}
-                  />
-                </div>
-              )
-            })}
+          <div className="flex flex-col gap-5">
+            {step.fields.map((field) => (
+              <FieldRenderer
+                key={field.id}
+                field={{
+                  ...field,
+                  /* On desktop, strip help from fields — it goes to the sidebar.
+                     On mobile, keep help inline (handled by CSS hiding the sidebar). */
+                  help: undefined,
+                }}
+                value={values[field.id]}
+                onChange={handleFieldChange(field.id)}
+                error={errors[field.id]}
+                allErrors={errors}
+                disabled={disabled || isSkipped}
+                allValues={values}
+                onBlur={onFieldBlur}
+              />
+            ))}
           </div>
+
+          {/* Mobile-only: show help texts below fields since sidebar is hidden */}
+          {fieldHelpTexts.length > 0 && (
+            <div className="md:hidden mt-6 flex flex-col gap-3">
+              {step.fields.map((field) =>
+                field.help && field.type !== "section" ? (
+                  <div key={`help-${field.id}`} className="flex flex-col gap-0.5">
+                    <span className="text-xs font-medium text-muted-foreground">{field.label}</span>
+                    <p className="text-[13px] leading-relaxed text-muted-foreground/60">{field.help}</p>
+                  </div>
+                ) : null
+              )}
+            </div>
+          )}
         </div>
 
-        {/* Right column: description + hint as sidebar (~35% on desktop) */}
-        {(hasDescription || hasHint) && (
+        {/* Right column: help text sidebar (desktop only) */}
+        {fieldHelpTexts.length > 0 && (
           <div className="hidden md:block md:w-[220px] lg:w-[260px] shrink-0">
-            <div className="sticky top-32 flex flex-col gap-6">
-              {hasDescription && (
-                <p className="text-[13px] leading-relaxed text-muted-foreground">
-                  {step.description}
-                </p>
-              )}
-              {hasHint && (
-                <div className="rounded-md bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200/50 dark:border-blue-800/30 px-3 py-2.5">
-                  <p className="text-[12px] leading-relaxed text-blue-700 dark:text-blue-300">
-                    {step.hint}
+            <div className="sticky top-32 flex flex-col gap-5">
+              {step.fields.map((field) =>
+                field.help && field.type !== "section" ? (
+                  <p
+                    key={`sidebar-${field.id}`}
+                    className="text-[12px] leading-relaxed text-muted-foreground/60"
+                  >
+                    {field.help}
                   </p>
-                </div>
+                ) : null
               )}
             </div>
           </div>
