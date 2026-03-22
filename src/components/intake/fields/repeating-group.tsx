@@ -2,6 +2,7 @@
 
 import { useCallback, useState, useMemo } from "react"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Label } from "@/components/ui/label"
 import { Plus, X, ChevronDown } from "lucide-react"
@@ -45,14 +46,11 @@ interface RepeatingGroupProps {
   value: Record<string, unknown>[]
   onChange: (value: Record<string, unknown>[]) => void
   error?: string
-  /** Full errors map from wizard — contains nested keys like "categories.0.short_label" */
   allErrors?: Record<string, string>
   disabled?: boolean
   validation?: RepeatingGroupValidation
   batchInput?: BatchInputConfig
-  /** Pre-filled entries to show when the group is empty (templates) */
   defaultEntries?: Record<string, unknown>[]
-  /** Show a colored category dot before each entry title, using the entry index */
   showColorDots?: boolean
 }
 
@@ -73,22 +71,22 @@ export function RepeatingGroup({
 }: RepeatingGroupProps) {
   const entries = Array.isArray(value) ? value : []
 
-  /* Auto-populate with default entries on first render when empty */
   const [didPrefill, setDidPrefill] = useState(false)
   if (!didPrefill && entries.length === 0 && defaultEntries && defaultEntries.length > 0) {
     setDidPrefill(true)
-    /* Use setTimeout to avoid updating parent during render */
     setTimeout(() => onChange(defaultEntries), 0)
   }
+
   const minItems = validation?.minItems ?? 0
   const maxItems = validation?.maxItems
   const canRemove = entries.length > minItems
   const canAdd = maxItems == null || entries.length < maxItems
 
-  /* Track which entries are expanded — new entries open by default */
-  const [expanded, setExpanded] = useState<Set<number>>(() => {
-    return new Set(entries.map((_, i) => i))
-  })
+  /* Determine rendering mode based on sub-field count */
+  const fieldCount = fields.length
+  const mode = fieldCount <= 1 ? "inline" : fieldCount <= 3 ? "compact" : "accordion"
+
+  const [expanded, setExpanded] = useState<Set<number>>(() => new Set(entries.map((_, i) => i)))
 
   const toggleExpanded = useCallback((index: number) => {
     setExpanded((prev) => {
@@ -107,7 +105,6 @@ export function RepeatingGroup({
     }
     const newIndex = entries.length
     onChange([...entries, newEntry])
-    /* Auto-expand the new entry */
     setExpanded((prev) => { const next = new Set(prev); next.add(newIndex); return next })
   }, [canAdd, fields, entries, onChange])
 
@@ -117,7 +114,6 @@ export function RepeatingGroup({
       const removed = entries[index]
       const newEntries = entries.filter((_, i) => i !== index)
       onChange(newEntries)
-      /* Clean up expanded state */
       setExpanded((prev) => {
         const next = new Set<number>()
         for (const i of prev) {
@@ -142,10 +138,9 @@ export function RepeatingGroup({
 
   const handleEntryChange = useCallback(
     (index: number, fieldId: string, fieldValue: unknown) => {
-      const updated = entries.map((entry, i) => {
-        if (i !== index) return entry
-        return { ...entry, [fieldId]: fieldValue }
-      })
+      const updated = entries.map((entry, i) =>
+        i !== index ? entry : { ...entry, [fieldId]: fieldValue }
+      )
       onChange(updated)
     },
     [entries, onChange]
@@ -155,7 +150,6 @@ export function RepeatingGroup({
     (imported: Record<string, unknown>[]) => {
       const startIndex = entries.length
       onChange([...entries, ...imported])
-      /* Auto-expand imported entries */
       setExpanded((prev) => {
         const next = new Set(prev)
         for (let i = 0; i < imported.length; i++) next.add(startIndex + i)
@@ -170,170 +164,278 @@ export function RepeatingGroup({
     entries.length > validation.warnAbove &&
     validation.warnMessage
 
-  /* Client-side uniqueness and duplicate tag validation */
   const duplicateErrors = useMemo(() => {
     const errors: Record<string, string> = {}
     if (entries.length < 2) return errors
-
-    /* Check uniqueness across entries for text and select fields */
     for (const field of fields) {
       if (field.type !== "text" && field.type !== "select") continue
-      const seen = new Map<string, number>() // value → first index
+      const seen = new Map<string, number>()
       for (let i = 0; i < entries.length; i++) {
         const val = (entries[i][field.id] as string)?.trim().toLowerCase()
         if (!val) continue
         if (seen.has(val)) {
-          errors[`${id}.${i}.${field.id}`] = `Duplicate — "${entries[i][field.id]}" is already used in entry ${(seen.get(val) ?? 0) + 1}`
+          errors[`${id}.${i}.${field.id}`] = `Duplicate — already in entry ${(seen.get(val) ?? 0) + 1}`
         } else {
           seen.set(val, i)
         }
       }
     }
-
-    /* Check comma-separated fields: duplicates + minimum count */
     for (let i = 0; i < entries.length; i++) {
       for (const field of fields) {
         const val = entries[i][field.id] as string
         if (!val || field.type !== "text") continue
         if (!val.includes(",") && field.id !== "auto_tags") continue
         const tags = val.split(",").map((t) => t.trim().toLowerCase()).filter(Boolean)
-
-        /* Minimum tag count for tag fields */
         if (field.id === "auto_tags" && tags.length < 2) {
           errors[`${id}.${i}.${field.id}`] = "Add at least 2 tags, separated by commas"
           continue
         }
-
         const uniqueTags = new Set(tags)
         if (uniqueTags.size < tags.length) {
           const dupes = tags.filter((t, idx) => tags.indexOf(t) !== idx)
-          const uniqueDupes = [...new Set(dupes)]
-          errors[`${id}.${i}.${field.id}`] = `Duplicate tags: ${uniqueDupes.join(", ")}`
+          errors[`${id}.${i}.${field.id}`] = `Duplicate tags: ${[...new Set(dupes)].join(", ")}`
         }
       }
     }
-
     return errors
   }, [entries, fields, id])
 
-  /* Merge server errors with client-side duplicate errors */
-  const mergedErrors = useMemo(() => {
-    return { ...allErrors, ...duplicateErrors }
-  }, [allErrors, duplicateErrors])
+  const mergedErrors = useMemo(() => ({ ...allErrors, ...duplicateErrors }), [allErrors, duplicateErrors])
+
+  const singularLabel = label.replace(/ies$/i, "y").replace(/ses$/i, "s").replace(/s$/i, "")
+
+  /* Get entry errors for a given index */
+  function getEntryErrors(index: number): Record<string, string> {
+    const result: Record<string, string> = {}
+    const prefix = `${id}.${index}.`
+    for (const [key, msg] of Object.entries(mergedErrors)) {
+      if (key.startsWith(prefix)) result[key.slice(prefix.length)] = msg
+    }
+    return result
+  }
 
   return (
     <div className={cn(
-      "flex flex-col gap-4 rounded-lg",
-      error && "ring-2 ring-destructive/20 border-destructive p-4 -mx-1"
+      "flex flex-col gap-3",
+      error && "ring-2 ring-destructive/20 rounded-lg border-destructive p-4 -mx-1"
     )}>
+      {/* Header */}
       <div className="flex items-center justify-between gap-4">
-        <div className="flex flex-col gap-1">
-          <Label className="text-sm font-medium">{label}</Label>
+        <div className="flex flex-col gap-0.5">
+          <div className="flex items-center gap-2">
+            <Label className="text-sm font-medium">{label}</Label>
+            <span className="text-xs text-muted-foreground/60 tabular-nums">
+              {entries.length}{maxItems ? `/${maxItems}` : ""}
+            </span>
+          </div>
           {help && (
             <p className="text-[13px] leading-relaxed text-muted-foreground/70">{help}</p>
           )}
         </div>
         {showWarning && (
-          <Badge variant="outline" className="shrink-0 border-amber-300 bg-amber-50 text-amber-800 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-300">
+          <Badge variant="outline" className="shrink-0 border-amber-300 bg-amber-50 text-amber-800 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-300 text-xs">
             {validation.warnMessage}
           </Badge>
         )}
       </div>
 
       {error && (
-        <div id={`${id}-error`} role="alert" className="text-sm font-medium text-destructive flex flex-col gap-1">
+        <div id={`${id}-error`} role="alert" className="text-sm font-medium text-destructive">
           <p>{error}</p>
-          {/* Show count-specific help when below minimum */}
           {validation?.minItems && entries.length < validation.minItems && (
-            <p className="text-xs">You have {entries.length} — add at least {validation.minItems - entries.length} more</p>
+            <p className="text-xs font-normal mt-0.5">You have {entries.length} — add at least {validation.minItems - entries.length} more</p>
           )}
         </div>
       )}
 
-      <div className="flex flex-col gap-3">
-        {entries.map((entry, index) => {
-          const firstFieldValue = entries[index]?.[fields[0]?.id] as string | undefined
-          const singularLabel = label.replace(/ies$/i, "y").replace(/ses$/i, "s").replace(/s$/i, "")
-          const itemTitle = firstFieldValue?.trim() ? firstFieldValue.trim() : `New ${singularLabel}`
-          const isOpen = expanded.has(index)
-
-          /* Collect sub-field errors for this entry from both server + duplicate checks */
-          const entryErrors: Record<string, string> = {}
-          const prefix = `${id}.${index}.`
-          for (const [key, msg] of Object.entries(mergedErrors)) {
-            if (key.startsWith(prefix)) {
-              entryErrors[key.slice(prefix.length)] = msg
-            }
-          }
-          const hasEntryErrors = Object.keys(entryErrors).length > 0
-
-          return (
-            <div
-              key={index}
-              className={cn(
-                "border rounded-lg overflow-hidden transition-colors",
-                disabled && "opacity-50",
-                hasEntryErrors && "border-destructive/50"
-              )}
-            >
-              {/* Accordion header — always visible */}
-              <div
-                className="flex items-center gap-2 px-3 py-2.5 cursor-pointer hover:bg-accent/50 transition-colors"
-                onClick={() => toggleExpanded(index)}
-              >
-                <ChevronDown className={cn(
-                  "size-4 text-muted-foreground shrink-0 transition-transform",
-                  isOpen && "rotate-180"
-                )} />
-                <Badge variant="secondary" className="font-mono text-xs shrink-0">{index + 1}</Badge>
+      {/* ── INLINE MODE: single-field entries as a simple list ── */}
+      {mode === "inline" && (
+        <div className="flex flex-col gap-1.5">
+          {entries.map((entry, index) => {
+            const field = fields[0]
+            const entryErrors = getEntryErrors(index)
+            const hasError = !!entryErrors[field.id]
+            return (
+              <div key={index} className="flex items-center gap-2">
                 {showColorDots && <CategoryDot index={index} />}
-                <span className={cn(
-                  "text-sm font-medium truncate flex-1",
-                  hasEntryErrors && "text-destructive"
-                )}>{itemTitle}</span>
-                {hasEntryErrors && !isOpen && (
-                  <span className="text-xs text-destructive shrink-0">
-                    {Object.keys(entryErrors).length} {Object.keys(entryErrors).length === 1 ? "issue" : "issues"}
-                  </span>
-                )}
+                <Input
+                  value={(entry[field.id] as string) ?? ""}
+                  onChange={(e) => handleEntryChange(index, field.id, e.target.value)}
+                  placeholder={field.placeholder ?? `${singularLabel}...`}
+                  disabled={disabled}
+                  aria-invalid={hasError || undefined}
+                  className={cn(
+                    "h-9 text-sm",
+                    hasError && "border-destructive"
+                  )}
+                />
                 <Button
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="size-7 shrink-0"
-                  onClick={(e) => { e.stopPropagation(); handleRemove(index) }}
+                  className="size-7 shrink-0 text-muted-foreground hover:text-destructive"
+                  onClick={() => handleRemove(index)}
                   disabled={!canRemove || disabled}
-                  aria-label={`Remove ${itemTitle}`}
+                  aria-label={`Remove`}
                 >
                   <X className="size-3.5" />
                 </Button>
               </div>
+            )
+          })}
+          {/* Inline add — empty input that adds on Enter */}
+          {canAdd && (
+            <div className="flex items-center gap-2">
+              {showColorDots && <span className="size-2.5 shrink-0" />}
+              <Input
+                placeholder={`Add ${singularLabel.toLowerCase()}...`}
+                disabled={disabled}
+                className="h-9 text-sm border-dashed"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault()
+                    const val = (e.target as HTMLInputElement).value.trim()
+                    if (!val) return
+                    const newEntry: Record<string, unknown> = { [fields[0].id]: val }
+                    onChange([...entries, newEntry])
+                    ;(e.target as HTMLInputElement).value = ""
+                  }
+                }}
+              />
+              <span className="size-7 shrink-0" /> {/* spacer to align with X buttons */}
+            </div>
+          )}
+        </div>
+      )}
 
-              {/* Accordion body — collapsible */}
-              {isOpen && (
-                <div className="px-3 pb-3 pt-1 border-t">
-                  <div className="flex flex-col gap-4">
-                    {fields.map((field) => (
+      {/* ── COMPACT MODE: 2-3 fields per entry, no accordion ── */}
+      {mode === "compact" && (
+        <div className="flex flex-col gap-2">
+          {entries.map((entry, index) => {
+            const entryErrors = getEntryErrors(index)
+            const hasEntryErrors = Object.keys(entryErrors).length > 0
+            return (
+              <div
+                key={index}
+                className={cn(
+                  "flex items-start gap-2 py-2 px-3 rounded-md border bg-card",
+                  hasEntryErrors && "border-destructive/40",
+                  disabled && "opacity-50"
+                )}
+              >
+                {showColorDots && <CategoryDot index={index} className="mt-2.5" />}
+                <span className="text-xs text-muted-foreground/50 tabular-nums mt-2 shrink-0 w-4">{index + 1}</span>
+                <div className="flex-1 grid grid-cols-1 md:grid-cols-[1fr,1fr] gap-x-3 gap-y-2">
+                  {fields.map((field) => (
+                    <div key={field.id} className={cn(
+                      "flex flex-col gap-0.5",
+                      /* Last field spans full if odd number of fields */
+                      fields.length % 2 !== 0 && field === fields[fields.length - 1] && "md:col-span-2"
+                    )}>
+                      <label className="text-[11px] text-muted-foreground/60 font-medium">{field.label}</label>
                       <FieldRenderer
-                        key={field.id}
-                        field={field}
+                        field={{ ...field, help: undefined }}
                         value={entry[field.id]}
                         onChange={(val) => handleEntryChange(index, field.id, val)}
                         error={entryErrors[field.id]}
                         disabled={disabled}
                       />
-                    ))}
-                  </div>
+                    </div>
+                  ))}
                 </div>
-              )}
-            </div>
-          )
-        })}
-      </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="size-7 shrink-0 mt-1 text-muted-foreground hover:text-destructive"
+                  onClick={() => handleRemove(index)}
+                  disabled={!canRemove || disabled}
+                  aria-label={`Remove entry ${index + 1}`}
+                >
+                  <X className="size-3.5" />
+                </Button>
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      {/* ── ACCORDION MODE: 4+ fields, collapsible ── */}
+      {mode === "accordion" && (
+        <div className="flex flex-col gap-2">
+          {entries.map((entry, index) => {
+            const firstFieldValue = entries[index]?.[fields[0]?.id] as string | undefined
+            const itemTitle = firstFieldValue?.trim() ? firstFieldValue.trim() : `New ${singularLabel}`
+            const isOpen = expanded.has(index)
+            const entryErrors = getEntryErrors(index)
+            const hasEntryErrors = Object.keys(entryErrors).length > 0
+
+            return (
+              <div
+                key={index}
+                className={cn(
+                  "border rounded-lg overflow-hidden",
+                  disabled && "opacity-50",
+                  hasEntryErrors && "border-destructive/50"
+                )}
+              >
+                <div
+                  className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-accent/50 transition-colors"
+                  onClick={() => toggleExpanded(index)}
+                >
+                  <ChevronDown className={cn(
+                    "size-3.5 text-muted-foreground shrink-0 transition-transform",
+                    isOpen && "rotate-180"
+                  )} />
+                  {showColorDots && <CategoryDot index={index} />}
+                  <span className="text-xs text-muted-foreground/50 tabular-nums shrink-0">{index + 1}</span>
+                  <span className={cn(
+                    "text-sm font-medium truncate flex-1",
+                    hasEntryErrors && "text-destructive"
+                  )}>{itemTitle}</span>
+                  {hasEntryErrors && !isOpen && (
+                    <span className="text-xs text-destructive shrink-0">
+                      {Object.keys(entryErrors).length} {Object.keys(entryErrors).length === 1 ? "issue" : "issues"}
+                    </span>
+                  )}
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="size-6 shrink-0"
+                    onClick={(e) => { e.stopPropagation(); handleRemove(index) }}
+                    disabled={!canRemove || disabled}
+                    aria-label={`Remove ${itemTitle}`}
+                  >
+                    <X className="size-3" />
+                  </Button>
+                </div>
+
+                {isOpen && (
+                  <div className="px-3 pb-3 pt-1 border-t">
+                    <div className="flex flex-col gap-4">
+                      {fields.map((field) => (
+                        <FieldRenderer
+                          key={field.id}
+                          field={field}
+                          value={entry[field.id]}
+                          onChange={(val) => handleEntryChange(index, field.id, val)}
+                          error={entryErrors[field.id]}
+                          disabled={disabled}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )
+          })}
+        </div>
+      )}
 
       {/* Empty state */}
       {entries.length === 0 && (
-        <div className="flex flex-col items-center gap-2 py-8 text-center text-sm text-muted-foreground border border-dashed rounded-lg">
+        <div className="flex flex-col items-center gap-2 py-6 text-center text-sm text-muted-foreground border border-dashed rounded-lg">
           <p>No {label.toLowerCase()} added yet</p>
           {validation?.minItems && validation.minItems > 0 && (
             <p className="text-xs">You&apos;ll need at least {validation.minItems} to continue</p>
@@ -352,16 +454,18 @@ export function RepeatingGroup({
         />
       )}
 
-      <Button
-        variant="outline"
-        size="lg"
-        onClick={handleAdd}
-        disabled={!canAdd || disabled}
-        className="w-full min-h-12"
-      >
-        <Plus data-icon="inline-start" />
-        Add {label.replace(/ies$/i, "y").replace(/ses$/i, "s").replace(/s$/i, "")}
-      </Button>
+      {/* Add button — only for compact/accordion modes (inline has its own) */}
+      {mode !== "inline" && (
+        <Button
+          variant="outline"
+          onClick={handleAdd}
+          disabled={!canAdd || disabled}
+          className="w-full h-9 text-sm"
+        >
+          <Plus className="size-3.5" />
+          Add {singularLabel}
+        </Button>
+      )}
     </div>
   )
 }
