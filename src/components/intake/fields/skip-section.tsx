@@ -1,0 +1,49 @@
+"use client"
+
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Info } from "lucide-react"
+
+interface SkipSectionProps {
+  label: string
+  consequences: string
+  checked: boolean
+  onChange: (checked: boolean) => void
+  disabled?: boolean
+}
+
+export function SkipSection({
+  label,
+  consequences,
+  checked,
+  onChange,
+  disabled,
+}: SkipSectionProps) {
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="flex items-start gap-3 min-h-12">
+        <Checkbox
+          id="skip-section"
+          checked={checked}
+          onCheckedChange={onChange}
+          disabled={disabled}
+        />
+        <Label
+          htmlFor="skip-section"
+          className="text-sm font-medium leading-normal cursor-pointer"
+        >
+          {label}
+        </Label>
+      </div>
+
+      {checked && (
+        <Alert className="bg-muted/50 border-border">
+          <Info className="text-muted-foreground" />
+          <AlertTitle>Good to know</AlertTitle>
+          <AlertDescription>{consequences}</AlertDescription>
+        </Alert>
+      )}
+    </div>
+  )
+}
