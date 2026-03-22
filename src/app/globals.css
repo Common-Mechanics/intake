@@ -141,7 +141,7 @@
   input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
   textarea,
   [role="combobox"] {
-    background-color: oklch(0.96 0 0);
+    background-color: oklch(0.95 0 0);
   }
   .dark input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
   .dark textarea,

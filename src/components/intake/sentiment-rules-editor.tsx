@@ -168,7 +168,7 @@ export function SentimentRulesEditor({
                             onChange={(e) => updateRule(category.value, ruleIdx, "because", e.target.value)}
                             placeholder="governance strengthened..."
                             disabled={disabled}
-                            className="text-sm h-8"
+                            className="text-sm w-full"
                           />
                         </div>
                         <Button
