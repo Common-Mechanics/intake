@@ -3,6 +3,7 @@
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
+import { HelpTooltip } from "@/components/intake/fields/help-tooltip"
 
 interface NumberFieldProps {
   id: string
@@ -36,11 +37,14 @@ export function NumberField({
   required,
 }: NumberFieldProps) {
   return (
-    <div className="flex flex-col gap-2">
-      <Label htmlFor={id} className="text-sm font-medium">
-        {label}
-        {!required && <span className="text-muted-foreground text-xs font-normal ml-1">(optional)</span>}
-      </Label>
+    <div className="flex flex-col gap-1">
+      <div className="flex items-center gap-1.5">
+        <Label htmlFor={id} className="text-sm font-medium">
+          {label}
+          {!required && <span className="text-muted-foreground text-xs font-normal ml-1">(optional)</span>}
+        </Label>
+        {help && <HelpTooltip text={help} />}
+      </div>
       <Input
         id={id}
         type="number"
@@ -68,9 +72,6 @@ export function NumberField({
       />
       {error && (
         <p id={`${id}-error`} role="alert" className="text-sm font-medium text-destructive">{error}</p>
-      )}
-      {help && (
-        <p id={`${id}-help`} className="text-[13px] leading-relaxed text-muted-foreground/70">{help}</p>
       )}
     </div>
   )

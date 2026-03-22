@@ -111,7 +111,7 @@ export function StepRenderer({
       {/* Fields — responsive 2-column grid on desktop, single column on mobile */}
       <div
         className={cn(
-          "grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-7 transition-opacity duration-200",
+          "grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-5 transition-opacity duration-200",
           isSkipped && "pointer-events-none opacity-40"
         )}
       >

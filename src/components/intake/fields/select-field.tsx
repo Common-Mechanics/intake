@@ -10,6 +10,7 @@ import {
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 import { CategoryDot } from "@/lib/intake/category-colors"
+import { HelpTooltip } from "@/components/intake/fields/help-tooltip"
 
 interface SelectOption {
   value: string
@@ -48,11 +49,14 @@ export function SelectField({
   colorMap,
 }: SelectFieldProps) {
   return (
-    <div className="flex flex-col gap-2">
-      <Label htmlFor={id} className="text-sm font-medium">
-        {label}
-        {!required && <span className="text-muted-foreground text-xs font-normal ml-1">(optional)</span>}
-      </Label>
+    <div className="flex flex-col gap-1">
+      <div className="flex items-center gap-1.5">
+        <Label htmlFor={id} className="text-sm font-medium">
+          {label}
+          {!required && <span className="text-muted-foreground text-xs font-normal ml-1">(optional)</span>}
+        </Label>
+        {help && <HelpTooltip text={help} />}
+      </div>
       <Select
         value={value ?? ""}
         onValueChange={(val) => onChange(val ?? "")}
@@ -93,9 +97,6 @@ export function SelectField({
       </Select>
       {error && (
         <p id={`${id}-error`} role="alert" className="text-sm font-medium text-destructive">{error}</p>
-      )}
-      {help && (
-        <p id={`${id}-help`} className="text-[13px] leading-relaxed text-muted-foreground/70">{help}</p>
       )}
     </div>
   )

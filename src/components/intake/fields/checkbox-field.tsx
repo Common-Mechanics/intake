@@ -2,6 +2,7 @@
 
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
+import { HelpTooltip } from "@/components/intake/fields/help-tooltip"
 
 interface CheckboxFieldProps {
   id: string
@@ -21,7 +22,7 @@ export function CheckboxField({
   disabled,
 }: CheckboxFieldProps) {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-1">
       <div className="flex items-start gap-3 min-h-12">
         <Checkbox
           id={id}
@@ -30,16 +31,16 @@ export function CheckboxField({
           disabled={disabled}
           className="mt-0.5"
         />
-        <Label
-          htmlFor={id}
-          className="text-sm font-medium leading-normal cursor-pointer"
-        >
-          {label}
-        </Label>
+        <div className="flex items-center gap-1.5">
+          <Label
+            htmlFor={id}
+            className="text-sm font-medium leading-normal cursor-pointer"
+          >
+            {label}
+          </Label>
+          {help && <HelpTooltip text={help} />}
+        </div>
       </div>
-      {help && (
-        <p className="text-[13px] leading-relaxed text-muted-foreground/70 pl-7">{help}</p>
-      )}
     </div>
   )
 }
