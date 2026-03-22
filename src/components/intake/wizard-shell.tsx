@@ -256,7 +256,7 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
     <div className="flex min-h-dvh flex-col">
       {/* Header + progress bar */}
       <div className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur-sm">
-        <div className="mx-auto max-w-3xl">
+        <div className="mx-auto max-w-6xl">
           <div className="flex items-center justify-between px-4 pt-3 pb-0">
             <h1 className="text-base font-semibold tracking-tight">Onboarding Form</h1>
           </div>
@@ -275,7 +275,7 @@ export function WizardShell({ schema, initialData, orgId }: WizardShellProps) {
         <div
           className={cn(
             "mx-auto w-full flex-1 py-6 md:py-10",
-            "max-w-3xl",
+            "max-w-6xl",
             /* Mobile: edge-to-edge with padding inside */
             "px-0 md:px-4"
           )}
