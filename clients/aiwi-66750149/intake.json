@@ -22,7 +22,11 @@
       }
     ]
   },
-  "skippedSections": [],
-  "completedSteps": [],
-  "lastSaved": "2026-03-22T17:05:25.052Z"
+  "skippedSections": [
+    "social-profiles"
+  ],
+  "completedSteps": [
+    "social-profiles"
+  ],
+  "lastSaved": "2026-03-22T17:05:33.852Z"
 }
