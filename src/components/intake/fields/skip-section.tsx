@@ -42,7 +42,7 @@ export function SkipSection({
       </div>
 
       {checked && (
-        <Alert className="bg-muted/50 border-border">
+        <Alert variant="info">
           <Info className="text-muted-foreground" />
           <AlertTitle>Good to know</AlertTitle>
           <AlertDescription>{consequences}</AlertDescription>

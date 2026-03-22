@@ -87,7 +87,7 @@ export function StepRenderer({
 
       {/* Hint callout */}
       {step.hint && (
-        <Alert className="bg-muted/50 border-border">
+        <Alert variant="info">
           <Info className="text-muted-foreground" />
           <AlertDescription>{step.hint}</AlertDescription>
         </Alert>
