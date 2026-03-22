@@ -198,13 +198,7 @@ export function BatchInput({
   const jsonPanelId = `batch-panel-json-${fieldId}`
 
   return (
-    <details className="group border border-dashed rounded-md">
-      <summary className="flex items-center gap-2 px-3 py-2 cursor-pointer text-xs text-muted-foreground hover:text-foreground transition-colors select-none">
-        <FileText className="size-3.5" />
-        <span>Bulk import</span>
-      </summary>
-
-      <div className="px-3 pb-3 pt-1 flex flex-col gap-2">
+    <div className="flex flex-col gap-3">
         {/* Compact tab toggle */}
         <div className="flex gap-1" role="tablist">
           {(["csv", "json"] as const).map((tab) => (
@@ -289,7 +283,6 @@ export function BatchInput({
         >
           {preview ? `Import ${preview.length}` : "Preview"}
         </Button>
-      </div>
-    </details>
+    </div>
   )
 }

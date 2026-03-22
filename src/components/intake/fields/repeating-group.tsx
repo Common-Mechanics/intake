@@ -5,7 +5,14 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Label } from "@/components/ui/label"
-import { Plus, X, ChevronDown } from "lucide-react"
+import { Plus, X, ChevronDown, Upload } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 import { FieldRenderer } from "../field-renderer"
@@ -233,11 +240,42 @@ export function RepeatingGroup({
             <p className="text-[13px] leading-relaxed text-muted-foreground/70">{help}</p>
           )}
         </div>
-        {showWarning && (
-          <Badge variant="outline" className="shrink-0 border-amber-300 bg-amber-50 text-amber-800 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-300 text-xs">
-            {validation.warnMessage}
-          </Badge>
-        )}
+        <div className="flex items-center gap-2">
+          {showWarning && (
+            <Badge variant="outline" className="shrink-0 border-amber-300 bg-amber-50 text-amber-800 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-300 text-xs">
+              {validation.warnMessage}
+            </Badge>
+          )}
+          {batchInput?.enabled && (
+            <Dialog>
+              <DialogTrigger
+                render={
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 text-xs text-muted-foreground shrink-0"
+                    disabled={disabled}
+                  />
+                }
+              >
+                <Upload className="size-3" />
+                Import
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-lg">
+                <DialogHeader>
+                  <DialogTitle>Import {label}</DialogTitle>
+                </DialogHeader>
+                <BatchInput
+                  id={`${id}-batch`}
+                  fieldId={id}
+                  fields={fields}
+                  onImport={handleBatchImport}
+                  disabled={disabled}
+                />
+              </DialogContent>
+            </Dialog>
+          )}
+        </div>
       </div>
 
       {error && (
@@ -432,17 +470,6 @@ export function RepeatingGroup({
         <p className="text-xs text-muted-foreground/60">
           You&apos;ll need at least {validation.minItems} to continue
         </p>
-      )}
-
-      {/* Batch import */}
-      {batchInput?.enabled && (
-        <BatchInput
-          id={`${id}-batch`}
-          fieldId={id}
-          fields={fields}
-          onImport={handleBatchImport}
-          disabled={disabled}
-        />
       )}
 
       {/* Add button — only for compact/accordion modes (inline has its own) */}
