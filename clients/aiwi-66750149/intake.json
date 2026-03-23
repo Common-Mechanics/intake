@@ -120,7 +120,7 @@
         {
           "when_this_happens": "Research documents that whistleblower protections are weak or unenforced in AI contexts",
           "default_sentiment": "negative",
-          "because": ""
+          "because": "systemic barrier to disclosure"
         }
       ]
     },
@@ -149,5 +149,5 @@
     "categories-and-editors",
     "sentiment-and-scoring"
   ],
-  "lastSaved": "2026-03-23T11:50:34.344Z"
+  "lastSaved": "2026-03-23T11:50:45.929Z"
 }
