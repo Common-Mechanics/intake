@@ -11,7 +11,7 @@
     "publisher_name": "The AI Whistleblower Initiative (AIWI)",
     "publisher_url": "https://aiwi.org/",
     "audience_description": "AIWI comms and strategic team members",
-    "topic_label": "AI whistleblowing disclosures",
+    "topic_label": "Frontier AI whistleblowing disclosures",
     "community_label": "the AI whistleblowing disclosures community",
     "publication_type": "AI whistleblowing disclosures intelligence briefing",
     "key_question": "Does this story reveal, signal, or affect AI insider disclosures, safety governance failures, or the conditions that enable or suppress AI safety whistleblowing in the public interest?",
@@ -55,5 +55,5 @@
     "social-profiles",
     "key-organizations"
   ],
-  "lastSaved": "2026-03-23T10:51:16.835Z"
+  "lastSaved": "2026-03-23T10:52:00.582Z"
 }
