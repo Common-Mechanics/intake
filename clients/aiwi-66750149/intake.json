@@ -116,7 +116,13 @@
           "because": "independent oversight mechanism activated"
         }
       ],
-      "research": []
+      "research": [
+        {
+          "when_this_happens": "Research documents that whistleblower protections are weak or unenforced in AI contexts",
+          "default_sentiment": "neutral",
+          "because": ""
+        }
+      ]
     },
     "what_positive_means": "Things are improving because insiders are better protected and even rewarded or praised by companies or their leaders because of the concerns they raised; companies are being held to account, and transparency in AI development is increasing.",
     "what_negative_means": "Things are getting worse because insiders face greater retaliation risk, companies are weakening safety commitments, or accountability mechanisms are being undermined.",
@@ -143,5 +149,5 @@
     "categories-and-editors",
     "sentiment-and-scoring"
   ],
-  "lastSaved": "2026-03-23T11:49:39.061Z"
+  "lastSaved": "2026-03-23T11:50:29.698Z"
 }
