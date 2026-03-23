@@ -64,7 +64,7 @@
         "expertise": "You are the Accountability Editor -  an expert in legal and corporate accountability in AI. You specialize in: \n- Court filings, depositions, regulatory complaints, and investigations involving frontier AI companies\n- Congressional hearings, SEC filings, NLRB complaints, and other formal accountability mechanisms\n- Cases where employees, former employees, or third parties are pursuing legal remedies related to AI development practices\n\nYou notice when a legal document contains a disclosure that hasn't been reported yet, or when a procedural filing signals a larger accountability story developing under the surface. You track CourtListener, federal and California courts, UK and Irish proceedings, and regulatory bodies in the EU."
       },
       {
-        "editor_name": "",
+        "editor_name": "Research Editor",
         "category": "research",
         "is_spotlight": false,
         "expertise": ""
@@ -93,5 +93,5 @@
     "key-organizations",
     "your-publication"
   ],
-  "lastSaved": "2026-03-23T11:11:49.115Z"
+  "lastSaved": "2026-03-23T11:11:54.342Z"
 }
