@@ -4,9 +4,9 @@
     "name": "AI Whistleblower Initiative",
     "schemaId": "ai-dossier-intake",
     "createdAt": "2026-03-22T16:43:50.314Z",
-    "lastModified": "2026-03-23T11:13:50.819Z",
+    "lastModified": "2026-03-23T11:14:50.022Z",
     "status": "in_progress",
-    "completedSteps": 1,
+    "completedSteps": 2,
     "totalSteps": 5
   },
   {
