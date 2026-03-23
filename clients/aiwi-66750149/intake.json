@@ -94,7 +94,7 @@
         {
           "when_this_happens": "A former employee speaks publicly after leaving but was under NDA",
           "default_sentiment": "positive",
-          "because": ""
+          "because": "NDA being overcome = accountability progressing"
         }
       ],
       "governance": [],
@@ -126,5 +126,5 @@
     "categories-and-editors",
     "sentiment-and-scoring"
   ],
-  "lastSaved": "2026-03-23T11:45:46.295Z"
+  "lastSaved": "2026-03-23T11:45:55.304Z"
 }
