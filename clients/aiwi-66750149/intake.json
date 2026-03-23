@@ -109,7 +109,13 @@
           "because": "direct suppression of the disclosure mechanisms AIWI exists to support"
         }
       ],
-      "accountability": [],
+      "accountability": [
+        {
+          "when_this_happens": "",
+          "default_sentiment": "neutral",
+          "because": ""
+        }
+      ],
       "research": []
     },
     "what_positive_means": "Things are improving because insiders are better protected and even rewarded or praised by companies or their leaders because of the concerns they raised; companies are being held to account, and transparency in AI development is increasing.",
@@ -137,5 +143,5 @@
     "categories-and-editors",
     "sentiment-and-scoring"
   ],
-  "lastSaved": "2026-03-23T11:48:38.586Z"
+  "lastSaved": "2026-03-23T11:48:58.295Z"
 }
