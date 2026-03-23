@@ -75,7 +75,13 @@
     "negative_signal_label": "suppression",
     "tracker_name": "AI Whistleblowing Disclosures Index",
     "sentiment_rules_by_category": {
-      "disclosures": [],
+      "disclosures": [
+        {
+          "when_this_happens": "",
+          "default_sentiment": "neutral",
+          "because": ""
+        }
+      ],
       "governance": [],
       "accountability": [],
       "research": []
@@ -105,5 +111,5 @@
     "categories-and-editors",
     "sentiment-and-scoring"
   ],
-  "lastSaved": "2026-03-23T11:39:36.562Z"
+  "lastSaved": "2026-03-23T11:41:44.448Z"
 }
