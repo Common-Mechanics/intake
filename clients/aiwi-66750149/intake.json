@@ -130,7 +130,7 @@
     "tracker_subtitle": "Frontier AI Accountability Climate Index",
     "scoring_positive": "A story is positive when: an insider or whistleblower receives legal protection or wins a case; a regulator opens an investigation into an AI company's safety practices; a company strengthens its RSP or adds meaningful disclosure commitments; new legislation improves protections for AI workers who wish to raise concerns.",
     "scoring_negative": "A story is negative when: a company retaliates against an insider or enforces an NDA or any other ways to silence them; a safety policy is quietly weakened or removed; a regulatory process is blocked or defunded; a key employee e.g., a safety researcher, departs under pressure, cannot speak publicly, reveals the failure of the internal speaking up culture, signals concerning safety measures, either directly or using cryptic wording.",
-    "scoring_neutral": "A story is neutral when: it reports on AI capabilities or research without clear implications for accountability or AI whistleblowing protections dimension; it covers industry events or personnel moves with no substantially safety or culture dimension; it describes regulatory debate where the outcome is genuinely unclear.",
+    "scoring_neutral": "A story is neutral when: it reports on AI capabilities or research without clear implications for accountability or AI whistleblowing protections dimension; it covers industry events or personnel moves with no substantially safety or speaking up culture dimension; it describes regulatory debate where the outcome is genuinely unclear.",
     "triage_topics": [
       {
         "topic": ""
@@ -149,5 +149,5 @@
     "categories-and-editors",
     "sentiment-and-scoring"
   ],
-  "lastSaved": "2026-03-23T12:00:46.252Z"
+  "lastSaved": "2026-03-23T12:00:51.691Z"
 }
