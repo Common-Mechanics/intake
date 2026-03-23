@@ -2,9 +2,9 @@
   "schemaId": "ai-dossier-intake",
   "schemaVersion": 2,
   "orgId": "aiwi-66750149",
-  "orgName": "This is an Emergency - AIWI Daily Intelligence",
+  "orgName": "AIWI Intelligence Monitor",
   "data": {
-    "publication_name": "This is an Emergency - AIWI Daily Intelligence",
+    "publication_name": "AIWI Intelligence Monitor",
     "site_url": "https://thisisanemergency.org",
     "tagline": "AI whistleblowing & insider disclosure - Daily intelligence for AIWI",
     "full_title": "",
@@ -48,5 +48,5 @@
     "social-profiles",
     "key-organizations"
   ],
-  "lastSaved": "2026-03-23T10:41:27.978Z"
+  "lastSaved": "2026-03-23T10:42:22.414Z"
 }
