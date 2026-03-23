@@ -102,11 +102,6 @@
           "when_this_happens": "A government waters down or delays AI accountability law following industry lobbying",
           "default_sentiment": "negative",
           "because": "accountability mechanism being undermined"
-        },
-        {
-          "when_this_happens": "A government waters down or delays whistleblower protection provisions in AI accountability legislation following industry lobbying",
-          "default_sentiment": "negative",
-          "because": "direct suppression of the disclosure mechanisms AIWI exists to support"
         }
       ],
       "accountability": [
@@ -187,5 +182,5 @@
     "sentiment-and-scoring",
     "sources-and-discovery"
   ],
-  "lastSaved": "2026-03-23T15:31:00.413Z"
+  "lastSaved": "2026-03-23T15:50:04.787Z"
 }
