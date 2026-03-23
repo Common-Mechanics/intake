@@ -82,6 +82,7 @@
     },
     "what_positive_means": "Things are improving because insiders are better protected, companies are being held to account, or transparency in AI development is increasing.",
     "what_negative_means": "Things are getting worse because insiders face greater retaliation risk, companies are weakening safety commitments, or accountability mechanisms are being undermined.",
+    "fallback_sentiment_question": "Does this story make it easier or harder for AI insiders to safely speak up about risks to the public?",
     "triage_topics": [
       {
         "topic": ""
@@ -102,5 +103,5 @@
     "your-publication",
     "categories-and-editors"
   ],
-  "lastSaved": "2026-03-23T11:19:12.369Z"
+  "lastSaved": "2026-03-23T11:19:31.087Z"
 }
