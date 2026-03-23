@@ -101,7 +101,7 @@
         {
           "when_this_happens": "A government waters down or delays AI accountability law following industry lobbying",
           "default_sentiment": "negative",
-          "because": ""
+          "because": "accountability mechanism being undermined"
         }
       ],
       "accountability": [],
@@ -132,5 +132,5 @@
     "categories-and-editors",
     "sentiment-and-scoring"
   ],
-  "lastSaved": "2026-03-23T11:46:57.612Z"
+  "lastSaved": "2026-03-23T11:47:08.558Z"
 }
