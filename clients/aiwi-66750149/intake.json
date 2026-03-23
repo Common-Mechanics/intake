@@ -20,7 +20,7 @@
       {
         "short_label": "Disclosures",
         "full_name": "Insider Disclosures & Whistleblowing",
-        "auto_tags": "whistleblower, insider, disclosure, leak, resignation, dissent, speak up, retaliation, NDA"
+        "auto_tags": "whistleblower, insider, disclosure, leak, resignation, dissent, speak up, retaliation"
       },
       {
         "short_label": "Governance",
@@ -70,5 +70,5 @@
     "key-organizations",
     "your-publication"
   ],
-  "lastSaved": "2026-03-23T10:59:19.280Z"
+  "lastSaved": "2026-03-23T10:59:36.665Z"
 }
