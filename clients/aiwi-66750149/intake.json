@@ -83,7 +83,7 @@
     "what_positive_means": "Things are improving because insiders are better protected, companies are being held to account, or transparency in AI development is increasing.",
     "what_negative_means": "Things are getting worse because insiders face greater retaliation risk, companies are weakening safety commitments, or accountability mechanisms are being undermined.",
     "fallback_sentiment_question": "Does this story make it easier or harder for AI insiders to safely speak up about risks to the public?",
-    "tracker_subtitle": "Accountability and Safe Disclosure Index",
+    "tracker_subtitle": "Accountability Climate Index",
     "scoring_positive": "A story is positive when: a whistleblower receives legal protection or wins a case; a regulator opens an investigation into an AI company's safety practices; a company strengthens its RSP or adds meaningful disclosure commitments; new legislation improves protections for AI workers who raise concerns.",
     "scoring_negative": "A story is negative when: a company retaliates against an insider or enforces an NDA to silence them; a safety policy is quietly weakened or removed; a regulatory process is blocked or defunded; a key safety researcher departs under pressure and cannot speak publicly.",
     "scoring_neutral": "A story is neutral when: it reports on AI capabilities or research without clear implications for accountability; it covers industry events or personnel moves with no disclosure dimension; it describes regulatory debate where the outcome is genuinely unclear.",
@@ -105,5 +105,5 @@
     "categories-and-editors",
     "sentiment-and-scoring"
   ],
-  "lastSaved": "2026-03-23T11:22:34.410Z"
+  "lastSaved": "2026-03-23T11:23:18.720Z"
 }
