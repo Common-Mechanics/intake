@@ -15,7 +15,7 @@
     "community_label": "the AI whistleblowing disclosures community",
     "publication_type": "AI whistleblowing disclosures intelligence briefing",
     "key_question": "Does this story reveal, signal, or affect AI insider disclosures, safety governance failures, or the conditions that enable or suppress AI safety whistleblowing in the public interest?",
-    "reader_profile": "You are writing for a small team at a Berlin-based nonprofit focused on AI whistleblowing and safety governance. They follow frontier AI developments closely, but are not technical researchers. They are rather strategists, communicators, and advocates. They need to know immediately when a story is relevant to insider disclosures, safety culture, company policy changes, or legal accountability at Frontier AI companies. What matters is not AI news generally, but developments that touch insiders speaking up, being silenced, or shaping the conditions for either. A story is worth flagging if it would change what AIWI says publicly, who they reach out to, or what they should respond to quickly to build credibility and trust in the space.",
+    "reader_profile": "You are writing for a small team at a Berlin-based nonprofit focused on AI whistleblowing and safety governance. They follow frontier AI developments closely, but are not technical researchers. They are rather strategists, communicators, and advocates. They need to know immediately when a story is relevant to insider disclosures, safety culture, company policy changes, or legal accountability at Frontier AI companies. What matters is not AI news generally, but story developments that touch insiders speaking up, being silenced, or shaping the conditions for either. A story is worth flagging if it would change what AIWI says publicly, who they reach out to, or what they should respond to quickly to build credibility and trust in the space.",
     "categories": [
       {
         "short_label": "",
@@ -55,5 +55,5 @@
     "social-profiles",
     "key-organizations"
   ],
-  "lastSaved": "2026-03-23T10:49:01.905Z"
+  "lastSaved": "2026-03-23T10:49:14.012Z"
 }
