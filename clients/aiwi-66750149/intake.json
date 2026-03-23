@@ -15,7 +15,7 @@
     "community_label": "the AI whistleblowing disclosures community",
     "publication_type": "AI whistleblowing disclosures intelligence briefing",
     "key_question": "Does this story reveal, signal, or affect AI insider disclosures, safety governance, or the conditions that enable or suppress AI safety whistleblowing, and does it carry implications for public trust in how AI is being built and governed?",
-    "reader_profile": "You are writing for a small senior team at a Berlin-based nonprofit focused on AI whistleblowing and safety governance. They follow frontier AI developments closely. They are strategists, communicators, and advocates, not technical researchers. They need to know immediately when a story is relevant to insider disclosures, safety culture, company policy changes, or legal accountability at Frontier AI companies. What matters is not AI news generally, but story developments that touch the topic of insiders speaking up, being silenced, or shaping the conditions for either, because those stories affect whether the public can trust that AI systems are being built safely. A story is worth flagging if it would impact what AIWI should say publicly, who they reach out to, or what they should respond to quickly to build credibility and trust in the space.",
+    "reader_profile": "You are writing for a small senior team at a Berlin-based nonprofit focused on AI whistleblowing and safety governance. They follow frontier AI developments closely. They are strategists, communicators, and advocates, not technical researchers. They need to know immediately when a story is relevant to insider disclosures, safety culture, company policy changes, or legal accountability at Frontier AI companies. What matters is not AI news generally, but story developments that touch the topic of insiders speaking up, being silenced, or shaping the conditions for either, because those stories affect whether the public can trust that AI systems are being built safely. A story is worth flagging if it would impact what AIWI should say publicly, who they reach out to, or what they should respond to quickly to build credibility and trust among insiders in the space.",
     "categories": [
       {
         "short_label": "Disclosures",
@@ -105,5 +105,5 @@
     "categories-and-editors",
     "sentiment-and-scoring"
   ],
-  "lastSaved": "2026-03-23T11:34:59.864Z"
+  "lastSaved": "2026-03-23T11:35:11.119Z"
 }
