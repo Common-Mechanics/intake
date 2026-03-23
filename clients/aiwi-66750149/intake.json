@@ -88,7 +88,7 @@
         },
         {
           "when_this_happens": "A company announces an internal review or investigation following employee concerns",
-          "default_sentiment": "negative",
+          "default_sentiment": "neutral",
           "because": ""
         }
       ],
@@ -121,5 +121,5 @@
     "categories-and-editors",
     "sentiment-and-scoring"
   ],
-  "lastSaved": "2026-03-23T11:44:56.368Z"
+  "lastSaved": "2026-03-23T11:45:12.662Z"
 }
