@@ -25,7 +25,7 @@
       {
         "short_label": "Governance",
         "full_name": "AI Safety Governance & Policy",
-        "auto_tags": "RSP, responsible scaling, safety commitment, governance framework, policy change, regulation, AI Act"
+        "auto_tags": "RSP, responsible scaling, safety commitment, internal whistleblowing policy, raising concerns policy, governance framework, policy change, regulation, AI Act"
       },
       {
         "short_label": "",
@@ -70,5 +70,5 @@
     "key-organizations",
     "your-publication"
   ],
-  "lastSaved": "2026-03-23T10:58:59.525Z"
+  "lastSaved": "2026-03-23T10:59:19.280Z"
 }
