@@ -119,7 +119,7 @@
       "research": [
         {
           "when_this_happens": "Research documents that whistleblower protections are weak or unenforced in AI contexts",
-          "default_sentiment": "neutral",
+          "default_sentiment": "negative",
           "because": ""
         }
       ]
@@ -149,5 +149,5 @@
     "categories-and-editors",
     "sentiment-and-scoring"
   ],
-  "lastSaved": "2026-03-23T11:50:29.698Z"
+  "lastSaved": "2026-03-23T11:50:34.344Z"
 }
