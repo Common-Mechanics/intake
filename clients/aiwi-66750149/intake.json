@@ -158,7 +158,7 @@
     ],
     "sources": [
       {
-        "name": "Wired AI",
+        "name": "Wired AI Content",
         "tags": "",
         "url": "https://www.wired.com/feed/tag/ai/latest/rss",
         "notes": ""
@@ -174,5 +174,5 @@
     "categories-and-editors",
     "sentiment-and-scoring"
   ],
-  "lastSaved": "2026-03-23T12:09:37.488Z"
+  "lastSaved": "2026-03-23T12:09:49.189Z"
 }
