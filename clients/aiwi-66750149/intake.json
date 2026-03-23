@@ -99,8 +99,8 @@
       ],
       "governance": [
         {
-          "when_this_happens": "",
-          "default_sentiment": "neutral",
+          "when_this_happens": "A government waters down or delays AI accountability legislation following industry lobbying",
+          "default_sentiment": "negative",
           "because": ""
         }
       ],
@@ -132,5 +132,5 @@
     "categories-and-editors",
     "sentiment-and-scoring"
   ],
-  "lastSaved": "2026-03-23T11:46:09.362Z"
+  "lastSaved": "2026-03-23T11:46:43.159Z"
 }
