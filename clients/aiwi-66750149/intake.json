@@ -111,8 +111,8 @@
       ],
       "accountability": [
         {
-          "when_this_happens": "",
-          "default_sentiment": "neutral",
+          "when_this_happens": "A regulatory body opens a formal investigation into an AI company's safety or labour practices",
+          "default_sentiment": "positive",
           "because": ""
         }
       ],
@@ -143,5 +143,5 @@
     "categories-and-editors",
     "sentiment-and-scoring"
   ],
-  "lastSaved": "2026-03-23T11:48:58.295Z"
+  "lastSaved": "2026-03-23T11:49:27.681Z"
 }
