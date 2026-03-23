@@ -97,9 +97,7 @@
     ],
     "llms_description": "D"
   },
-  "skippedSections": [
-    "key-organizations"
-  ],
+  "skippedSections": [],
   "completedSteps": [
     "social-profiles",
     "key-organizations",
@@ -107,5 +105,5 @@
     "categories-and-editors",
     "sentiment-and-scoring"
   ],
-  "lastSaved": "2026-03-23T11:22:20.487Z"
+  "lastSaved": "2026-03-23T11:22:34.410Z"
 }
