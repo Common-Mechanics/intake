@@ -105,13 +105,7 @@
         }
       ],
       "accountability": [],
-      "research": [
-        {
-          "when_this_happens": "Research documents that whistleblower protections are weak or unenforced in AI contexts",
-          "default_sentiment": "negative",
-          "because": "systemic barrier to disclosure"
-        }
-      ]
+      "research": []
     },
     "what_positive_means": "Things are improving because insiders are better protected and even rewarded or praised by companies or their leaders because of the concerns they raised; companies are being held to account, and transparency in AI development is increasing.",
     "what_negative_means": "Things are getting worse because insiders face greater retaliation risk, companies are weakening safety commitments, or accountability mechanisms are being undermined.",
@@ -176,5 +170,5 @@
     "sentiment-and-scoring",
     "sources-and-discovery"
   ],
-  "lastSaved": "2026-03-23T15:50:44.386Z"
+  "lastSaved": "2026-03-23T15:51:58.243Z"
 }
