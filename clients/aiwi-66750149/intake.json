@@ -18,7 +18,7 @@
     "reader_profile": "You are writing for a small team at a Berlin-based nonprofit focused on AI whistleblowing and safety governance. They follow frontier AI developments closely, but are not technical researchers. They are rather strategists, communicators, and advocates. They need to know immediately when a story is relevant to insider disclosures, safety culture, company policy changes, or legal accountability at Frontier AI companies. What matters is not AI news generally, but story developments that touch the topic of insiders speaking up, being silenced, or shaping the conditions for either, because those stories affect whether the public can trust that AI systems are being built safely. A story is worth flagging if it would change what AIWI should say publicly, who they reach out to, or what they should respond to quickly to build credibility and trust in the space.",
     "categories": [
       {
-        "short_label": "",
+        "short_label": "Disclosures",
         "full_name": "",
         "auto_tags": ""
       },
@@ -31,6 +31,20 @@
         "short_label": "",
         "full_name": "",
         "auto_tags": ""
+      }
+    ],
+    "editors": [
+      {
+        "editor_name": "Disclosures Editor",
+        "category": "disclosures",
+        "is_spotlight": false,
+        "expertise": "You are the Disclosures Editor — an expert in Disclosures. You specialize in:\n\n- [Sub-area 1]\n- [Sub-area 2]\n- [Sub-area 3]\n\nYou notice when [what makes your perspective unique]. You track [key organizations and developments in this area]."
+      },
+      {
+        "editor_name": "Spotlight Editor",
+        "category": "spotlight",
+        "is_spotlight": true,
+        "expertise": "You are the Spotlight Editor. Your job is to find the most interesting, surprising, or entertaining content — podcasts worth listening to, videos worth watching, demos worth trying, and stories that make people smile or think differently.\n\nYou look for:\n- Notable podcast episodes and interviews\n- Compelling video content and documentaries\n- Interactive demos, tools, and visualizations\n- Unusual angles, human interest stories, and cultural moments\n\nYou notice when something is genuinely interesting to a curious professional, not just technically relevant."
       }
     ],
     "tracker_nav_label": "Tracker",
@@ -56,5 +70,5 @@
     "key-organizations",
     "your-publication"
   ],
-  "lastSaved": "2026-03-23T10:55:58.445Z"
+  "lastSaved": "2026-03-23T10:57:07.470Z"
 }
