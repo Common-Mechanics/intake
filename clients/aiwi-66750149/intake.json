@@ -74,6 +74,12 @@
     "positive_signal_label": "progress",
     "negative_signal_label": "risk",
     "tracker_name": "AI Whistleblowing Disclosures Index",
+    "sentiment_rules_by_category": {
+      "disclosures": [],
+      "governance": [],
+      "accountability": [],
+      "research": []
+    },
     "triage_topics": [
       {
         "topic": ""
@@ -91,7 +97,8 @@
   "completedSteps": [
     "social-profiles",
     "key-organizations",
-    "your-publication"
+    "your-publication",
+    "categories-and-editors"
   ],
-  "lastSaved": "2026-03-23T11:13:49.453Z"
+  "lastSaved": "2026-03-23T11:14:48.386Z"
 }
