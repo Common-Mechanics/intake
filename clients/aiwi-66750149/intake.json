@@ -6,6 +6,8 @@
   "data": {
     "publication_name": "This is an Emergency",
     "site_url": "https://thisisanemergency.org",
+    "tagline": "AI whistleblowing & insider disclosure - Daily intelligence for AIWI",
+    "full_title": "This is an Emergency — AI whistleblowing & insider disclosure - Daily intelligence for AIWI",
     "categories": [
       {
         "short_label": "",
@@ -33,7 +35,8 @@
       {
         "topic": ""
       }
-    ]
+    ],
+    "llms_description": "D"
   },
   "skippedSections": [
     "social-profiles",
@@ -43,5 +46,5 @@
     "social-profiles",
     "key-organizations"
   ],
-  "lastSaved": "2026-03-23T10:25:51.887Z"
+  "lastSaved": "2026-03-23T10:39:23.787Z"
 }
