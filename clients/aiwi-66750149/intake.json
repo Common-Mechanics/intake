@@ -19,7 +19,7 @@
     "categories": [
       {
         "short_label": "Disclosures",
-        "full_name": "Insider Disclosures & Whistleblowing",
+        "full_name": "AI Insider Disclosures & Whistleblowing",
         "auto_tags": "resignation, departure, leak, internal memo, open letter, dissent, anonymous source, former employee"
       },
       {
@@ -105,5 +105,5 @@
     "categories-and-editors",
     "sentiment-and-scoring"
   ],
-  "lastSaved": "2026-03-23T11:23:18.720Z"
+  "lastSaved": "2026-03-23T11:25:46.111Z"
 }
