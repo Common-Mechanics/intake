@@ -170,9 +170,9 @@
         "notes": ""
       },
       {
-        "name": "",
-        "tags": "",
-        "url": "",
+        "name": "Arstechnica",
+        "tags": "arstechnica",
+        "url": "https://arstechnica.com/ai/feed/",
         "notes": ""
       }
     ],
@@ -187,5 +187,5 @@
     "sentiment-and-scoring",
     "sources-and-discovery"
   ],
-  "lastSaved": "2026-03-23T12:24:37.255Z"
+  "lastSaved": "2026-03-23T12:25:20.905Z"
 }
