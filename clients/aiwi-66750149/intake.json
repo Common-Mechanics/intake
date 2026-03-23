@@ -165,7 +165,7 @@
       },
       {
         "name": "Tech Crunch - AI",
-        "tags": "",
+        "tags": "AI",
         "url": "https://techcrunch.com/category/artificial-intelligence/feed/",
         "notes": ""
       }
@@ -181,5 +181,5 @@
     "sentiment-and-scoring",
     "sources-and-discovery"
   ],
-  "lastSaved": "2026-03-23T12:24:10.812Z"
+  "lastSaved": "2026-03-23T12:24:15.278Z"
 }
