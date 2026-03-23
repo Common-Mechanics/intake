@@ -97,13 +97,7 @@
           "because": "NDA being overcome = accountability progressing"
         }
       ],
-      "governance": [
-        {
-          "when_this_happens": "A government waters down or delays AI accountability law or whistleblower provisions following industry lobbying",
-          "default_sentiment": "negative",
-          "because": "accountability mechanism being undermined"
-        }
-      ],
+      "governance": [],
       "accountability": [],
       "research": []
     },
@@ -170,5 +164,5 @@
     "sentiment-and-scoring",
     "sources-and-discovery"
   ],
-  "lastSaved": "2026-03-23T15:51:58.243Z"
+  "lastSaved": "2026-03-23T15:52:30.518Z"
 }
