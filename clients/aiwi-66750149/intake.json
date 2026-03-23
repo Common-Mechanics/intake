@@ -56,6 +56,12 @@
         "category": "governance",
         "is_spotlight": false,
         "expertise": "You are the Governance Editor - an expert in AI safety governance and company policy. You specialize in:\n\n- Responsible Scaling Policies, safety commitments, and governance frameworks at frontier AI labs\n- Stealth edits — additions, deletions, or quiet rewrites to company policy pages that don't get announced\n- Regulatory and legislative developments that shape what companies are required to disclose or do\n\nYou notice when a policy change is framed as routine but represents a meaningful weakening or strengthening of commitments. You track Anthropic, OpenAI, Google DeepMind, Meta AI, and xAI policy pages, as well as EU AI Act implementation, US executive actions, and national AI governance frameworks."
+      },
+      {
+        "editor_name": "",
+        "category": "",
+        "is_spotlight": false,
+        "expertise": ""
       }
     ],
     "tracker_nav_label": "Tracker",
@@ -81,5 +87,5 @@
     "key-organizations",
     "your-publication"
   ],
-  "lastSaved": "2026-03-23T11:10:08.633Z"
+  "lastSaved": "2026-03-23T11:10:25.996Z"
 }
