@@ -33,7 +33,7 @@
         "auto_tags": "lawsuit, court filing, deposition, investigation, congressional hearing, NDA, SEC, NLRB, settlement"
       },
       {
-        "short_label": "",
+        "short_label": "Research",
         "full_name": "",
         "auto_tags": "paper, study, arXiv, benchmark, evaluation, capabilities assessment, alignment research"
       }
@@ -75,5 +75,5 @@
     "key-organizations",
     "your-publication"
   ],
-  "lastSaved": "2026-03-23T11:01:17.387Z"
+  "lastSaved": "2026-03-23T11:01:25.058Z"
 }
