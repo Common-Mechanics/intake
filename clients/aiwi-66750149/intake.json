@@ -31,6 +31,11 @@
         "short_label": "Accountability",
         "full_name": "Legal & Corporate Accountability",
         "auto_tags": "lawsuit, court filing, deposition, investigation, congressional hearing, NDA, SEC, NLRB, settlement"
+      },
+      {
+        "short_label": "",
+        "full_name": "",
+        "auto_tags": ""
       }
     ],
     "editors": [
@@ -70,5 +75,5 @@
     "key-organizations",
     "your-publication"
   ],
-  "lastSaved": "2026-03-23T11:01:06.400Z"
+  "lastSaved": "2026-03-23T11:01:10.173Z"
 }
