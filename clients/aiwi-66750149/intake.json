@@ -139,6 +139,11 @@
         "topic": ""
       }
     ],
+    "key_organizations": [
+      {
+        "name": "OpenAI"
+      }
+    ],
     "llms_description": "D"
   },
   "skippedSections": [],
@@ -149,5 +154,5 @@
     "categories-and-editors",
     "sentiment-and-scoring"
   ],
-  "lastSaved": "2026-03-23T12:01:15.749Z"
+  "lastSaved": "2026-03-23T12:04:48.969Z"
 }
