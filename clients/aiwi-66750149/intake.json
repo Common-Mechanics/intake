@@ -85,6 +85,11 @@
           "when_this_happens": "An anonymous source surfaces information about internal safety failures without being named",
           "default_sentiment": "positive",
           "because": "disclosure serves public interest regardless of attribution"
+        },
+        {
+          "when_this_happens": "",
+          "default_sentiment": "neutral",
+          "because": ""
         }
       ],
       "governance": [],
@@ -116,5 +121,5 @@
     "categories-and-editors",
     "sentiment-and-scoring"
   ],
-  "lastSaved": "2026-03-23T11:44:25.000Z"
+  "lastSaved": "2026-03-23T11:44:29.228Z"
 }
