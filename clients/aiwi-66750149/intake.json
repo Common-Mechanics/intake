@@ -162,6 +162,12 @@
         "tags": "",
         "url": "https://www.wired.com/feed/tag/ai/latest/rss",
         "notes": ""
+      },
+      {
+        "name": "",
+        "tags": "",
+        "url": "",
+        "notes": ""
       }
     ],
     "llms_description": "D"
@@ -174,5 +180,5 @@
     "categories-and-editors",
     "sentiment-and-scoring"
   ],
-  "lastSaved": "2026-03-23T12:09:49.189Z"
+  "lastSaved": "2026-03-23T12:09:52.999Z"
 }
