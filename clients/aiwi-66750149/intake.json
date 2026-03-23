@@ -43,7 +43,7 @@
         "editor_name": "Disclosures Editor",
         "category": "disclosures",
         "is_spotlight": false,
-        "expertise": "You are the Disclosures Editor — an expert in Disclosures an expert in AI insider disclosures and whistleblowing.. You specialize in:\n\n- [Sub-area 1]\n- [Sub-area 2]\n- [Sub-area 3]\n\nYou notice when [what makes your perspective unique]. You track [key organizations and developments in this area]."
+        "expertise": "You are the Disclosures Editor — an expert in Disclosures and whistleblowing.. You specialize in:\n\n- [Sub-area 1]\n- [Sub-area 2]\n- [Sub-area 3]\n\nYou notice when [what makes your perspective unique]. You track [key organizations and developments in this area]."
       },
       {
         "editor_name": "Spotlight Editor",
@@ -75,5 +75,5 @@
     "key-organizations",
     "your-publication"
   ],
-  "lastSaved": "2026-03-23T11:03:37.310Z"
+  "lastSaved": "2026-03-23T11:03:42.369Z"
 }
