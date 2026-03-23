@@ -72,7 +72,7 @@
     ],
     "tracker_nav_label": "Tracker",
     "positive_signal_label": "progress",
-    "negative_signal_label": "risk",
+    "negative_signal_label": "suppression",
     "tracker_name": "AI Whistleblowing Disclosures Index",
     "sentiment_rules_by_category": {
       "disclosures": [],
@@ -100,5 +100,5 @@
     "your-publication",
     "categories-and-editors"
   ],
-  "lastSaved": "2026-03-23T11:14:48.386Z"
+  "lastSaved": "2026-03-23T11:18:33.546Z"
 }
