@@ -144,6 +144,9 @@
         "name": "OpenAI"
       },
       {
+        "name": "Anthropic"
+      },
+      {
         "name": ""
       }
     ],
@@ -157,5 +160,5 @@
     "categories-and-editors",
     "sentiment-and-scoring"
   ],
-  "lastSaved": "2026-03-23T12:04:51.836Z"
+  "lastSaved": "2026-03-23T12:04:57.489Z"
 }
