@@ -104,13 +104,7 @@
           "because": "accountability mechanism being undermined"
         }
       ],
-      "accountability": [
-        {
-          "when_this_happens": "A regulatory body opens a formal investigation into an AI company's safety or labour practices",
-          "default_sentiment": "positive",
-          "because": "independent oversight mechanism activated"
-        }
-      ],
+      "accountability": [],
       "research": [
         {
           "when_this_happens": "Research documents that whistleblower protections are weak or unenforced in AI contexts",
@@ -182,5 +176,5 @@
     "sentiment-and-scoring",
     "sources-and-discovery"
   ],
-  "lastSaved": "2026-03-23T15:50:17.525Z"
+  "lastSaved": "2026-03-23T15:50:44.386Z"
 }
