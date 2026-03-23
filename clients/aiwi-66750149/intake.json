@@ -11,6 +11,9 @@
     "publisher_name": "The AI Whistleblower Initiative (AIWI)",
     "publisher_url": "https://aiwi.org/",
     "audience_description": "AIWI comms and strategic team members",
+    "topic_label": "AI whistleblowing disclosures",
+    "community_label": "the AI whistleblowing disclosures community",
+    "publication_type": "AI whistleblowing disclosures intelligence briefing",
     "categories": [
       {
         "short_label": "",
@@ -31,6 +34,7 @@
     "tracker_nav_label": "Tracker",
     "positive_signal_label": "progress",
     "negative_signal_label": "risk",
+    "tracker_name": "AI Whistleblowing Disclosures Index",
     "triage_topics": [
       {
         "topic": ""
@@ -49,5 +53,5 @@
     "social-profiles",
     "key-organizations"
   ],
-  "lastSaved": "2026-03-23T10:44:25.902Z"
+  "lastSaved": "2026-03-23T10:44:39.429Z"
 }
