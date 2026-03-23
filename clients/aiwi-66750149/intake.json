@@ -14,6 +14,7 @@
     "topic_label": "AI whistleblowing disclosures",
     "community_label": "the AI whistleblowing disclosures community",
     "publication_type": "AI whistleblowing disclosures intelligence briefing",
+    "key_question": "Does this story reveal, signal, or affect AI insider disclosures, safety governance failures, or the conditions that enable or suppress whistleblowing?",
     "categories": [
       {
         "short_label": "",
@@ -53,5 +54,5 @@
     "social-profiles",
     "key-organizations"
   ],
-  "lastSaved": "2026-03-23T10:45:01.750Z"
+  "lastSaved": "2026-03-23T10:45:23.851Z"
 }
