@@ -550,18 +550,6 @@
               }
             },
             {
-              "id": "tags",
-              "type": "text",
-              "label": "Tags",
-              "help": "Comma-separated category labels.",
-              "placeholder": "policy, science",
-              "validation": {
-                "required": true,
-                "maxLength": 200,
-                "pattern": "^[a-zA-Z0-9\\-\\s,]*$"
-              }
-            },
-            {
               "id": "url",
               "type": "url",
               "label": "Feed URL",
@@ -569,6 +557,18 @@
               "placeholder": "https://example.com/feed",
               "validation": {
                 "required": true
+              }
+            },
+            {
+              "id": "tags",
+              "type": "text",
+              "label": "Tags",
+              "help": "Optional comma-separated category labels.",
+              "placeholder": "policy, science",
+              "validation": {
+                "required": false,
+                "maxLength": 200,
+                "pattern": "^[a-zA-Z0-9\\-\\s,]*$"
               }
             },
             {
