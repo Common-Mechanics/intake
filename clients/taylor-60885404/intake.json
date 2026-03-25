@@ -31,6 +31,11 @@
         "short_label": "Global Dev",
         "full_name": "Global Health & Development",
         "auto_tags": "Human welfare, poverty, national development"
+      },
+      {
+        "short_label": "",
+        "full_name": "",
+        "auto_tags": ""
       }
     ],
     "editors": [
@@ -108,5 +113,5 @@
     "sentiment-and-scoring",
     "sources-and-discovery"
   ],
-  "lastSaved": "2026-03-25T20:22:20.493Z"
+  "lastSaved": "2026-03-25T20:22:44.779Z"
 }
