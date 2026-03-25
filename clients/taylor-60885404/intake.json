@@ -80,7 +80,8 @@
   "skippedSections": [],
   "completedSteps": [
     "your-publication",
-    "categories-and-editors"
+    "categories-and-editors",
+    "sentiment-and-scoring"
   ],
-  "lastSaved": "2026-03-25T19:59:12.377Z"
+  "lastSaved": "2026-03-25T19:59:15.272Z"
 }
