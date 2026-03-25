@@ -94,9 +94,6 @@
       },
       {
         "name": "Centre for Effective Altruism"
-      },
-      {
-        "name": ""
       }
     ],
     "llms_description": "Weekly reporting on the most pressing stories in high impact causes."
@@ -107,5 +104,5 @@
     "categories-and-editors",
     "sentiment-and-scoring"
   ],
-  "lastSaved": "2026-03-25T20:11:08.137Z"
+  "lastSaved": "2026-03-25T20:12:54.006Z"
 }
