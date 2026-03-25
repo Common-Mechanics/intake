@@ -28,7 +28,7 @@
         "auto_tags": "wild animals, factory farming, alternative proteins, animal abuse, animal testing"
       },
       {
-        "short_label": "Global Dev.",
+        "short_label": "Global Dev",
         "full_name": "Global Health & Development",
         "auto_tags": "Human welfare, poverty, national development"
       }
@@ -66,5 +66,5 @@
   "completedSteps": [
     "your-publication"
   ],
-  "lastSaved": "2026-03-25T19:53:15.782Z"
+  "lastSaved": "2026-03-25T19:53:23.842Z"
 }
