@@ -69,6 +69,8 @@
       "global dev": []
     },
     "tracker_subtitle": "How well are pressing causes doing overall?",
+    "what_positive_means": "These cause areas are improving in their condition.",
+    "what_negative_means": "These cause areas are worsening in their condition.",
     "llms_description": "Weekly reporting on the most pressing stories in high impact causes."
   },
   "skippedSections": [],
@@ -76,5 +78,5 @@
     "your-publication",
     "categories-and-editors"
   ],
-  "lastSaved": "2026-03-25T19:56:12.517Z"
+  "lastSaved": "2026-03-25T19:56:36.480Z"
 }
