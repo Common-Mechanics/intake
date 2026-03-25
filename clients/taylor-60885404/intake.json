@@ -73,7 +73,7 @@
     "what_negative_means": "These cause areas are worsening in their condition.",
     "fallback_sentiment_question": "Are these causes improving or declining in their condition?",
     "scoring_positive": "More pro-social and altruistic outcomes are achieved",
-    "scoring_negative": "More pro-social and altruistic outcomes are achieved",
+    "scoring_negative": "More harmful outcomes are achieved",
     "llms_description": "Weekly reporting on the most pressing stories in high impact causes."
   },
   "skippedSections": [],
@@ -81,5 +81,5 @@
     "your-publication",
     "categories-and-editors"
   ],
-  "lastSaved": "2026-03-25T19:58:35.063Z"
+  "lastSaved": "2026-03-25T19:58:42.894Z"
 }
