@@ -64,13 +64,7 @@
     "positive_signal_label": "progress",
     "negative_signal_label": "decline",
     "sentiment_rules_by_category": {
-      "x-risk": [
-        {
-          "when_this_happens": "",
-          "default_sentiment": "neutral",
-          "because": ""
-        }
-      ],
+      "x-risk": [],
       "animals": [],
       "global dev": []
     },
@@ -114,5 +108,5 @@
     "sentiment-and-scoring",
     "sources-and-discovery"
   ],
-  "lastSaved": "2026-03-25T20:25:32.595Z"
+  "lastSaved": "2026-03-25T20:25:36.113Z"
 }
