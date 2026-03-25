@@ -97,7 +97,7 @@
       }
     ],
     "llms_description": "Weekly reporting on the most pressing stories in high impact causes.",
-    "about_what_is_this": "This is Taylor's Digest on high-priority cause areas, through an Effective Altruism lens. Stories matter if they are a high-signal and low-noise update on one the most ethically impactful causes,"
+    "about_what_is_this": "This is Taylor's Digest on high-priority cause areas, through an Effective Altruism lens. Stories matter if they are a high-signal and low-noise update on one the most ethically impactful causes"
   },
   "skippedSections": [],
   "completedSteps": [
@@ -106,5 +106,5 @@
     "sentiment-and-scoring",
     "sources-and-discovery"
   ],
-  "lastSaved": "2026-03-25T20:14:19.516Z"
+  "lastSaved": "2026-03-25T20:14:21.700Z"
 }
