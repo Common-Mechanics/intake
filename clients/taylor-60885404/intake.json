@@ -74,7 +74,7 @@
     "fallback_sentiment_question": "Are these causes improving or declining in their condition?",
     "scoring_positive": "More pro-social and altruistic outcomes are achieved",
     "scoring_negative": "More harmful or socially degrading outcomes occur",
-    "scoring_neutral": "There is no clear effect on pro-social ",
+    "scoring_neutral": "There is no clear effect on pro-social outcomes or harms to populations",
     "llms_description": "Weekly reporting on the most pressing stories in high impact causes."
   },
   "skippedSections": [],
@@ -82,5 +82,5 @@
     "your-publication",
     "categories-and-editors"
   ],
-  "lastSaved": "2026-03-25T19:59:05.403Z"
+  "lastSaved": "2026-03-25T19:59:12.377Z"
 }
