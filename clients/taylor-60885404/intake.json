@@ -53,10 +53,10 @@
         "expertise": "You are the animal welfare editor."
       },
       {
-        "editor_name": "",
-        "category": "",
+        "editor_name": "Global H&D Editor",
+        "category": "global dev.",
         "is_spotlight": false,
-        "expertise": ""
+        "expertise": "You are the Global Health & Development editor."
       }
     ],
     "tracker_name": "Existential Risks, Global Health, Animal Welfare Index",
@@ -66,5 +66,5 @@
   "completedSteps": [
     "your-publication"
   ],
-  "lastSaved": "2026-03-25T19:52:29.340Z"
+  "lastSaved": "2026-03-25T19:52:45.010Z"
 }
