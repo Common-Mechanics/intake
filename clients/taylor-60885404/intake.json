@@ -62,7 +62,7 @@
     "tracker_name": "Cause health",
     "tracker_nav_label": "Tracker",
     "positive_signal_label": "progress",
-    "negative_signal_label": "risk",
+    "negative_signal_label": "decline",
     "sentiment_rules_by_category": {
       "x-risk": [],
       "animals": [],
@@ -76,5 +76,5 @@
     "your-publication",
     "categories-and-editors"
   ],
-  "lastSaved": "2026-03-25T19:54:17.696Z"
+  "lastSaved": "2026-03-25T19:56:12.517Z"
 }
