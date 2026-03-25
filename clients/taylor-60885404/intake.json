@@ -20,7 +20,7 @@
       {
         "short_label": "X-Risk",
         "full_name": "Existential Risks",
-        "auto_tags": ""
+        "auto_tags": "existential, "
       },
       {
         "short_label": "Animals",
@@ -54,5 +54,5 @@
   "completedSteps": [
     "your-publication"
   ],
-  "lastSaved": "2026-03-25T19:49:34.074Z"
+  "lastSaved": "2026-03-25T19:49:39.122Z"
 }
