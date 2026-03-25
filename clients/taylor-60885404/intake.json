@@ -47,10 +47,10 @@
         "expertise": "You are the Spotlight Editor. Your job is to find the most interesting, surprising, or entertaining content — podcasts worth listening to, videos worth watching, demos worth trying, and stories that make people smile or think differently.\n\nYou look for:\n- Notable podcast episodes and interviews\n- Compelling video content and documentaries\n- Interactive demos, tools, and visualizations\n- Unusual angles, human interest stories, and cultural moments\n\nYou notice when something is genuinely interesting to a curious professional, not just technically relevant."
       },
       {
-        "editor_name": "",
+        "editor_name": "Animals Editor",
         "category": "animals",
         "is_spotlight": false,
-        "expertise": ""
+        "expertise": "You are the animals editor."
       }
     ],
     "tracker_name": "Existential Risks, Global Health, Animal Welfare Index",
@@ -60,5 +60,5 @@
   "completedSteps": [
     "your-publication"
   ],
-  "lastSaved": "2026-03-25T19:52:09.143Z"
+  "lastSaved": "2026-03-25T19:52:24.443Z"
 }
