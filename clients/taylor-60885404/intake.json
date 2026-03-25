@@ -38,7 +38,7 @@
         "editor_name": "X-Risks Editor",
         "category": "x-risk",
         "is_spotlight": false,
-        "expertise": "You are the X-risks Editor — an expert in E. You specialize in:\n\n- [Sub-area 1]\n- [Sub-area 2]\n- [Sub-area 3]\n\nYou notice when [what makes your perspective unique]. You track [key organizations and developments in this area]."
+        "expertise": "You are the X-risks Editor — an expert in Existential Risks. You specialize in:\n\n- [Sub-area 1]\n- [Sub-area 2]\n- [Sub-area 3]\n\nYou notice when [what makes your perspective unique]. You track [key organizations and developments in this area]."
       },
       {
         "editor_name": "Spotlight Editor",
@@ -60,5 +60,5 @@
   "completedSteps": [
     "your-publication"
   ],
-  "lastSaved": "2026-03-25T19:51:45.363Z"
+  "lastSaved": "2026-03-25T19:52:00.717Z"
 }
