@@ -88,6 +88,14 @@
         "handle": "@AISpecies"
       }
     ],
+    "key_organizations": [
+      {
+        "name": "Future of Life Institute"
+      },
+      {
+        "name": ""
+      }
+    ],
     "llms_description": "Weekly reporting on the most pressing stories in high impact causes."
   },
   "skippedSections": [],
@@ -96,5 +104,5 @@
     "categories-and-editors",
     "sentiment-and-scoring"
   ],
-  "lastSaved": "2026-03-25T20:10:21.077Z"
+  "lastSaved": "2026-03-25T20:10:40.887Z"
 }
