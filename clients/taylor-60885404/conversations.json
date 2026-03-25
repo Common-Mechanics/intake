@@ -1,0 +1,105 @@
+[
+  {
+    "id": "2026-03-25_194111_yiid",
+    "startedAt": "2026-03-25T19:41:11.560Z",
+    "endedAt": "2026-03-25T19:45:24.564Z",
+    "messageCount": 19,
+    "messages": [
+      {
+        "role": "assistant",
+        "text": "Hi! I'm here to help you set up your publication. I'll ask you some questions and fill in the form as we go. Let's start — what's your publication called?",
+        "timestamp": 1774467684269
+      },
+      {
+        "role": "user",
+        "text": "It's called Taylor's Dispatch.",
+        "timestamp": 1774467697646
+      },
+      {
+        "role": "assistant",
+        "text": "I'll set that as Taylor's Dispatch. Sound right? Now, give me a one-line tagline — something that captures what Taylor's Dispatch does.",
+        "timestamp": 1774467699079
+      },
+      {
+        "role": "user",
+        "text": "Weekly reporting on the most pressing stories in high impact causes.",
+        "timestamp": 1774467722082
+      },
+      {
+        "role": "assistant",
+        "text": "I'll set that as \"Weekly reporting on the most pressing stories in high impact causes.\" I'll set your full title as \"Taylor's Dispatch — Weekly reporting on the most pressing stories in high impact causes.\" Want to change it?",
+        "timestamp": 1774467724817
+      },
+      {
+        "role": "assistant",
+        "text": "I'll set that as \"Weekly reporting on the most pressing stories in high impact causes.\" I've set your full title as \"Taylor's Dispatch — Weekly reporting on the most pressing stories in high impact causes.\" Want to change it?",
+        "timestamp": 1774467728827
+      },
+      {
+        "role": "assistant",
+        "text": "Okay, I'll keep the full title as is. What topic does Taylor's Dispatch cover? Just two to four words, like \"AI safety\" or \"AI policy.\"",
+        "timestamp": 1774467740567
+      },
+      {
+        "role": "assistant",
+        "text": "Okay, I'll keep the full title as is. What topic does Taylor's Dispatch cover? Just two to four words, like \"AI safety\" or \"AI policy.\"",
+        "timestamp": 1774467743949
+      },
+      {
+        "role": "user",
+        "text": "It covers a range of cause areas that are particularly high impact, such as biotechnology, AI safety, AI governance, alternative proteins, existential risks, pandemics, global poverty and health.",
+        "timestamp": 1774467802277
+      },
+      {
+        "role": "assistant",
+        "text": "That's a lot of great topics! To keep things focused, could you give me just two to four words that best describe the main topic Taylor's Dispatch covers?",
+        "timestamp": 1774467802665
+      },
+      {
+        "role": "user",
+        "text": "Existential risks, global health and development, animal welfare, and that's it.",
+        "timestamp": 1774467825759
+      },
+      {
+        "role": "assistant",
+        "text": "I'll set the topic as \"Existential risks, global health, animal welfare.\" Sound right?\n\nBased on that, I'll set your publication type as \"Existential risks, global health, animal welfare intelligence briefing\" and your community label as \"the Existential risks, global health, animal welfare community.\" We can change these later if you like.\n\nNext, where will the site live? Do you have a URL in mind? If not, I can suggest \"https://taylors-dispatch.org.\"",
+        "timestamp": 1774467828737
+      },
+      {
+        "role": "user",
+        "text": "Yeah, let's go with that URL for now.",
+        "timestamp": 1774467867879
+      },
+      {
+        "role": "assistant",
+        "text": "Great, I'll set the site URL as https://taylors-dispatch.org.\n\nWhat's your organization called? And their website?",
+        "timestamp": 1774467870432
+      },
+      {
+        "role": "assistant",
+        "text": "Great, I'll set the site URL as https://taylors-dispatch.org.\n\nWhat's your organization called? And their website?",
+        "timestamp": 1774467871974
+      },
+      {
+        "role": "user",
+        "text": "I am publishing this as an independent publisher. I don't have a website already.",
+        "timestamp": 1774467906184
+      },
+      {
+        "role": "assistant",
+        "text": "Okay, I'll set the publisher name as \"Independent Publisher.\" Since you don't have a website for it, I'll leave that field blank for now.\n\nWho reads this? Name a few types of readers, like \"policy advisors, journalists, analysts.\"",
+        "timestamp": 1774467906883
+      },
+      {
+        "role": "assistant",
+        "text": "I'll set the publisher name as \"Independent Publisher.\" Since you don't have a website for it, I'll leave that field blank for now.\n\nWho reads this? Name a few types of readers, like \"policy advisors, journalists, analysts.\"",
+        "timestamp": 1774467910310
+      },
+      {
+        "role": "assistant",
+        "text": "Okay, I'll set the publisher name as \"Independent Publisher.\" Since you don't have a website for it, I'll leave that field blank for now.\n\nWho reads this? Name a few types of readers, like \"policy advisors, journalists, analysts.\"",
+        "timestamp": 1774467916672
+      }
+    ]
+  }
+]
