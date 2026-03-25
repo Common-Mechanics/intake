@@ -68,6 +68,7 @@
       "animals": [],
       "global dev": []
     },
+    "tracker_subtitle": "",
     "llms_description": "Weekly reporting on the most pressing stories in high impact causes."
   },
   "skippedSections": [],
@@ -75,5 +76,5 @@
     "your-publication",
     "categories-and-editors"
   ],
-  "lastSaved": "2026-03-25T19:54:02.366Z"
+  "lastSaved": "2026-03-25T19:54:06.021Z"
 }
