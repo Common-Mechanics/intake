@@ -28,7 +28,7 @@
         "auto_tags": "wild animals, factory farming, alternative proteins, animal abuse, animal testing"
       },
       {
-        "short_label": "Global",
+        "short_label": "Global ",
         "full_name": "",
         "auto_tags": ""
       }
@@ -54,5 +54,5 @@
   "completedSteps": [
     "your-publication"
   ],
-  "lastSaved": "2026-03-25T19:50:09.427Z"
+  "lastSaved": "2026-03-25T19:50:13.748Z"
 }
