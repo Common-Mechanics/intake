@@ -77,8 +77,8 @@
     "scoring_neutral": "There is no clear effect on pro-social outcomes or harms to populations",
     "sources": [
       {
-        "name": "",
-        "url": "",
+        "name": "Effective Altruism Forum",
+        "url": "https://forum.effectivealtruism.org/feed.xml?view=community-rss&karmaThreshold=30",
         "tags": "",
         "notes": ""
       }
@@ -91,5 +91,5 @@
     "categories-and-editors",
     "sentiment-and-scoring"
   ],
-  "lastSaved": "2026-03-25T19:59:35.113Z"
+  "lastSaved": "2026-03-25T20:04:46.432Z"
 }
