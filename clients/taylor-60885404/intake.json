@@ -59,7 +59,7 @@
         "expertise": "You are the Global Health & Development editor."
       }
     ],
-    "tracker_name": "Existential Risks, Global Health, Animal Welfare Index",
+    "tracker_name": "Cause health",
     "tracker_nav_label": "Tracker",
     "positive_signal_label": "progress",
     "negative_signal_label": "risk",
@@ -75,5 +75,5 @@
     "your-publication",
     "categories-and-editors"
   ],
-  "lastSaved": "2026-03-25T19:53:33.872Z"
+  "lastSaved": "2026-03-25T19:54:02.366Z"
 }
