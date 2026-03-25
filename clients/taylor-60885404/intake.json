@@ -16,6 +16,13 @@
     "key_question": "Why is this one of the most ethically significant and action-relevant stories right now?",
     "reader_profile": "Readers are looking for high-signal, low-noise updates on the current state of high-impact cause areas. They care about a range of issues and only have a few minutes per week to get up to speed on the latest developments in each. ",
     "publisher_url": "https://taylorjones.space/",
+    "categories": [
+      {
+        "short_label": "",
+        "full_name": "",
+        "auto_tags": ""
+      }
+    ],
     "tracker_name": "Existential Risks, Global Health, Animal Welfare Index",
     "llms_description": "Weekly reporting on the most pressing stories in high impact causes."
   },
@@ -23,5 +30,5 @@
   "completedSteps": [
     "your-publication"
   ],
-  "lastSaved": "2026-03-25T19:47:58.131Z"
+  "lastSaved": "2026-03-25T19:48:10.957Z"
 }
