@@ -18,8 +18,8 @@
     "publisher_url": "https://taylorjones.space/",
     "categories": [
       {
-        "short_label": "Existential risks",
-        "full_name": "",
+        "short_label": "X-Risk",
+        "full_name": "Existential Risks",
         "auto_tags": ""
       }
     ],
@@ -44,5 +44,5 @@
   "completedSteps": [
     "your-publication"
   ],
-  "lastSaved": "2026-03-25T19:48:38.580Z"
+  "lastSaved": "2026-03-25T19:48:49.688Z"
 }
