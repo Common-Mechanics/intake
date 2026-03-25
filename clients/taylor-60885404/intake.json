@@ -98,7 +98,8 @@
     ],
     "llms_description": "Weekly reporting on the most pressing stories in high impact causes.",
     "about_what_is_this": "This is Taylor's Digest on high-priority cause areas, through an Effective Altruism lens. Stories matter if they are a high-signal and low-noise update on one the most ethically impactful causes of our time.",
-    "about_tracker": "The tracker measure progress on these key causes."
+    "about_tracker": "The tracker measure progress on these key causes.",
+    "about_built_by": "Built my Taylor Jones as a personal experiment."
   },
   "skippedSections": [],
   "completedSteps": [
@@ -107,5 +108,5 @@
     "sentiment-and-scoring",
     "sources-and-discovery"
   ],
-  "lastSaved": "2026-03-25T20:15:00.266Z"
+  "lastSaved": "2026-03-25T20:15:10.936Z"
 }
