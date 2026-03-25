@@ -83,6 +83,11 @@
         "notes": ""
       }
     ],
+    "x_handles": [
+      {
+        "handle": "https://x.com/AISpecies"
+      }
+    ],
     "llms_description": "Weekly reporting on the most pressing stories in high impact causes."
   },
   "skippedSections": [],
@@ -91,5 +96,5 @@
     "categories-and-editors",
     "sentiment-and-scoring"
   ],
-  "lastSaved": "2026-03-25T20:04:46.432Z"
+  "lastSaved": "2026-03-25T20:10:14.668Z"
 }
