@@ -23,9 +23,9 @@
         "auto_tags": ""
       },
       {
-        "short_label": "",
-        "full_name": "",
-        "auto_tags": ""
+        "short_label": "Animals",
+        "full_name": "Animal Welfare",
+        "auto_tags": "wild animals, factory farming, alternative proteins"
       },
       {
         "short_label": "",
@@ -54,5 +54,5 @@
   "completedSteps": [
     "your-publication"
   ],
-  "lastSaved": "2026-03-25T19:49:03.127Z"
+  "lastSaved": "2026-03-25T19:49:26.850Z"
 }
