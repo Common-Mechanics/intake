@@ -75,6 +75,14 @@
     "scoring_positive": "More pro-social and altruistic outcomes are achieved",
     "scoring_negative": "More harmful or socially degrading outcomes occur",
     "scoring_neutral": "There is no clear effect on pro-social outcomes or harms to populations",
+    "sources": [
+      {
+        "name": "",
+        "url": "",
+        "tags": "",
+        "notes": ""
+      }
+    ],
     "llms_description": "Weekly reporting on the most pressing stories in high impact causes."
   },
   "skippedSections": [],
@@ -83,5 +91,5 @@
     "categories-and-editors",
     "sentiment-and-scoring"
   ],
-  "lastSaved": "2026-03-25T19:59:15.272Z"
+  "lastSaved": "2026-03-25T19:59:35.113Z"
 }
