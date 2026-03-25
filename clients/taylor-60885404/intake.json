@@ -1,10 +1,10 @@
 {
   "schemaId": "ai-dossier-intake",
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "orgId": "taylor-60885404",
-  "orgName": "Taylors Briefing",
+  "orgName": "taylor-60885404",
   "data": {},
   "skippedSections": [],
   "completedSteps": [],
-  "lastSaved": "2026-03-22T17:13:54.125Z"
+  "lastSaved": "2026-03-25T19:38:56.011Z"
 }
