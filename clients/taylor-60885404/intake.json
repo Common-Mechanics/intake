@@ -35,7 +35,7 @@
     ],
     "editors": [
       {
-        "editor_name": "E Editor",
+        "editor_name": "X-Risks Editor",
         "category": "x-risk",
         "is_spotlight": false,
         "expertise": "You are the E Editor — an expert in E. You specialize in:\n\n- [Sub-area 1]\n- [Sub-area 2]\n- [Sub-area 3]\n\nYou notice when [what makes your perspective unique]. You track [key organizations and developments in this area]."
@@ -60,5 +60,5 @@
   "completedSteps": [
     "your-publication"
   ],
-  "lastSaved": "2026-03-25T19:51:04.771Z"
+  "lastSaved": "2026-03-25T19:51:18.513Z"
 }
