@@ -14,11 +14,11 @@
     "publisher_name": "Independent Publisher",
     "audience_description": "People working on high-impact causes, effective altruists, concerned citizens",
     "key_question": "Why is this one of the most ethically significant and action-relevant stories right now?",
-    "reader_profile": "Readers are looking for high-signal, low-noise updates on the current state of high-impact cause areas.",
+    "reader_profile": "Readers are looking for high-signal, low-noise updates on the current state of high-impact cause areas. ",
     "tracker_name": "Existential Risks, Global Health, Animal Welfare Index",
     "llms_description": "Weekly reporting on the most pressing stories in high impact causes."
   },
   "skippedSections": [],
   "completedSteps": [],
-  "lastSaved": "2026-03-25T19:47:11.990Z"
+  "lastSaved": "2026-03-25T19:47:14.678Z"
 }
