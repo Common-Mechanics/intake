@@ -34,9 +34,9 @@
     "name": "Taylors Briefing",
     "schemaId": "ai-dossier-intake",
     "createdAt": "2026-03-22T17:13:54.125Z",
-    "lastModified": "2026-03-25T19:47:56.755Z",
-    "status": "not_started",
-    "completedSteps": 0,
+    "lastModified": "2026-03-25T19:47:58.976Z",
+    "status": "in_progress",
+    "completedSteps": 1,
     "totalSteps": 5
   }
 ]
