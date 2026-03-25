@@ -50,7 +50,13 @@
         "editor_name": "Animals Editor",
         "category": "animals",
         "is_spotlight": false,
-        "expertise": "You are the animals editor."
+        "expertise": "You are the animal welfare editor."
+      },
+      {
+        "editor_name": "",
+        "category": "",
+        "is_spotlight": false,
+        "expertise": ""
       }
     ],
     "tracker_name": "Existential Risks, Global Health, Animal Welfare Index",
@@ -60,5 +66,5 @@
   "completedSteps": [
     "your-publication"
   ],
-  "lastSaved": "2026-03-25T19:52:24.443Z"
+  "lastSaved": "2026-03-25T19:52:29.340Z"
 }
