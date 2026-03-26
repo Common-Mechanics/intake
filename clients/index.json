@@ -14,10 +14,10 @@
     "name": "Lars Briefing",
     "schemaId": "ai-dossier-intake",
     "createdAt": "2026-03-22T16:55:15.174Z",
-    "lastModified": "2026-03-22T16:55:15.174Z",
+    "lastModified": "2026-03-26T00:21:29.476Z",
     "status": "not_started",
     "completedSteps": 0,
-    "totalSteps": 0
+    "totalSteps": 5
   },
   {
     "id": "nico-80783035",
