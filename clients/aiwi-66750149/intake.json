@@ -5,17 +5,17 @@
   "orgName": "AIWI Intelligence Monitor",
   "data": {
     "publication_name": "AIWI Intelligence Monitor",
-    "site_url": "https://aiwiintelligencemonitoring.org",
     "tagline": "Daily intelligence on frontier AI insider disclosures, safety governance, and whistleblowing in public interest",
     "full_title": "AIWI Intelligence Monitor - Daily intelligence on frontier AI insider disclosures, safety governance, and whistleblowing",
+    "topic_label": "Frontier AI whistleblowing disclosures",
+    "site_url": "https://aiwiintelligencemonitoring.org",
     "publisher_name": "The AI Whistleblower Initiative (AIWI)",
     "publisher_url": "https://aiwi.org/",
     "audience_description": "AIWI communications team members, strategic team members",
-    "topic_label": "Frontier AI whistleblowing disclosures",
-    "community_label": "the AI whistleblowing disclosures community",
-    "publication_type": "AI whistleblowing disclosures intelligence briefing",
     "key_question": "Does this story reveal, signal, or affect AI insider disclosures, safety governance, or the conditions that enable or suppress AI safety whistleblowing, and does it carry implications for public trust in how AI is being built and governed?",
     "reader_profile": "You are writing for a small senior team at a Berlin-based nonprofit focused on AI whistleblowing and safety governance. They are strategists, communicators, and advocates, not technical researchers. They need to know immediately when a story is relevant to insider disclosures, safety culture, company policy changes, or legal accountability at Frontier AI companies. What matters is not general AI news but story developments that touch the topic of insiders speaking up, being silenced, or shaping the conditions for either, because those stories affect whether the public can trust that AI systems are being built safely. A story is worth flagging if it would impact what AIWI should say publicly, who they reach out to, or what they should respond to quickly to build credibility and trust among insiders in the space.",
+    "publication_type": "AI whistleblowing disclosures intelligence briefing",
+    "community_label": "the AI whistleblowing disclosures community",
     "categories": [
       {
         "short_label": "Disclosures",
@@ -70,10 +70,17 @@
         "expertise": "You are the Research Editor - an expert in academic and technical evidence relevant to AI accountability and whistleblowing. You specialize in: \n\n- Research on whistleblowing as a mechanism — legal protections, organisational behaviour, disclosure effectiveness, and what conditions make insiders more or less likely to speak up\n- Academic and policy literature on AI accountability: audit frameworks, transparency obligations, corporate liability, and governance gaps at frontier labs \n- Technical research that provides independent evidence bearing on safety claims companies make publicly — evaluations, red-teaming findings, capability assessments \n\nYou notice when a paper's findings have implications for whistleblower protection law, when research documents a governance failure that insiders have already tried to raise internally, or when academic work gives credibility and context to a disclosure story that journalists haven't fully picked up yet. You track arXiv, Semantic Scholar, SSRN, and publications from law schools, AI governance institutes, and labour rights researchers."
       }
     ],
+    "tracker_name": "AI Whistleblowing Disclosures Index",
+    "tracker_subtitle": "Frontier AI Accountability Climate Index",
     "tracker_nav_label": "Tracker",
     "positive_signal_label": "progress",
     "negative_signal_label": "suppression",
-    "tracker_name": "AI Whistleblowing Disclosures Index",
+    "what_positive_means": "Things are improving because insiders are better protected and even rewarded or praised by companies or their leaders because of the concerns they raised; companies are being held to account, and transparency in AI development is increasing.",
+    "what_negative_means": "Things are getting worse because insiders face greater retaliation risk, companies are weakening safety commitments, or accountability mechanisms are being undermined.",
+    "fallback_sentiment_question": "Does this story make it easier or harder for AI insiders to safely speak up about risks to the public?",
+    "scoring_positive": "A story is positive when: an insider or whistleblower receives legal protection or wins a case; a regulator opens an investigation into an AI company's safety practices; a company strengthens its RSP or adds meaningful disclosure commitments; new legislation improves protections for AI workers who wish to raise concerns.",
+    "scoring_negative": "A story is negative when: a company retaliates against an insider or enforces an NDA or any other ways to silence them; a safety policy is quietly weakened or removed; a regulatory process is blocked or defunded; a key employee e.g., a safety researcher, departs under pressure, cannot speak publicly, reveals the failure of the internal speaking up culture, signals concerning safety measures, either directly or using cryptic wording.",
+    "scoring_neutral": "A story is neutral when: it reports on AI capabilities or research without clear implications for accountability or AI whistleblowing protections dimension; it covers industry events or personnel moves with no substantial safety or speaking up culture dimension; it describes regulatory debate where the outcome is genuinely unclear.",
     "sentiment_rules_by_category": {
       "disclosures": [
         {
@@ -101,19 +108,24 @@
       "accountability": [],
       "research": []
     },
-    "what_positive_means": "Things are improving because insiders are better protected and even rewarded or praised by companies or their leaders because of the concerns they raised; companies are being held to account, and transparency in AI development is increasing.",
-    "what_negative_means": "Things are getting worse because insiders face greater retaliation risk, companies are weakening safety commitments, or accountability mechanisms are being undermined.",
-    "fallback_sentiment_question": "Does this story make it easier or harder for AI insiders to safely speak up about risks to the public?",
-    "tracker_subtitle": "Frontier AI Accountability Climate Index",
-    "scoring_positive": "A story is positive when: an insider or whistleblower receives legal protection or wins a case; a regulator opens an investigation into an AI company's safety practices; a company strengthens its RSP or adds meaningful disclosure commitments; new legislation improves protections for AI workers who wish to raise concerns.",
-    "scoring_negative": "A story is negative when: a company retaliates against an insider or enforces an NDA or any other ways to silence them; a safety policy is quietly weakened or removed; a regulatory process is blocked or defunded; a key employee e.g., a safety researcher, departs under pressure, cannot speak publicly, reveals the failure of the internal speaking up culture, signals concerning safety measures, either directly or using cryptic wording.",
-    "scoring_neutral": "A story is neutral when: it reports on AI capabilities or research without clear implications for accountability or AI whistleblowing protections dimension; it covers industry events or personnel moves with no substantial safety or speaking up culture dimension; it describes regulatory debate where the outcome is genuinely unclear.",
-    "triage_topics": [
+    "sources": [
       {
-        "topic": ""
+        "name": "Wired - AI Content",
+        "tags": "Wired",
+        "url": "https://www.wired.com/feed/tag/ai/latest/rss",
+        "notes": ""
       },
       {
-        "topic": ""
+        "name": "Tech Crunch - AI",
+        "tags": "Techcrunch",
+        "url": "https://techcrunch.com/category/artificial-intelligence/feed/",
+        "notes": ""
+      },
+      {
+        "name": "Arstechnica",
+        "tags": "arstechnica",
+        "url": "https://arstechnica.com/ai/feed/",
+        "notes": ""
       }
     ],
     "key_organizations": [
@@ -142,24 +154,12 @@
         "name": "Microsoft AI"
       }
     ],
-    "sources": [
+    "triage_topics": [
       {
-        "name": "Wired - AI Content",
-        "tags": "Wired",
-        "url": "https://www.wired.com/feed/tag/ai/latest/rss",
-        "notes": ""
+        "topic": ""
       },
       {
-        "name": "Tech Crunch - AI",
-        "tags": "Techcrunch",
-        "url": "https://techcrunch.com/category/artificial-intelligence/feed/",
-        "notes": ""
-      },
-      {
-        "name": "Arstechnica",
-        "tags": "arstechnica",
-        "url": "https://arstechnica.com/ai/feed/",
-        "notes": ""
+        "topic": ""
       }
     ],
     "llms_description": "D"
@@ -176,5 +176,5 @@
     "sources-and-discovery",
     "about-page"
   ],
-  "lastSaved": "2026-03-24T08:02:50.848Z"
+  "lastSaved": "2026-03-26T00:16:58.552Z"
 }
