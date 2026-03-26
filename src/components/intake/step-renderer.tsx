@@ -179,7 +179,7 @@ export function StepRenderer({
                     <ChevronDown
                       aria-hidden="true"
                       className={cn(
-                        "size-4 text-muted-foreground transition-transform",
+                        "size-4 text-muted-foreground transition-transform duration-200 ease-[var(--ease-out-strong)]",
                         !isExpanded && "-rotate-90"
                       )}
                     />
@@ -222,8 +222,18 @@ export function StepRenderer({
                 </div>
               )}
 
-              {/* Section body — fields */}
-              {(isExpanded || !isCollapsible) && (
+              {/* Section body — fields (CSS grid trick for smooth collapse) */}
+              {isCollapsible ? (
+                <div
+                  className="grid transition-[grid-template-rows] duration-200 ease-[var(--ease-out-strong)]"
+                  style={{ gridTemplateRows: isExpanded ? '1fr' : '0fr' }}
+                  inert={!isExpanded || undefined}
+                >
+                  <div className="min-h-0 overflow-hidden">
+                    {renderFields(section.fields, isSectionSkipped)}
+                  </div>
+                </div>
+              ) : (
                 renderFields(section.fields, isSectionSkipped)
               )}
             </div>

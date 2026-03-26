@@ -71,7 +71,7 @@ export function NumberField({
         )}
       />
       {error && (
-        <p id={`${id}-error`} role="alert" className="text-sm font-medium text-destructive">{error}</p>
+        <p id={`${id}-error`} role="alert" className="animate-error-enter text-sm font-medium text-destructive">{error}</p>
       )}
       {help && (
         <div id={`${id}-help`}>

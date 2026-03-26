@@ -49,6 +49,9 @@
 }
 
 :root {
+  /* Strong custom easings — punchier than CSS defaults (Emil Kowalski) */
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out-strong: cubic-bezier(0.77, 0, 0.175, 1);
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -150,10 +153,27 @@
   }
 }
 
+/* Step entry — subtle scale prevents "appearing from nothing" */
 @keyframes step-enter {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(8px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-step-enter {
+  animation: step-enter 0.25s var(--ease-out-strong);
+}
+
+/* Error messages — slide down to draw attention without jarring */
+@keyframes error-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
   }
   to {
     opacity: 1;
@@ -161,13 +181,32 @@
   }
 }
 
-.animate-step-enter {
-  animation: step-enter 0.25s ease-out;
+.animate-error-enter {
+  animation: error-enter 0.2s var(--ease-out-strong);
+}
+
+/* Progress dropdown — scale from trigger with @starting-style */
+.animate-dropdown-enter {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  transform-origin: top center;
+  transition: opacity 150ms var(--ease-out-strong),
+              transform 150ms var(--ease-out-strong);
+}
+
+@starting-style {
+  .animate-dropdown-enter {
+    opacity: 0;
+    transform: scale(0.96) translateY(-4px);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-step-enter {
+  .animate-step-enter,
+  .animate-error-enter,
+  .animate-dropdown-enter {
     animation: none;
+    transition: none;
   }
 }
 

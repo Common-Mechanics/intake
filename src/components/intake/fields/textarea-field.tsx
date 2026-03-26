@@ -63,7 +63,7 @@ export function TextareaField({
         )}
       />
       {error && (
-        <p id={`${id}-error`} role="alert" className="text-sm font-medium text-destructive">{error}</p>
+        <p id={`${id}-error`} role="alert" className="animate-error-enter text-sm font-medium text-destructive">{error}</p>
       )}
       <div className="flex justify-between gap-4">
         {help && (

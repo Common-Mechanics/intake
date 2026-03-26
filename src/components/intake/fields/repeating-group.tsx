@@ -438,7 +438,7 @@ export function RepeatingGroup({
                 <div
                   role="button"
                   tabIndex={0}
-                  className="flex items-center gap-2 px-3 py-2 w-full text-left cursor-pointer hover:bg-accent/50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
+                  className="flex items-center gap-2 px-3 py-2 w-full text-left cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset [@media(hover:hover)]:hover:bg-accent/50"
                   onClick={() => toggleExpanded(index)}
                   onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleExpanded(index) } }}
                   aria-expanded={isOpen}
@@ -470,26 +470,33 @@ export function RepeatingGroup({
                   </Button>
                 </div>
 
-                {isOpen && (
-                  <div className="px-3 pb-3 pt-2 border-t">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-3 gap-y-3">
-                      {fields.map((field) => {
-                        const spanFull = field.type === "textarea" || field.type === "checkbox"
-                        return (
-                          <div key={field.id} className={cn(spanFull && "md:col-span-2")}>
-                            <FieldRenderer
-                              field={field}
-                              value={entry[field.id]}
-                              onChange={(val) => handleEntryChange(index, field.id, val)}
-                              error={entryErrors[field.id]}
-                              disabled={disabled}
-                            />
-                          </div>
-                        )
-                      })}
+                {/* Smooth expand/collapse via CSS grid row transition */}
+                <div
+                  className="grid transition-[grid-template-rows] duration-200 ease-[var(--ease-out-strong)]"
+                  style={{ gridTemplateRows: isOpen ? '1fr' : '0fr' }}
+                  inert={!isOpen || undefined}
+                >
+                  <div className="min-h-0 overflow-hidden">
+                    <div className="px-3 pb-3 pt-2 border-t">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-3 gap-y-3">
+                        {fields.map((field) => {
+                          const spanFull = field.type === "textarea" || field.type === "checkbox"
+                          return (
+                            <div key={field.id} className={cn(spanFull && "md:col-span-2")}>
+                              <FieldRenderer
+                                field={field}
+                                value={entry[field.id]}
+                                onChange={(val) => handleEntryChange(index, field.id, val)}
+                                error={entryErrors[field.id]}
+                                disabled={disabled}
+                              />
+                            </div>
+                          )
+                        })}
+                      </div>
                     </div>
                   </div>
-                )}
+                </div>
               </div>
             )
           })}

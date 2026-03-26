@@ -107,7 +107,7 @@ export function ProgressBar({
 
         {/* Dropdown */}
         {dropdownOpen && (
-          <div role="listbox" aria-label="Steps" className="absolute top-full left-0 right-0 mt-1 bg-popover border rounded-lg shadow-lg z-50 py-1 max-h-[60vh] overflow-y-auto">
+          <div role="listbox" aria-label="Steps" className="animate-dropdown-enter absolute top-full left-0 right-0 mt-1 bg-popover border rounded-lg shadow-lg z-50 py-1 max-h-[60vh] overflow-y-auto">
             {steps.map((step, index) => {
               const isCurrent = index === currentStep
               const hasErrors = (stepErrors[step.id] ?? 0) > 0
