@@ -1,0 +1,25 @@
+[
+  {
+    "id": "2026-03-26_002137_mfo6",
+    "startedAt": "2026-03-26T00:21:37.569Z",
+    "endedAt": "2026-03-26T00:21:54.364Z",
+    "messageCount": 3,
+    "messages": [
+      {
+        "role": "assistant",
+        "text": "Hi! I'm here to help you set up your publication. I'll ask you some questions and fill in the form as we go. Let's start — what's your publication called?",
+        "timestamp": 1774484499356
+      },
+      {
+        "role": "user",
+        "text": "This is just a test.",
+        "timestamp": 1774484510150
+      },
+      {
+        "role": "assistant",
+        "text": "Let's stay focused on getting your publication set up. So — what's your publication called?",
+        "timestamp": 1774484510430
+      }
+    ]
+  }
+]
