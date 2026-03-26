@@ -5,17 +5,17 @@
   "orgName": "Taylor's Dispatch",
   "data": {
     "publication_name": "Taylor's Dispatch",
-    "site_url": "https://taylors-dispatch.org",
     "tagline": "Weekly reporting on the most pressing stories in high impact causes.",
     "full_title": "Taylor's Dispatch — Weekly reporting on the most pressing stories in high impact causes.",
     "topic_label": "Existential risks, global health, animal welfare",
-    "community_label": "the Existential risks, global health, animal welfare community",
-    "publication_type": "Existential risks, global health, animal welfare intelligence briefing",
+    "site_url": "https://taylors-dispatch.org",
     "publisher_name": "Independent Publisher",
+    "publisher_url": "https://taylorjones.space/",
     "audience_description": "People working on high-impact causes, effective altruists, concerned citizens",
     "key_question": "Why is this one of the most ethically significant and action-relevant stories right now?",
     "reader_profile": "Readers are looking for high-signal, low-noise updates on the current state of high-impact cause areas. They care about a range of issues and only have a few minutes per week to get up to speed on the latest developments in each. ",
-    "publisher_url": "https://taylorjones.space/",
+    "publication_type": "Existential risks, global health, animal welfare intelligence briefing",
+    "community_label": "the Existential risks, global health, animal welfare community",
     "categories": [
       {
         "short_label": "X-Risk",
@@ -60,21 +60,21 @@
       }
     ],
     "tracker_name": "Cause health",
+    "tracker_subtitle": "How well are pressing causes doing overall?",
     "tracker_nav_label": "Tracker",
     "positive_signal_label": "progress",
     "negative_signal_label": "decline",
-    "sentiment_rules_by_category": {
-      "x-risk": [],
-      "animals": [],
-      "global dev": []
-    },
-    "tracker_subtitle": "How well are pressing causes doing overall?",
     "what_positive_means": "These cause areas are improving in their condition.",
     "what_negative_means": "These cause areas are worsening in their condition.",
     "fallback_sentiment_question": "Are these causes improving or declining in their condition?",
     "scoring_positive": "More pro-social and altruistic outcomes are achieved",
     "scoring_negative": "More harmful or socially degrading outcomes occur",
     "scoring_neutral": "There is no clear effect on pro-social outcomes or harms to populations",
+    "sentiment_rules_by_category": {
+      "x-risk": [],
+      "animals": [],
+      "global dev": []
+    },
     "sources": [
       {
         "name": "Effective Altruism Forum",
@@ -96,10 +96,10 @@
         "name": "Centre for Effective Altruism"
       }
     ],
-    "llms_description": "Weekly reporting on the most pressing stories in high impact causes.",
     "about_what_is_this": "This is Taylor's Digest on high-priority cause areas, through an Effective Altruism lens. Stories matter if they are a high-signal and low-noise update on one the most ethically impactful causes of our time.",
     "about_tracker": "The tracker measure progress on these key causes.",
-    "about_built_by": "Built my Taylor Jones as a personal experiment."
+    "about_built_by": "Built my Taylor Jones as a personal experiment.",
+    "llms_description": "Weekly reporting on the most pressing stories in high impact causes."
   },
   "skippedSections": [],
   "completedSteps": [
@@ -108,5 +108,5 @@
     "sentiment-and-scoring",
     "sources-and-discovery"
   ],
-  "lastSaved": "2026-03-25T20:30:09.717Z"
+  "lastSaved": "2026-03-26T00:19:45.986Z"
 }
